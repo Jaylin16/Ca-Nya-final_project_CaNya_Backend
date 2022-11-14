@@ -29,6 +29,12 @@ public class BoardController {
     private final BoardService boardService;
 
 
+    @GetMapping("/board/main")
+    public ResponseEntity<?> getMainBoards(){
+        return boardService.getBoards();
+    }
+
+
     @PutMapping("/auth/board/update/{boardId}")
     public ResponseEntity<?> editBoard(@RequestPart(value = "image", required = false) List<MultipartFile> image,
                                        @RequestParam("data") String dataList,

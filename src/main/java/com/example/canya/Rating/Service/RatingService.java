@@ -29,7 +29,7 @@ public class RatingService {
         }
 
 
-        Rating rating = new Rating(requestDto,board.get());
+        Rating rating = new Rating(requestDto,board.get(), board.get().getMember());
         ratingRepository.save(rating);
 
         return new ResponseEntity<>(requestDto,HttpStatus.CREATED);

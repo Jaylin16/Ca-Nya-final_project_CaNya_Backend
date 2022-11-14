@@ -11,6 +11,7 @@ import com.example.canya.Member.Entity.Member;
 import com.example.canya.Member.Repository.MemberRepository;
 import com.example.canya.Member.Service.MemberDetailsImpl;
 import com.example.canya.Rating.Dto.RatingRequestDto;
+import com.example.canya.Rating.Dto.RatingResponseDto;
 import com.example.canya.Rating.Entity.Rating;
 import com.example.canya.Rating.Repository.RatingRepository;
 import com.example.canya.S3.S3Uploader;
@@ -23,10 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -72,14 +70,50 @@ public class BoardService {
 
 
     public ResponseEntity<?> getBoards(){
-        List<Board> boardList = boardRepository.findAll();
-        List<BoardResponseDto> dtoList = new ArrayList<>();
+        // createdAt desc, first image for each board, highest two ratings
 
-        for (Board board : boardList) {
-            dtoList.add(new BoardResponseDto(board));
+        List<Board> createdAtBoards = boardRepository.findAllByOrderByCreatedAtAsc();
+        List<BoardResponseDto> boardsDto = new ArrayList<>();
+
+        for (Board boards : createdAtBoards) {
+            List<Image> imageList = boards.getImageList();
+            Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(boards,boards.getMember().getMemberId()).orElse(null);
+
+            Map<String, Long> ratingMap = new HashMap<String, Long>();
+            ratingMap.put("coffeeRating",ratingList.getCoffeeRate());
+            ratingMap.put("dessertRating",ratingList.getDessertRate());
+            ratingMap.put("kindnessRating",ratingList.getKindnessRate());
+            ratingMap.put("moodRating",ratingList.getMoodRate());
+            ratingMap.put("parkingRating",ratingList.getParkingRate());
+            ratingMap.put("priceRating",ratingList.getPriceRate());
+
+            Map.Entry<String,Long> maxEntry = null;
+            Map.Entry<String,Long> secondMaxEntry = null;
+            for (Map.Entry<String, Long> entry : ratingMap.entrySet()) {
+                if (maxEntry == null || entry.getValue() > maxEntry.getValue()) {
+                    maxEntry = entry;
+                }
+            }
+            ratingMap.values().remove(maxEntry.getValue());
+            for (Map.Entry<String, Long> entry : ratingMap.entrySet()){
+                if(secondMaxEntry == null || entry.getValue() > secondMaxEntry.getValue()){
+                    secondMaxEntry = entry;
+                }
+            }
+            System.out.println("second max : "+secondMaxEntry);
+            System.out.println("max : " +maxEntry);
+
+            RatingResponseDto responseDto = new RatingResponseDto(maxEntry, secondMaxEntry);
+
+            if(imageList.size()!=0) {
+                String image = imageList.get(0).getImageUrl();
+                boardsDto.add(new BoardResponseDto(boards, image,responseDto));
+            }
+            boardsDto.add(new BoardResponseDto(boards,null,responseDto));
         }
+        System.out.println(createdAtBoards);
 
-        return new ResponseEntity<>(dtoList,HttpStatus.OK);
+        return new ResponseEntity<>(boardsDto,HttpStatus.OK);
     }
 
     @Transactional
@@ -97,7 +131,7 @@ public class BoardService {
 
         //coffee , dessert, price, mood, parking
         RatingRequestDto ratingDto = new RatingRequestDto(dto.getRatings()[0],dto.getRatings()[1],dto.getRatings()[2],dto.getRatings()[3],dto.getRatings()[4],dto.getRatings()[5]);
-        Rating rating = new Rating(ratingDto,board);
+        Rating rating = new Rating(ratingDto,board,board.getMember());
         System.out.println(rating);
         ratingRepository.save(rating);
 
