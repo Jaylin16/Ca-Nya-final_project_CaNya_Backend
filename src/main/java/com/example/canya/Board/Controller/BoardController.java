@@ -25,6 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardController {
 
+
     private final BoardService boardService;
 
     @PutMapping("/auth/board/update/{boardId}")
@@ -32,7 +33,7 @@ public class BoardController {
                                          @RequestParam("data")String dataList,
                                          @PathVariable Long boardId) throws IOException {
 
-
+        System.out.println("testing");
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});
 
