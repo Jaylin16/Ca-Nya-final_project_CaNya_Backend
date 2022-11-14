@@ -2,6 +2,7 @@ package com.example.canya.Rating.Entity;
 
 import com.example.canya.Board.Dto.BoardRequestDto;
 import com.example.canya.Board.Entity.Board;
+import com.example.canya.Member.Entity.Member;
 import com.example.canya.Rating.Dto.RatingRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,7 +39,9 @@ public class Rating {
     @JoinColumn(name="board_id")
     private Board board;
 
-    public Rating (RatingRequestDto requestDto, Board board){
+    private Long memberId;
+
+    public Rating (RatingRequestDto requestDto, Board board, Member member){
         this.coffeeRate = requestDto.getCoffeeRate();
         this.dessertRate = requestDto.getDessertRate();
         this.priceRate = requestDto.getPriceRate();
@@ -46,6 +49,7 @@ public class Rating {
         this.kindnessRate = requestDto.getKindnessRate();
         this.parkingRate= requestDto.getParkingRate();
         this.board = board;
+        this.memberId = member.getMemberId();
     }
 
     public Rating(Board board){
