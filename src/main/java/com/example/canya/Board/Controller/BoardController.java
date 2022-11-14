@@ -28,12 +28,24 @@ public class BoardController {
 
     private final BoardService boardService;
 
+
     @PutMapping("/auth/board/update/{boardId}")
+    public ResponseEntity<?> editBoard(@RequestPart(value = "image", required = false) List<MultipartFile> image,
+                                       @RequestParam("data") String dataList,
+                                        @PathVariable Long boardId,
+                                       @AuthenticationPrincipal MemberDetailsImpl memberDetails) throws IOException{
+        ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
+        BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});
+        return boardService.editBoard(dto, image, boardId,memberDetails.getMember());
+    };
+
+    @PutMapping("/auth/board/submit/{boardId}")
     public ResponseEntity<?> confirmBoard(@RequestPart(value = "image",required = false) List<MultipartFile> image,
                                          @RequestParam("data")String dataList,
                                          @PathVariable Long boardId) throws IOException {
 
         System.out.println("testing");
+        System.out.println(dataList);
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});
 

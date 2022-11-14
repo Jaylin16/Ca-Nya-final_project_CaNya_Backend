@@ -15,6 +15,7 @@ public class BoardRequestDto {
     private String boardTitle;
     private String boardContent;
     private String address;
+    private Long[] ratings;
 
 //    private ArrayList<MultipartFile> image;
 
