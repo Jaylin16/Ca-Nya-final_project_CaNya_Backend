@@ -1,0 +1,52 @@
+POST http://localhost:8080/member/register
+Content-Type: application/json
+
+{
+  "memberName": "Adam",
+  "memberNickname": "앗함",
+  "password": "1234"
+}
+
+
+###
+POST http://localhost:8080/member/login
+Content-Type: application/json
+
+{
+  "memberName": "Adam",
+  "password": "1234"
+}
+
+###
+POST http://localhost:8080/auth/board/create
+Content-Type: application/json
+Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZGFtIiwiYXVkIjoi7JWX7ZWoIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY5OTc3NDQ1Nn0.YQWSQi9gzyowC_SNlvF0L922AsL2gfyv3el-0nb-3Jg
+
+{
+  "boardTitle": "title",
+  "boardContent": "content",
+  "address": "address"
+}
+
+###
+POST http://localhost:8080/auth/rating/1
+Content-Type: application/json
+Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZGFtIiwiYXVkIjoi7JWX7ZWoIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY5OTc3NDQ1Nn0.YQWSQi9gzyowC_SNlvF0L922AsL2gfyv3el-0nb-3Jg
+
+{
+  "coffeeRate": 4,
+  "dessertRate": 3,
+  "priceRate": 4,
+  "kindnessRate": 5,
+  "moodRate": 5,
+  "parkingRate": 5
+}
+
+###
+POST http://localhost:8080/auth/board/save
+Content-Type: application/json
+Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZGFtIiwiYXVkIjoi7JWX7ZWoIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY5OTc3NDQ1Nn0.YQWSQi9gzyowC_SNlvF0L922AsL2gfyv3el-0nb-3Jg
+
+{
+
+}
