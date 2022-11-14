@@ -27,10 +27,9 @@ public class Rating {
     private Long priceRate;
 
     @Column
-    private Long kindnessRate;
-
-    @Column
     private Long moodRate;
+    @Column
+    private Long kindnessRate;
 
     @Column
     private Long parkingRate;
@@ -43,8 +42,8 @@ public class Rating {
         this.coffeeRate = requestDto.getCoffeeRate();
         this.dessertRate = requestDto.getDessertRate();
         this.priceRate = requestDto.getPriceRate();
-        this.kindnessRate = requestDto.getKindnessRate();
         this.moodRate = requestDto.getMoodRate();
+        this.kindnessRate = requestDto.getKindnessRate();
         this.parkingRate= requestDto.getParkingRate();
         this.board = board;
     }
@@ -52,6 +51,7 @@ public class Rating {
     public Rating(Board board){
         this.board = board;
     }
+
 
 //    public void update(BoardRequestDto dto) {
 //        this.coffeeRate = dto.getCoffeeRate() != null ? dto.getCoffeeRate() : this.coffeeRate;
