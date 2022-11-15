@@ -5,7 +5,6 @@ import com.example.canya.Member.Entity.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 
@@ -36,8 +35,5 @@ public class Image {
         this.imageUrl = imageUrl;
         this.member= member;
 
-
     }
-
-
 }

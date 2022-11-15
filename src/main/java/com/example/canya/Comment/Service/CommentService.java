@@ -35,7 +35,7 @@ public class CommentService {
         Comment commentContent = new Comment(commentRequestDto, board, member);
         commentRepository.save(commentContent);
 
-        return new ResponseEntity<>("댓글 작성 완료", HttpStatus.OK);
+        return new ResponseEntity<>("댓글 생성이 완료되었습니다.", HttpStatus.OK);
     }
 
     //댓글 전체 불러오기.
