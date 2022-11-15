@@ -16,16 +16,14 @@ public class BoardRequestDto {
     private String boardContent;
     private String address;
     private Long[] ratings;
+    private double totalRating;
 
-//    private ArrayList<MultipartFile> image;
-
-
-
-//    private Long coffeeRate;
-//    private Long dessertRate;
-//    private Long priceRate;
-//    private Long kindnessRate;
-//    private Long moodRate;
-//    private Long parkingRate;
+    public double getTotalRating (Long[] ratings){
+        this.totalRating = 0;
+        for (Long rating : ratings) {
+            totalRating+=rating;
+        }
+        return totalRating;
+    }
 
 }

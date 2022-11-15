@@ -34,6 +34,10 @@ public class BoardController {
         return boardService.getBoards();
     }
 
+    @GetMapping("/board/{boardId}")
+    public ResponseEntity<?> getBoardDetail(@PathVariable Long boardId){
+        return boardService.getBoardDetail(boardId);
+    }
 
     @PutMapping("/auth/board/update/{boardId}")
     public ResponseEntity<?> editBoard(@RequestPart(value = "image", required = false) List<MultipartFile> image,

@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface RatingRepository extends JpaRepository<Rating, Long> {
     Optional<Rating> findRatingByBoardAndMemberId(Board board,Long memberId);
+
+    Rating findRatingByBoard(Board board);
 }

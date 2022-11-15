@@ -4,6 +4,7 @@ import com.example.canya.Board.Dto.BoardRequestDto;
 import com.example.canya.Board.Entity.Board;
 import com.example.canya.Member.Entity.Member;
 import com.example.canya.Rating.Dto.RatingRequestDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,30 +16,33 @@ import javax.persistence.*;
 public class Rating {
 
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ratingId;
 
     @Column
-    private Long coffeeRate;
+    private double coffeeRate;
 
     @Column
-    private Long dessertRate;
+    private double dessertRate;
 
     @Column
-    private Long priceRate;
+    private double priceRate;
 
     @Column
-    private Long moodRate;
+    private double moodRate;
     @Column
-    private Long kindnessRate;
+    private double kindnessRate;
 
     @Column
-    private Long parkingRate;
+    private double parkingRate;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name="board_id")
     private Board board;
 
+    @JsonIgnore
     private Long memberId;
 
     public Rating (RatingRequestDto requestDto, Board board, Member member){
@@ -51,7 +55,10 @@ public class Rating {
         this.board = board;
         this.memberId = member.getMemberId();
     }
-
+    @JsonIgnore
+    public double getTotalRating(){
+        return (this.coffeeRate + this.dessertRate + this.priceRate + this.moodRate + this.kindnessRate + this.parkingRate)/6;
+    }
     public Rating(Board board){
         this.board = board;
     }
