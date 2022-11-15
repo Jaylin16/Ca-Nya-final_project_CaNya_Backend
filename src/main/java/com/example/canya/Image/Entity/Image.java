@@ -1,9 +1,9 @@
 package com.example.canya.Image.Entity;
 
 import com.example.canya.Board.Entity.Board;
+import com.example.canya.Member.Entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 
@@ -23,12 +23,14 @@ public class Image {
     @JoinColumn(name = "board_id")
     private Board board;
 
-    public Image(Board board , String imageUrl){
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    public Image(Board board , String imageUrl, Member member){
         this.board = board;
         this.imageUrl = imageUrl;
-
+        this.member= member;
 
     }
-
-
 }
