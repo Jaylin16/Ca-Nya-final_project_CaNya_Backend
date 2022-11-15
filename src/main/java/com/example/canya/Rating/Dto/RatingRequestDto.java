@@ -7,27 +7,29 @@ import lombok.Setter;
 @Setter
 public class RatingRequestDto {
 
-    private Long coffeeRate;
+    private double coffeeRate;
 
-    private Long dessertRate;
+    private double dessertRate;
 
-    private Long priceRate;
+    private double priceRate;
 
-    private Long kindnessRate;
+    private double moodRate;
+    private double kindnessRate;
 
-    private Long moodRate;
+    private double parkingRate;
 
-    private Long parkingRate;
+    private double totalRating;
 
-    public RatingRequestDto(Long coffeeRate, Long dessertRate,
-                            Long priceRate,Long moodRate, Long kindnessRate
-            , Long parkingRate) {
+    public RatingRequestDto(double coffeeRate, double dessertRate,
+                            double priceRate,double moodRate, double kindnessRate
+                            , double parkingRate) {
         this.coffeeRate = coffeeRate;
         this.dessertRate = dessertRate;
         this.priceRate = priceRate;
         this.kindnessRate = kindnessRate;
         this.moodRate = moodRate;
         this.parkingRate = parkingRate;
+        this.totalRating = (coffeeRate + dessertRate + priceRate + moodRate + kindnessRate + parkingRate)/6;
     }
-
+    
 }

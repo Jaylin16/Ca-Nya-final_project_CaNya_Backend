@@ -68,7 +68,7 @@ public class S3Uploader {
         // 위의 경로로 File 생성됨.
         if(convertFile.createNewFile()) {
             try (FileOutputStream fos = new FileOutputStream(convertFile)) {
-                System.out.println("got to the try");
+
                 fos.write(file.getBytes());
             }
             return Optional.of(convertFile);
@@ -79,7 +79,7 @@ public class S3Uploader {
 
     public void deleteFile(String fileName){
         DeleteObjectRequest request = new DeleteObjectRequest(bucket, fileName);
-        System.out.println("fileName = " + fileName);
+
         amazonS3Client.deleteObject(request);
     }
 }

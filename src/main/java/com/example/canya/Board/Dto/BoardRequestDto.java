@@ -25,4 +25,14 @@ public class BoardRequestDto {
 //    private Long moodRate;
 //    private Long parkingRate;
 
+    private double totalRating;
+
+    public double getTotalRating (Long[] ratings){
+        this.totalRating = 0;
+        for (Long rating : ratings) {
+            totalRating+=rating;
+        }
+        return totalRating;
+    }
+
 }

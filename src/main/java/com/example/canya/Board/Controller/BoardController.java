@@ -20,7 +20,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardController {
 
+
     private final BoardService boardService;
+
+
+    @GetMapping("/board/main")
+    public ResponseEntity<?> getMainBoards(){
+        return boardService.getBoards();
+    }
+
+    @GetMapping("/board/{boardId}")
+    public ResponseEntity<?> getBoardDetail(@PathVariable Long boardId){
+        return boardService.getBoardDetail(boardId);
+    }
 
     @PutMapping("/auth/board/update/{boardId}")
     public ResponseEntity<?> editBoard(@RequestPart(value = "image", required = false) List<MultipartFile> image,
@@ -30,12 +42,12 @@ public class BoardController {
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});
         return boardService.editBoard(dto, image, boardId,memberDetails.getMember());
-    }
+    };
 
     @PutMapping("/auth/board/submit/{boardId}")
     public ResponseEntity<?> confirmBoard(@RequestPart(value = "image",required = false) List<MultipartFile> image,
-                                          @RequestParam("data")String dataList,
-                                          @PathVariable Long boardId) throws IOException {
+                                         @RequestParam("data")String dataList,
+                                         @PathVariable Long boardId) throws IOException {
 
         System.out.println("testing");
         System.out.println(dataList);
