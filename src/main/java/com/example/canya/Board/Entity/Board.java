@@ -5,9 +5,12 @@ import com.example.canya.Comment.Entity.Comment;
 import com.example.canya.Heart.Entity.Heart;
 import com.example.canya.Image.Entity.Image;
 import com.example.canya.Member.Entity.Member;
+import com.example.canya.Rating.Dto.RatingRequestDto;
+import com.example.canya.Rating.Entity.Rating;
 import com.example.canya.Timestamp.Timestamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -31,9 +34,13 @@ public class Board extends Timestamp {
     @Column
     private String address;
 
+
     @ManyToOne
     @JoinColumn(name="member_id")
     private Member member;
+
+    @OneToMany(mappedBy= "board", cascade =  CascadeType.ALL)
+    private List<Rating> ratingList = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Comment> commentList = new ArrayList<>();
@@ -43,7 +50,8 @@ public class Board extends Timestamp {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Image> imageList = new ArrayList<>();
-    public Board(BoardRequestDto dto, Member member){
+
+    public Board(BoardRequestDto dto, Member member, RatingRequestDto ratingDto){
         this.member = member;
         this.boardContent = dto.getBoardContent();
         this.boardTitle = dto.getBoardTitle();

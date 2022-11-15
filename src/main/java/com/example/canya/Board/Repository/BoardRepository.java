@@ -12,5 +12,6 @@ import java.util.Optional;
 public interface BoardRepository extends JpaRepository<Board,Long> {
     Optional<Board> findBoardByMember(Member member);
     List<Board> findAllByOrderByCreatedAtAsc();
+//    List<Board> findAllByOrderByTotalRating();
 
 }

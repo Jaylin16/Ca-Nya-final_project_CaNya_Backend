@@ -51,7 +51,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // CSRF 설정 Disable
-        http.csrf().disable()
+        http.cors().and().csrf().disable()
 
                 // exception handling 할 때 우리가 만든 클래스를 추가
                 .exceptionHandling()
