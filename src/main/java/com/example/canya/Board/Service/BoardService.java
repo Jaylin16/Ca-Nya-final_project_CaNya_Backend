@@ -4,6 +4,8 @@ import com.example.canya.Board.Dto.*;
 import com.example.canya.Board.Entity.Board;
 import com.example.canya.Board.Repository.BoardRepository;
 
+import com.example.canya.Heart.Entity.Heart;
+import com.example.canya.Heart.Repository.HeartRepository;
 import com.example.canya.Image.Entity.Image;
 import com.example.canya.Image.Repository.ImageRepository;
 import com.example.canya.Member.Entity.Member;
@@ -22,7 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,13 +38,13 @@ public class BoardService {
     private final MemberRepository memberRepository;
     private final ImageRepository imageRepository;
     private final RatingRepository ratingRepository;
+    private final HeartRepository heartRepository;
 
     private final S3Uploader s3Uploader;
 
 
     public ResponseEntity<?> saveBoard(MemberDetailsImpl memberDetails) {
         Board board = boardRepository.save(new Board(memberDetails.getMember()));
-        ratingRepository.save(new Rating(board));
         return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
     }
 
@@ -73,27 +77,33 @@ public class BoardService {
         if (board == null) {
             return new ResponseEntity<>("존재 하지 않는 게시물입니다", HttpStatus.BAD_REQUEST);
         }
+        boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board,board.getMember().getMemberId());
         List<Image> imageList = board.getImageList();
         Rating rating = ratingRepository.findRatingByBoard(board);
+
 
         BoardResponseDto responseDto = BoardResponseDto.builder()
                 .board(board)
                 .imageList(imageList)
                 .rating(rating)
+                .isLiked(isLiked)
                 .build();
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
-
-
     }
 
 
     public ResponseEntity<?> getBoards() {
         // createdAt desc, first image for each board, highest two ratings
+        // canya's pick coffee | dessert | mood with the highest rating and most likes
+        // 1. bring all boards + their ratings.
+        // 2. get the highest ratings
+        // if (highest == coffee | dessert | mood) add to the first filtering array ( where the most liked will be sorted)
+        // 3. sort the array, get the most likes, return the 0,1,2 items
 
-        List<Board> createdAtBoards = boardRepository.findAllByOrderByCreatedAtAsc();
-////       List<Board> bestBoards = boardRepository.findAllByOrderByTotalRating();
-//        System.out.println("bestBoards = " + bestBoards);
+        List<Board> createdAtBoards = boardRepository.findAllByOrderByCreatedAtDesc();
+//       List<Board> bestBoards = boardRepository.findAllByOrderByTotalRating();
+//       System.out.println("bestBoards = " + bestBoards);
         List<CanyaPickDto> canyaDto = new ArrayList<>();
         List<BestDto> bestDto = new ArrayList<>();
         List<NewDto> newDto = new ArrayList<>();
@@ -102,10 +112,10 @@ public class BoardService {
         for (Board boards : createdAtBoards) {
             List<Image> imageList = boards.getImageList();
 
-            Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(boards, boards.getMember().getMemberId()).orElse(null);
+            Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(boards, boards.getMember().getMemberId());
 
-            Map<String, Double> ratingMap = new HashMap<String, Double>();
             //stream 활용
+            HashMap<String, Double> ratingMap = new HashMap<String, Double>();
             ratingMap.put("coffeeRating", ratingList.getCoffeeRate());
             ratingMap.put("dessertRating", ratingList.getDessertRate());
             ratingMap.put("kindnessRating", ratingList.getKindnessRate());
@@ -119,14 +129,12 @@ public class BoardService {
 
             RatingResponseDto ratingDto = new RatingResponseDto(entries.get(5), entries.get(4), ratingList);
 
-            // 조만간 지워야할수도 있는부분. default thumbnail 사용 여부 확정후 refactor
-            if (imageList.size() != 0) {
-                String image = imageList.get(0).getImageUrl();
-                canyaDto.add(new CanyaPickDto(boards, image, ratingDto));
-            }
-            canyaDto.add(new CanyaPickDto(boards, null, ratingDto));
+            String image = imageList.get(0).getImageUrl();
+//            canyaDto.add(new CanyaPickDto());
+            newDto.add(new NewDto(ratingDto, image, boards));
+            allDto.add(new AllDto(boards, image, ratingDto));
         }
-        MainPageDto mainPageDto = new MainPageDto(canyaDto,null,null,null);
+        MainPageDto mainPageDto = new MainPageDto(canyaDto, newDto, allDto, null);
 
         return new ResponseEntity<>(mainPageDto, HttpStatus.OK);
     }

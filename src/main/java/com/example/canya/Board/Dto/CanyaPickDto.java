@@ -5,29 +5,19 @@ import com.example.canya.Rating.Dto.RatingResponseDto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Map;
+
 @Getter
 @Setter
 public class CanyaPickDto {
-    private Long boardId;
-    private String boardTitle;
-    private String boardContent;
-    private int heartCount;
-    private int commentCount;
-    private double totalRating;
-    private String imageUrl;
-    private Map.Entry<String, Double> highestRating;
-    private Map.Entry<String, Double> secondHighestRating;
+    private List<CoffeePick> coffeePick;
+    private List<DessertPick> dessertPick;
+    private List<MoodPick> moodPick;
 
-    public CanyaPickDto(Board board, String image, RatingResponseDto dto) {
-        this.boardId = board.getBoardId();
-        this.boardTitle = board.getBoardTitle();
-        this.boardContent = board.getBoardContent();
-        this.commentCount = board.getCommentList().size();
-        this.heartCount = board.getHeartList().size();
-        this.totalRating = dto.getTotalRating();
-        this.imageUrl = image;
-        this.highestRating = dto.getHighestRating();
-        this.secondHighestRating = dto.getSecondHighestRating();
+    public CanyaPickDto(List<CoffeePick> coffeePick, List<DessertPick> dessertPick, List<MoodPick> moodPick) {
+        this.coffeePick = coffeePick;
+        this.dessertPick = dessertPick;
+        this.moodPick = moodPick;
     }
 }
