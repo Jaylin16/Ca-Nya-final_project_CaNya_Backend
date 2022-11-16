@@ -84,4 +84,13 @@ public class Rating {
         twoRatings.add(entries.get(4));
     return twoRatings;
     }
+
+    public void update(RatingRequestDto ratingDto) {
+        this.coffeeRate = ratingDto.getCoffeeRate();
+        this.dessertRate = ratingDto.getDessertRate();
+        this.priceRate = ratingDto.getPriceRate();
+        this.moodRate = ratingDto.getMoodRate();
+        this.kindnessRate = ratingDto.getKindnessRate();
+        this.parkingRate= ratingDto.getParkingRate();
+    }
 }

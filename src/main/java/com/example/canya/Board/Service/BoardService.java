@@ -42,19 +42,46 @@ public class BoardService {
 
     private final S3Uploader s3Uploader;
 
-
+    @Transactional
     public ResponseEntity<?> saveBoard(MemberDetailsImpl memberDetails) {
         Board board = boardRepository.save(new Board(memberDetails.getMember()));
         return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
     }
 
+    @Transactional
     public ResponseEntity<?> editBoard(BoardRequestDto dto, List<MultipartFile> images,
                                        Long boardId, Member member) throws IOException {
+        System.out.println(dto.getBoardTitle());
+        System.out.println(dto.getBoardContent());
+
+
         Board board = boardRepository.findById(boardId).orElse(null);
+        List<Image> imageList = imageRepository.findAllByBoard(board);
+        Rating rating = ratingRepository.findRatingByBoardAndMemberId(board, member.getMemberId());
+        System.out.println(board);
         assert board != null;
+        if(!Objects.equals(board.getMember().getMemberId(), member.getMemberId())){
+            return new ResponseEntity<>("ㅈㅏㄱㅅㅓㅇㅈㅏㄱㅏ ㄷㅏㄹㅡㅂㄴㅣㄷㅏ",HttpStatus.BAD_REQUEST);
+        }
+
         if (member.getMemberId().equals(board.getMember().getMemberId())) {
             board.update(dto);
+
+            RatingRequestDto ratingDto = new RatingRequestDto(
+                    dto.getRatings()[0], dto.getRatings()[1], dto.getRatings()[2],
+                    dto.getRatings()[3], dto.getRatings()[4], dto.getRatings()[5]);
+
+            rating.update(ratingDto);
+
+            List<Map.Entry<String, Double>> twoHighestRatings= rating.getTwoHighestRatings(rating);
+            board.update(dto,twoHighestRatings.get(0).getKey(),twoHighestRatings.get(1).getKey());
+
+            imageRepository.deleteAll(imageList);
+            for (MultipartFile image : images) {
+                imageRepository.save(new Image(board, s3Uploader.upload(image, "boardImage"), board.getMember()));
+            }
         }
+
         return new ResponseEntity<>("수정이 완료되었습니다.", HttpStatus.OK);
     }
 
@@ -135,7 +162,6 @@ public class BoardService {
             }
         }
 
-        //coffee , dessert, price, mood, parking
         RatingRequestDto ratingDto = new RatingRequestDto(
                 dto.getRatings()[0], dto.getRatings()[1], dto.getRatings()[2],
                 dto.getRatings()[3], dto.getRatings()[4], dto.getRatings()[5]);
@@ -149,7 +175,7 @@ public class BoardService {
         board.update(dto,twoHighestRatings.get(0).getKey(),twoHighestRatings.get(1).getKey());
         boardRepository.save(board);
 
-        System.out.println(Arrays.toString(dto.getRatings()));
+
 
         return new ResponseEntity<>("게시글 작성이 완료 되었습니다.", HttpStatus.CREATED);
     }
@@ -161,7 +187,7 @@ public class BoardService {
         if (board.isEmpty()) {
             return new ResponseEntity<>("게시글이 존재 하지 않습니다", HttpStatus.BAD_REQUEST);
         }
-        if (board.get().getMember() != member) {
+        if (!Objects.equals(board.get().getMember().getMemberId(), member.getMemberId())) {
             return new ResponseEntity<>("작성자가 일치 하지 않습니다", HttpStatus.BAD_REQUEST);
         }
         boardRepository.deleteById(boardId);

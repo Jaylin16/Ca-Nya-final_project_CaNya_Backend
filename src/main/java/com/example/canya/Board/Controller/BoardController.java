@@ -46,6 +46,8 @@ public class BoardController {
                                        @AuthenticationPrincipal MemberDetailsImpl memberDetails) throws IOException{
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});
+
+
         return boardService.editBoard(dto, image, boardId,memberDetails.getMember());
     };
 
