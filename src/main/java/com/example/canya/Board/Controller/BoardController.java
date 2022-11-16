@@ -2,14 +2,10 @@ package com.example.canya.Board.Controller;
 
 import com.example.canya.Board.Dto.BoardRequestDto;
 import com.example.canya.Board.Service.BoardService;
-import com.example.canya.Image.Dto.ImageRequestDto;
-import com.example.canya.Image.Entity.Image;
 import com.example.canya.Member.Service.MemberDetailsImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -42,7 +37,7 @@ public class BoardController {
     @PutMapping("/auth/board/update/{boardId}")
     public ResponseEntity<?> editBoard(@RequestPart(value = "image", required = false) List<MultipartFile> image,
                                        @RequestParam("data") String dataList,
-                                        @PathVariable Long boardId,
+                                       @PathVariable Long boardId,
                                        @AuthenticationPrincipal MemberDetailsImpl memberDetails) throws IOException{
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});

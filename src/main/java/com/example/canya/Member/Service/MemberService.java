@@ -1,9 +1,16 @@
 package com.example.canya.Member.Service;
 
+import com.example.canya.Board.Entity.Board;
+import com.example.canya.Board.Repository.BoardRepository;
+import com.example.canya.Comment.Entity.Comment;
+import com.example.canya.Comment.Repository.CommentRepository;
+import com.example.canya.Heart.Entity.Heart;
+import com.example.canya.Heart.Repository.HeartRepository;
 import com.example.canya.JWT.Dto.TokenDto;
 import com.example.canya.JWT.JwtAuthFilter;
 import com.example.canya.JWT.TokenProvider;
 import com.example.canya.Member.Dto.MemberRequestDto;
+import com.example.canya.Member.Dto.MemberResponseDto;
 import com.example.canya.Member.Entity.Authority;
 import com.example.canya.Member.Entity.Member;
 import com.example.canya.Member.Repository.MemberRepository;
@@ -16,12 +23,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,6 +40,9 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final HeartRepository heartRepository;
+    private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
 
 
     private final String DEFAULT_IMAGE = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLxVwdzaxNLKosglrrPJRFG8ojryDuVby2yL8J4zwn&s";
@@ -53,8 +64,6 @@ public class MemberService {
     }
 
 
-
-
     public ResponseEntity<?> signUp(MemberRequestDto requestDto){
 
         Member member = Member.builder()
@@ -68,7 +77,7 @@ public class MemberService {
         memberRepository.save(member);
 
         return new ResponseEntity<>("회원가입에 성공하셨습니다.", HttpStatus.CREATED);
-    };
+    }
 
 
     public ResponseEntity<?> login(MemberRequestDto requestDto, HttpServletResponse response){
@@ -102,4 +111,48 @@ public class MemberService {
         return new ResponseEntity<>("로그인에 성공하셨습니다.", httpHeaders, HttpStatus.OK);
     }
 
+    //마이페이지 내가 좋아요한 게시글 전체 조회
+    @Transactional
+    public ResponseEntity<?> getHeartBoards(Member member) {
+
+        List<Heart> hearts = heartRepository.findAllByMember_MemberId(member.getMemberId());
+
+        List<MemberResponseDto> myHeartBoardList = new ArrayList<>();
+        for (Heart heartList : hearts) {
+
+            Long boardId = heartList.getBoard().getBoardId();
+            Optional<Board> board = boardRepository.findById(boardId);
+            if(board.isEmpty()) {
+                return new ResponseEntity<>("좋아요한 게시글이 없습니다.", HttpStatus.BAD_REQUEST);
+            }
+
+            MemberResponseDto memberResponseDto = new MemberResponseDto(board.get());
+
+            myHeartBoardList.add(memberResponseDto);
+        }
+
+        return new ResponseEntity<>(myHeartBoardList, HttpStatus.OK);
+    }
+
+    //마이페이지 내가 작성한 리뷰 전체 조회
+    @Transactional
+    public ResponseEntity<?> getMyComments(Member member) {
+
+        List<Comment> comments = commentRepository.findAllByMember_MemberId(member.getMemberId());
+
+        List<MemberResponseDto> myCommentList = new ArrayList<>();
+        for(Comment commentList : comments) {
+
+            MemberResponseDto memberResponseDto = new MemberResponseDto(commentList);
+
+            myCommentList.add(memberResponseDto);
+
+        }
+        return new ResponseEntity<>(myCommentList, HttpStatus.OK);
+    }
+
+    //마이페이지 내가 작성한 게시글 전체 조회
+//    public ResponseEntity<?> getMyBoards(Member member) {
+//
+//    }
 }
