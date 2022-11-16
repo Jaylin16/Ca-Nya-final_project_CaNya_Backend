@@ -6,6 +6,7 @@ import com.example.canya.Comment.Entity.Comment;
 import com.example.canya.Comment.Repository.CommentRepository;
 import com.example.canya.Heart.Entity.Heart;
 import com.example.canya.Heart.Repository.HeartRepository;
+import com.example.canya.Image.Repository.ImageRepository;
 import com.example.canya.JWT.Dto.TokenDto;
 import com.example.canya.JWT.JwtAuthFilter;
 import com.example.canya.JWT.TokenProvider;
@@ -14,6 +15,7 @@ import com.example.canya.Member.Dto.MemberResponseDto;
 import com.example.canya.Member.Entity.Authority;
 import com.example.canya.Member.Entity.Member;
 import com.example.canya.Member.Repository.MemberRepository;
+import com.example.canya.Rating.Repository.RatingRepository;
 import com.example.canya.RefreshToken.RefreshToken;
 import com.example.canya.RefreshToken.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
@@ -130,7 +132,6 @@ public class MemberService {
 
             myHeartBoardList.add(memberResponseDto);
         }
-
         return new ResponseEntity<>(myHeartBoardList, HttpStatus.OK);
     }
 
@@ -152,7 +153,19 @@ public class MemberService {
     }
 
     //마이페이지 내가 작성한 게시글 전체 조회
-//    public ResponseEntity<?> getMyBoards(Member member) {
-//
-//    }
+    public ResponseEntity<?> getMyBoards(Member member) {
+
+        List<Board> boards = boardRepository.findBoardByMember(member);
+
+        List<MemberResponseDto> myBoardList = new ArrayList<>();
+        for(Board boardList : boards) {
+
+            MemberResponseDto memberResponseDto = new MemberResponseDto(boardList);
+
+            myBoardList.add(memberResponseDto);
+
+        }
+        return new ResponseEntity<>(myBoardList, HttpStatus.OK);
+
+    }
 }
