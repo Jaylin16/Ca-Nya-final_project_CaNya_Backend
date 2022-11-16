@@ -9,6 +9,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -62,14 +67,21 @@ public class Rating {
     public Rating(Board board){
         this.board = board;
     }
+    public List<Map.Entry<String, Double>> getTwoHighestRatings(Rating ratingList){
+        HashMap<String, Double> ratingMap = new HashMap<String, Double>();
+        ratingMap.put("coffeeRating", ratingList.getCoffeeRate());
+        ratingMap.put("dessertRating", ratingList.getDessertRate());
+        ratingMap.put("kindnessRating", ratingList.getKindnessRate());
+        ratingMap.put("moodRating", ratingList.getMoodRate());
+        ratingMap.put("parkingRating", ratingList.getParkingRate());
+        ratingMap.put("priceRating", ratingList.getPriceRate());
 
-
-//    public void update(BoardRequestDto dto) {
-//        this.coffeeRate = dto.getCoffeeRate() != null ? dto.getCoffeeRate() : this.coffeeRate;
-//        this.dessertRate = dto.getDessertRate()!= null ? dto.getDessertRate() : this.dessertRate;
-//        this.priceRate = dto.getPriceRate()!= null ? dto.getPriceRate() : this.priceRate;
-//        this.kindnessRate = dto.getKindnessRate()!= null ? dto.getKindnessRate() : this.kindnessRate;
-//        this.moodRate = dto.getMoodRate()!= null ? dto.getMoodRate() : this.moodRate;
-//        this.parkingRate= dto.getParkingRate()!= null ? dto.getParkingRate() : this.parkingRate;
-//    }
+        List<Map.Entry<String, Double>> entries = ratingMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toList());
+        List<Map.Entry<String, Double>> twoRatings = new ArrayList<>();
+        twoRatings.add(entries.get(5));
+        twoRatings.add(entries.get(4));
+    return twoRatings;
+    }
 }

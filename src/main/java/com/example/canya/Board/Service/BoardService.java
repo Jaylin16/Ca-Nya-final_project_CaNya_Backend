@@ -94,12 +94,6 @@ public class BoardService {
 
 
     public ResponseEntity<?> getBoards() {
-        // createdAt desc, first image for each board, highest two ratings
-        // canya's pick coffee | dessert | mood with the highest rating and most likes
-        // 1. bring all boards + their ratings.
-        // 2. get the highest ratings
-        // if (highest == coffee | dessert | mood) add to the first filtering array ( where the most liked will be sorted)
-        // 3. sort the array, get the most likes, return the 0,1,2 items
 
         List<Board> createdAtBoards = boardRepository.findAllByOrderByCreatedAtDesc();
 //       List<Board> bestBoards = boardRepository.findAllByOrderByTotalRating();
@@ -114,20 +108,9 @@ public class BoardService {
 
             Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(boards, boards.getMember().getMemberId());
 
-            //stream 활용
-            HashMap<String, Double> ratingMap = new HashMap<String, Double>();
-            ratingMap.put("coffeeRating", ratingList.getCoffeeRate());
-            ratingMap.put("dessertRating", ratingList.getDessertRate());
-            ratingMap.put("kindnessRating", ratingList.getKindnessRate());
-            ratingMap.put("moodRating", ratingList.getMoodRate());
-            ratingMap.put("parkingRating", ratingList.getParkingRate());
-            ratingMap.put("priceRating", ratingList.getPriceRate());
+            List<Map.Entry<String, Double>> ratings = ratingList.getTwoHighestRatings(ratingList);
 
-            List<Map.Entry<String, Double>> entries = ratingMap.entrySet().stream()
-                    .sorted(Map.Entry.comparingByValue())
-                    .collect(Collectors.toList());
-
-            RatingResponseDto ratingDto = new RatingResponseDto(entries.get(5), entries.get(4), ratingList);
+            RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0),ratings.get(1), ratingList);
 
             String image = imageList.get(0).getImageUrl();
 //            canyaDto.add(new CanyaPickDto());
@@ -144,21 +127,27 @@ public class BoardService {
     public ResponseEntity<?> confirmBoard(BoardRequestDto dto, List<MultipartFile> images,
                                           Long boardId) throws IOException {
         Board board = boardRepository.findById(boardId).orElse(null);
-        assert board != null;
-        board.update(dto);
 
         if (images != null) {
             for (MultipartFile image : images) {
+                assert board != null;
                 imageRepository.save(new Image(board, s3Uploader.upload(image, "boardImage"), board.getMember()));
             }
         }
 
         //coffee , dessert, price, mood, parking
-        RatingRequestDto ratingDto = new RatingRequestDto(dto.getRatings()[0], dto.getRatings()[1], dto.getRatings()[2], dto.getRatings()[3], dto.getRatings()[4], dto.getRatings()[5]);
+        RatingRequestDto ratingDto = new RatingRequestDto(
+                dto.getRatings()[0], dto.getRatings()[1], dto.getRatings()[2],
+                dto.getRatings()[3], dto.getRatings()[4], dto.getRatings()[5]);
+        assert board != null;
         Rating rating = new Rating(ratingDto, board, board.getMember());
         System.out.println(rating);
         ratingRepository.save(rating);
 
+
+        List<Map.Entry<String, Double>> twoHighestRatings= rating.getTwoHighestRatings(rating);
+        board.update(dto,twoHighestRatings.get(0).getKey(),twoHighestRatings.get(1).getKey());
+        boardRepository.save(board);
 
         System.out.println(Arrays.toString(dto.getRatings()));
 

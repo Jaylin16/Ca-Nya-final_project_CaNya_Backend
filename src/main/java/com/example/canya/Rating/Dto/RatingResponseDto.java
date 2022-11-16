@@ -36,4 +36,5 @@ public class RatingResponseDto {
                 ratingList.getPriceRate()+
                 ratingList.getMoodRate())/6;
     }
+
 }
