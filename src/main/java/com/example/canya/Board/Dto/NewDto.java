@@ -15,10 +15,10 @@ public class NewDto {
     private Map.Entry<String, Double> secondHighestRating;
     private String imageUrl;
 
-    public NewDto(RatingResponseDto dto, String image, Board board) {
+    public NewDto(RatingResponseDto dto, Board board) {
         this.boardId = board.getBoardId();
         this.highestRating = dto.getHighestRating();
         this.secondHighestRating = dto.getSecondHighestRating();
-        this.imageUrl = image;
+        this.imageUrl = board.getImageList().get(0).getImageUrl();
     }
 }

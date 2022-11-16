@@ -19,14 +19,14 @@ public class CoffeePick {
     private Map.Entry<String, Double> highestRating;
     private Map.Entry<String, Double> secondHighestRating;
 
-    public CoffeePick(Board board, String image, RatingResponseDto dto) {
+    public CoffeePick(Board board, RatingResponseDto dto) {
         this.boardId = board.getBoardId();
         this.boardTitle = board.getBoardTitle();
         this.boardContent = board.getBoardContent();
         this.commentCount = board.getCommentList().size();
         this.heartCount = board.getHeartList().size();
         this.totalRating = dto.getTotalRating();
-        this.imageUrl = image;
+        this.imageUrl = board.getImageList().get(0).getImageUrl();
         this.highestRating = dto.getHighestRating();
         this.secondHighestRating = dto.getSecondHighestRating();
     }
