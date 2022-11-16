@@ -34,6 +34,9 @@ public class Board extends Timestamp {
     @Column
     private String address;
 
+    @Column
+    private int totalHeartCount;
+
 
     @ManyToOne
     @JoinColumn(name="member_id")
@@ -56,15 +59,25 @@ public class Board extends Timestamp {
         this.boardContent = dto.getBoardContent();
         this.boardTitle = dto.getBoardTitle();
         this.address = dto.getAddress();
+        this.totalHeartCount = this.heartList.size() != 0 ? this.heartList.size() : 0;
     }
     public Board(Member member){
         this.member = member;
+    }
+    public int getHeartCount(){
+        return this.heartList.size();
     }
 
     public void update(BoardRequestDto dto){
         this.address= dto.getAddress() != null ? dto.getAddress() : this.address;
         this.boardContent = dto.getBoardContent() != null ? dto.getBoardContent() : this.boardContent;
         this.boardTitle = dto.getBoardTitle()!= null ? dto.getBoardTitle() : this.boardTitle;
+    }
+    public void updateHeartCount(boolean isLiked){
+        if(isLiked){
+            this.totalHeartCount = this.heartList.size();
+        }
+        this.totalHeartCount = this.totalHeartCount-1;
     }
 
 

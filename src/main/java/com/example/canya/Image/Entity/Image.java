@@ -14,6 +14,7 @@ import javax.persistence.*;
 public class Image {
 
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -34,6 +35,5 @@ public class Image {
         this.board = board;
         this.imageUrl = imageUrl;
         this.member= member;
-
     }
 }
