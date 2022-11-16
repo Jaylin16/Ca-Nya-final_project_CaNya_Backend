@@ -13,8 +13,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Getter
@@ -37,6 +36,11 @@ public class Board extends Timestamp {
     @Column
     private int totalHeartCount;
 
+    @Column
+    private String highestRating;
+
+    @Column
+    private String secondHighestRating;
 
     @ManyToOne
     @JoinColumn(name="member_id")
@@ -69,9 +73,18 @@ public class Board extends Timestamp {
     }
 
     public void update(BoardRequestDto dto){
+        System.out.println("update called in board.java");
         this.address= dto.getAddress() != null ? dto.getAddress() : this.address;
         this.boardContent = dto.getBoardContent() != null ? dto.getBoardContent() : this.boardContent;
         this.boardTitle = dto.getBoardTitle()!= null ? dto.getBoardTitle() : this.boardTitle;
+    }
+    public void update(BoardRequestDto dto, String highestRate , String secondHighestRate){
+        this.address= dto.getAddress() != null ? dto.getAddress() : this.address;
+        this.boardContent = dto.getBoardContent() != null ? dto.getBoardContent() : this.boardContent;
+        this.boardTitle = dto.getBoardTitle()!= null ? dto.getBoardTitle() : this.boardTitle;
+        this.highestRating = highestRate;
+        this.secondHighestRating = secondHighestRate;
+
     }
     public void updateHeartCount(boolean isLiked){
         if(isLiked){
