@@ -34,13 +34,12 @@ public class HeartService {
         if (heartRepository.existsByBoardAndMember_MemberId(board.get(), member.getMemberId())) {
 
             heartRepository.deleteByBoardAndMember(board.get(),member);
-            board.get().updateHeartCount(isLiked);
+            board.get().updateHeartCount(false);
             return new ResponseEntity<>("좋아요 삭제 완료.", HttpStatus.OK);
         } else {
             Heart heart = new Heart(member, board.get());
             heartRepository.save(heart);
-            isLiked = true;
-            board.get().updateHeartCount(isLiked);
+            board.get().updateHeartCount(true);
             boardRepository.save(board.get());
             return new ResponseEntity<>("좋아요 생성 완료.", HttpStatus.OK);
         }
