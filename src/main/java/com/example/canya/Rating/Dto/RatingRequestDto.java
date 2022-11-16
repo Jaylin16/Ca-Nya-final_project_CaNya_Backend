@@ -31,4 +31,5 @@ public class RatingRequestDto {
         this.parkingRate = parkingRate;
         this.totalRating = (coffeeRate + dessertRate + priceRate + moodRate + kindnessRate + parkingRate)/6;
     }
+    
 }

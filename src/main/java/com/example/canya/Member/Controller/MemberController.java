@@ -1,10 +1,11 @@
 package com.example.canya.Member.Controller;
 
-import com.example.canya.Board.Entity.Board;
 import com.example.canya.Member.Dto.MemberRequestDto;
+import com.example.canya.Member.Service.MemberDetailsImpl;
 import com.example.canya.Member.Service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -40,5 +41,22 @@ public class MemberController {
 
     }
 
+    //마이페이지 내가 좋아요한 게시글 전체 조회 (위치, 평점, 이미지, 게시글 ID 추가 필요)
+    @GetMapping("/auth/mypage/heart-boards")
+    public ResponseEntity<?> getHeartBoards(@AuthenticationPrincipal MemberDetailsImpl memberDetails){
+        return memberService.getHeartBoards(memberDetails.getMember());
+    }
+
+    //마이페이지 내가 작성한 댓글 전체 조회
+    @GetMapping("/auth/mypage/comments")
+    public ResponseEntity<?> getMyComments(@AuthenticationPrincipal MemberDetailsImpl memberDetails){
+        return memberService.getMyComments(memberDetails.getMember());
+    }
+
+    //마이페이지 내가 작성한 게시글 전체 조회 (게시글 제목, 내용, 위치, 평점, 이미지, 게시글 ID 필요)
+//    @GetMapping("/auth/mypage/boards")
+//    public ResponseEntity<?> getMyBoards(@AuthenticationPrincipal MemberDetailsImpl memberDetails){
+//        return memberService.getMyBoards(memberDetails.getMember());
+//    }
 
 }
