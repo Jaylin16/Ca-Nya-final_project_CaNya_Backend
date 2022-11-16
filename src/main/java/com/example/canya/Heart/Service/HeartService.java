@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,17 +25,22 @@ public class HeartService {
     @Transactional
     public ResponseEntity<?> heartCreate(Long boardId, Member member) {
         Optional<Board> board = boardRepository.findById(boardId);
+        boolean isLiked =false;
 
         if (board.isEmpty()) {
             return new ResponseEntity<>("해당 게시글이 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        if (heartRepository.existsByBoardAndMember(board.get(), member)) {
-            heartRepository.deleteByBoardAndMember(board.get(), member);
+        if (heartRepository.existsByBoardAndMember_MemberId(board.get(), member.getMemberId())) {
+
+            heartRepository.deleteByBoardAndMember(board.get(),member);
+            board.get().updateHeartCount(false);
             return new ResponseEntity<>("좋아요 삭제 완료.", HttpStatus.OK);
         } else {
             Heart heart = new Heart(member, board.get());
             heartRepository.save(heart);
+            board.get().updateHeartCount(true);
+            boardRepository.save(board.get());
             return new ResponseEntity<>("좋아요 생성 완료.", HttpStatus.OK);
         }
     }

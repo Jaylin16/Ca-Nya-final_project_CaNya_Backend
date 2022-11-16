@@ -27,12 +27,6 @@ public class BoardRequestDto {
 
     private double totalRating;
 
-    public double getTotalRating (Long[] ratings){
-        this.totalRating = 0;
-        for (Long rating : ratings) {
-            totalRating+=rating;
-        }
-        return totalRating;
-    }
+
 
 }
