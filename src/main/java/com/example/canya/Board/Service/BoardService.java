@@ -3,8 +3,6 @@ package com.example.canya.Board.Service;
 import com.example.canya.Board.Dto.*;
 import com.example.canya.Board.Entity.Board;
 import com.example.canya.Board.Repository.BoardRepository;
-
-import com.example.canya.Heart.Entity.Heart;
 import com.example.canya.Heart.Repository.HeartRepository;
 import com.example.canya.Image.Entity.Image;
 import com.example.canya.Image.Repository.ImageRepository;
@@ -21,20 +19,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.transaction.Transactional;
 import java.io.IOException;
-
-import java.lang.reflect.Field;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,14 +47,11 @@ public class BoardService {
     @Transactional
     public ResponseEntity<?> editBoard(BoardRequestDto dto, List<MultipartFile> images,
                                        Long boardId, Member member) throws IOException {
-        System.out.println(dto.getBoardTitle());
-        System.out.println(dto.getBoardContent());
-
 
         Board board = boardRepository.findById(boardId).orElse(null);
         List<Image> imageList = imageRepository.findAllByBoard(board);
         Rating rating = ratingRepository.findRatingByBoardAndMemberId(board, member.getMemberId());
-        System.out.println(board);
+
         assert board != null;
         if (!Objects.equals(board.getMember().getMemberId(), member.getMemberId())) {
             return new ResponseEntity<>("작성자가 다릅니다.", HttpStatus.BAD_REQUEST);
@@ -104,7 +91,6 @@ public class BoardService {
         return new ResponseEntity<>("작성이 취소 되었습니다.", HttpStatus.OK);
     }
 
-
     public ResponseEntity<?> getBoardDetail(Long boardId) {
         Board board = boardRepository.findById(boardId).orElse(null);
         if (board == null) {
@@ -113,7 +99,6 @@ public class BoardService {
         boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
         List<Image> imageList = board.getImageList();
         Rating rating = ratingRepository.findRatingByBoard(board);
-
 
         BoardResponseDto responseDto = BoardResponseDto.builder()
                 .board(board)
@@ -124,23 +109,6 @@ public class BoardService {
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
-
-//    private void addBoards(List<Board> canyaBoards,
-//                           List<CanyaPickDto> canyaDto,
-//                           List<CoffeePick> coffeePickList){
-//
-//        for (Board boards : canyaBoards) {
-//            Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(boards, boards.getMember().getMemberId());
-//            List<Map.Entry<String, Double>> ratings = ratingList.getTwoHighestRatings(ratingList);
-//
-//            RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0), ratings.get(1), ratingList);
-//
-//            coffeePickList.add(new CoffeePick(boards,ratingDto));
-//            canyaDto.add(new CanyaPickDto(coffeePickList,null,null));
-//
-//        }
-//
-//    }
 
     public ResponseEntity<?> getBoards() {
 
@@ -161,10 +129,7 @@ public class BoardService {
         for (Board bestBoard : bestBoards) {
             bestDto.add(new BestDto(bestBoard));
         }
-//
-//        addBoards(canyaCoffeeBoards,canyaDto,coffeePickList);
-//        addBoards(canyaMoodBoards,canyaDto,coffeePickList);
-//        addBoards(canyaDessertBoards,canyaDto,coffeePickList);
+
         for (Board boards : canyaCoffeeBoards) {
             Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(boards, boards.getMember().getMemberId());
 
@@ -197,16 +162,13 @@ public class BoardService {
         }
 
         for (Board boards : createdAtBoards) {
-//            List<Image> imageList = boards.getImageList();
 
             Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(boards, boards.getMember().getMemberId());
 
             List<Map.Entry<String, Double>> ratings = ratingList.getTwoHighestRatings(ratingList);
 
             RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0), ratings.get(1), ratingList);
-//
-//            String image = imageList.get(0).getImageUrl();
-//            canyaDto.add(new CanyaPickDto());
+
             newDto.add(new NewDto(ratingDto, boards));
             allDto.add(new AllDto(boards, ratingDto));
         }
@@ -236,11 +198,9 @@ public class BoardService {
         System.out.println(rating);
         ratingRepository.save(rating);
 
-
         List<Map.Entry<String, Double>> twoHighestRatings = rating.getTwoHighestRatings(rating);
         board.update(dto, twoHighestRatings.get(0).getKey(), twoHighestRatings.get(1).getKey());
         boardRepository.save(board);
-
 
         return new ResponseEntity<>("게시글 작성이 완료 되었습니다.", HttpStatus.CREATED);
     }
@@ -257,9 +217,5 @@ public class BoardService {
         }
         boardRepository.deleteById(boardId);
         return new ResponseEntity<>("삭제가 완료 되었습니다", HttpStatus.OK);
-
-
     }
-
-
 }
