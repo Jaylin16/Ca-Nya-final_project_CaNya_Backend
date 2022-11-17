@@ -46,18 +46,15 @@ public class BoardController {
         return boardService.getBoardDetail(boardId);
     }
 
-//    @GetMapping("/infinite-scroll")
-//    public Map<String, List<CoffeePick>> getCategoryListScroll(@RequestParam(required = false) Integer page,
-//                                                               @RequestParam(required = false) Integer size,
-//                                                               @RequestParam(required = false) String sortBy,
-//                                                               @RequestParam(required = false) Boolean isAsc){
-//        if(isNotNullParam ( page, size , sortBy , isAsc)){
-//            page = -1;
-//            return boardService.getCategoryListScroll(page,size, sortBy, isAsc);
-//        }else{
-//            throw new RuntimeException("해당 페이지가 존재하지 않습니다.");
-//        }
-//    }
+    @GetMapping("/board/infinite")
+    public ResponseEntity <?> getCategoryListScroll(@RequestParam(required = false) int page,
+                                                               @RequestParam(required = false) int size,
+                                                               @RequestParam(required = false) String sortBy,
+                                                               @RequestParam(required = false) Boolean isAsc){
+        int pageTemp = page -1;
+        return boardService.getCategoryListScroll(pageTemp, size, sortBy, isAsc);
+
+    }
     //게시물 등록 시작
     @PostMapping("/auth/board/save")
     public ResponseEntity<?> saveBoard( @AuthenticationPrincipal MemberDetailsImpl memberDetails){
@@ -73,18 +70,15 @@ public class BoardController {
                                        @RequestParam(value = "url", required = false) String urlList,
                                        @AuthenticationPrincipal MemberDetailsImpl memberDetails) throws IOException{
 
-
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});
         if(urlList != null){
             UpdateUrl urlDto = objectMapper.readValue(urlList, new TypeReference<>(){});
             System.out.println("edit controller line 79 " + Arrays.toString(urlDto.getUrlList()));
             return boardService.editBoard(dto, images, boardId,memberDetails.getMember(),urlDto.getUrlList());
-
         }
 
         UpdateUrl urlDto = new UpdateUrl();
-
 
         return boardService.editBoard(dto, images, boardId,memberDetails.getMember(),urlDto.getUrlList());
     };

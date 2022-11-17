@@ -3,6 +3,7 @@ package com.example.canya.Board.Dto;
 import com.example.canya.Board.Entity.Board;
 import com.example.canya.Member.Entity.Member;
 import com.example.canya.Rating.Dto.RatingResponseDto;
+import com.example.canya.Timestamp.Time;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +17,7 @@ public class MoodPick {
     private String boardContent;
     private String address;
 
+    private String date;
     private String memberProfileImage;
     private String memberNickname;
     private int heartCount;
@@ -29,6 +31,7 @@ public class MoodPick {
         this.memberProfileImage = board.getMember().getMemberProfileImage();
         this.memberNickname = board.getMember().getMemberNickname();
         this.address = board.getAddress();
+        this.date = Time.calculateTime(board);
         this.boardId = board.getBoardId();
         this.boardTitle = board.getBoardTitle();
         this.boardContent = board.getBoardContent();
