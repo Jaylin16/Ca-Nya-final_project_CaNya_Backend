@@ -231,6 +231,14 @@ public class BoardService {
 
     }
 
+    public ResponseEntity<?> getCategoryListScroll(int page, int size, String sortBy, Boolean isAsc) {
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return new ResponseEntity<>("placeholder",HttpStatus.OK);
+
+    }
+
 //    public Map<String, List<CoffeePick>> getCategoryListScroll(Integer page, Integer size, String sortBy, Boolean isAsc) {
 //        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
 //        Sort sort = Sort.by(direction, sortBy);

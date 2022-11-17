@@ -3,6 +3,7 @@ package com.example.canya.Board.Dto;
 import com.example.canya.Board.Entity.Board;
 import com.example.canya.Member.Entity.Member;
 import com.example.canya.Rating.Dto.RatingResponseDto;
+import com.example.canya.Timestamp.Time;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +18,7 @@ public class DessertPick {
     private String address;
     private String memberProfileImage;
     private String memberNickname;
-
+    private String date;
     private int heartCount;
     private int commentCount;
     private String totalRating;
@@ -30,6 +31,7 @@ public class DessertPick {
         this.memberProfileImage = board.getMember().getMemberProfileImage();
         this.address = board.getAddress();
         this.boardId = board.getBoardId();
+        this.date = Time.calculateTime(board);
         this.boardTitle = board.getBoardTitle();
         this.boardContent = board.getBoardContent();
         this.commentCount = board.getCommentList().size();
