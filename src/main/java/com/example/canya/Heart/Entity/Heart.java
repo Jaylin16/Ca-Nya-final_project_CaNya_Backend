@@ -2,6 +2,7 @@ package com.example.canya.Heart.Entity;
 
 import com.example.canya.Board.Entity.Board;
 import com.example.canya.Member.Entity.Member;
+import com.example.canya.Timestamp.Timestamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Heart {
+public class Heart extends Timestamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

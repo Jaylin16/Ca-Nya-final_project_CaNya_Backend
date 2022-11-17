@@ -23,6 +23,7 @@ public class MemberResponseDto {
     private String address;
     private Integer commentCount;
     private Double totalRating;
+    private Integer heartCount;
     private List<Rating> ratingList = new ArrayList<>();
     private List<Image> imageList = new ArrayList<>();
 
@@ -35,6 +36,7 @@ public class MemberResponseDto {
         this.totalRating = board.getRatingList().get(ratingList.size()).getTotalRating();
         this.imageList = board.getImageList();
         this.commentCount = board.getCommentList().size();
+        this.heartCount = board.getHeartCount();
     }
 
     public MemberResponseDto(Comment comment) {
