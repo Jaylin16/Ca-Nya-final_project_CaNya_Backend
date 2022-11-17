@@ -18,6 +18,7 @@ public class MemberResponseDto {
     private Long boardId;
     private String boardTitle;
     private String boardContent;
+    private Long commentId;
     private String commentContent;
     private String address;
     private Integer commentCount;
@@ -37,8 +38,10 @@ public class MemberResponseDto {
     }
 
     public MemberResponseDto(Comment comment) {
+        this.boardId = comment.getBoard().getBoardId();
         this.boardTitle = comment.getBoard().getBoardTitle();
         this.boardContent = comment.getBoard().getBoardContent();
+        this.commentId = comment.getCommentId();
         this.commentContent = comment.getCommentContent();
     }
 }
