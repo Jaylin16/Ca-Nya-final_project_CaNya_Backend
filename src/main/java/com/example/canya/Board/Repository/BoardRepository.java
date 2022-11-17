@@ -11,7 +11,8 @@ import java.util.List;
 public interface BoardRepository extends JpaRepository<Board,Long> {
 
     List<Board> findBoardByMember(Member member);
-    List<Board> findAllByOrderByCreatedAtAsc();
+    List<Board> findAllByOrderByCreatedAtDesc();
+
     
 //    List<Board> findAllByOrderByTotalRating();
     List<Board> findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc(String ratingName);

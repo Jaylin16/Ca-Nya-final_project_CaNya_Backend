@@ -15,6 +15,10 @@ import com.example.canya.Rating.Entity.Rating;
 import com.example.canya.Rating.Repository.RatingRepository;
 import com.example.canya.S3.S3Uploader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -32,11 +36,9 @@ import java.util.*;
 public class BoardService {
 
     private final BoardRepository boardRepository;
-    private final MemberRepository memberRepository;
     private final ImageRepository imageRepository;
     private final RatingRepository ratingRepository;
     private final HeartRepository heartRepository;
-
     private final S3Uploader s3Uploader;
 
     @Transactional
@@ -46,8 +48,7 @@ public class BoardService {
     }
 
     @Transactional
-    public ResponseEntity<?> editBoard(BoardRequestDto dto, List<MultipartFile> images,
-                                       Long boardId, Member member) throws IOException {
+    public ResponseEntity<?> editBoard(BoardRequestDto dto, List<MultipartFile> images, Long boardId, Member member, String[] urls) throws IOException {
 
         Board board = boardRepository.findById(boardId).orElse(null);
         List<Image> imageList = imageRepository.findAllByBoard(board);
@@ -61,9 +62,7 @@ public class BoardService {
         if (member.getMemberId().equals(board.getMember().getMemberId())) {
             board.update(dto);
 
-            RatingRequestDto ratingDto = new RatingRequestDto(
-                    dto.getRatings()[0], dto.getRatings()[1], dto.getRatings()[2],
-                    dto.getRatings()[3], dto.getRatings()[4], dto.getRatings()[5]);
+            RatingRequestDto ratingDto = new RatingRequestDto(dto.getRatings()[0], dto.getRatings()[1], dto.getRatings()[2], dto.getRatings()[3], dto.getRatings()[4], dto.getRatings()[5]);
 
             rating.update(ratingDto);
 
@@ -71,10 +70,16 @@ public class BoardService {
             board.update(dto, twoHighestRatings.get(0).getKey(), twoHighestRatings.get(1).getKey());
 
             imageRepository.deleteAll(imageList);
-            for (MultipartFile image : images) {
-                imageRepository.save(new Image(board, s3Uploader.upload(image, "boardImage"), board.getMember()));
+            for (String url : urls) {
+                imageRepository.save(new Image(board, url, board.getMember()));
+            }
+            if (images != null) {
+                for (MultipartFile image : images) {
+                    imageRepository.save(new Image(board, s3Uploader.upload(image, "boardImage"), board.getMember()));
+                }
             }
         }
+
 
         return new ResponseEntity<>("수정이 완료되었습니다.", HttpStatus.OK);
     }
@@ -101,12 +106,7 @@ public class BoardService {
         List<Image> imageList = board.getImageList();
         Rating rating = ratingRepository.findRatingByBoard(board);
 
-        BoardResponseDto responseDto = BoardResponseDto.builder()
-                .board(board)
-                .imageList(imageList)
-                .rating(rating)
-                .isLiked(isLiked)
-                .build();
+        BoardResponseDto responseDto = BoardResponseDto.builder().board(board).imageList(imageList).rating(rating).isLiked(isLiked).build();
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
@@ -175,23 +175,20 @@ public class BoardService {
 
 
     @Transactional
-    public ResponseEntity<?> confirmBoard(BoardRequestDto dto, List<MultipartFile> images,
-                                          Long boardId) throws IOException {
+    public ResponseEntity<?> confirmBoard(BoardRequestDto dto, List<MultipartFile> images, Long boardId) throws IOException {
         Board board = boardRepository.findById(boardId).orElse(null);
 
         if (images != null) {
             for (MultipartFile image : images) {
                 assert board != null;
+
                 imageRepository.save(new Image(board, s3Uploader.upload(image, "boardImage"), board.getMember()));
             }
         }
 
-        RatingRequestDto ratingDto = new RatingRequestDto(
-                dto.getRatings()[0], dto.getRatings()[1], dto.getRatings()[2],
-                dto.getRatings()[3], dto.getRatings()[4], dto.getRatings()[5]);
+        RatingRequestDto ratingDto = new RatingRequestDto(dto.getRatings()[0], dto.getRatings()[1], dto.getRatings()[2], dto.getRatings()[3], dto.getRatings()[4], dto.getRatings()[5]);
         assert board != null;
         Rating rating = new Rating(ratingDto, board, board.getMember());
-        System.out.println(rating);
         ratingRepository.save(rating);
 
         List<Map.Entry<String, Double>> twoHighestRatings = rating.getTwoHighestRatings(rating);
@@ -214,4 +211,38 @@ public class BoardService {
         boardRepository.deleteById(boardId);
         return new ResponseEntity<>("삭제가 완료 되었습니다", HttpStatus.OK);
     }
+
+    // refactor this section. make a method out of adding board part.
+    public ResponseEntity<?> getMainCategory(String keyword) {
+
+        List<CoffeePick> keywordPick = new ArrayList<>();
+        List<Board> boardList = boardRepository.findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc(keyword);
+
+        for (Board board : boardList) {
+            Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(board, board.getMember().getMemberId());
+            List<Map.Entry<String, Double>> ratings = ratingList.getTwoHighestRatings(ratingList);
+
+            RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0), ratings.get(1), ratingList);
+
+            keywordPick.add(new CoffeePick(board, ratingDto));
+        }
+
+        return new ResponseEntity<>(keywordPick, HttpStatus.OK);
+
+    }
+
+//    public Map<String, List<CoffeePick>> getCategoryListScroll(Integer page, Integer size, String sortBy, Boolean isAsc) {
+//        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+//        Sort sort = Sort.by(direction, sortBy);
+//        Pageable pageable = PageRequest.of(page,size,sort);
+//
+//        Slice<Board> sliceBoardList = boardRepository.findAll(pageable);
+//
+//        Map<String, List<CoffeePick>> mapList = new HashMap<>();
+//        List<CoffeePick> boardList = new ArrayList<>();
+//
+//        return new ResponseEntity<>(boardRepository.findAll(pageable));
+//
+//
+//    }
 }
