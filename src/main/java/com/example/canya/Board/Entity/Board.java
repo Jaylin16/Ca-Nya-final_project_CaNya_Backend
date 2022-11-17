@@ -1,9 +1,6 @@
 package com.example.canya.Board.Entity;
 
 import com.example.canya.Board.Dto.BoardRequestDto;
-import com.example.canya.Board.Dto.CanyaPickDto;
-import com.example.canya.Board.Dto.CoffeePick;
-import com.example.canya.Board.Repository.BoardRepository;
 import com.example.canya.Comment.Entity.Comment;
 import com.example.canya.Heart.Entity.Heart;
 import com.example.canya.Image.Entity.Image;
@@ -13,8 +10,6 @@ import com.example.canya.Rating.Entity.Rating;
 import com.example.canya.Timestamp.Timestamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.*;

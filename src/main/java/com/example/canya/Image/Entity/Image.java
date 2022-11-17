@@ -36,4 +36,5 @@ public class Image {
         this.imageUrl = imageUrl;
         this.member= member;
     }
+
 }

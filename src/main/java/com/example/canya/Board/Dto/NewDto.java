@@ -3,6 +3,7 @@ package com.example.canya.Board.Dto;
 import com.example.canya.Board.Entity.Board;
 import com.example.canya.Rating.Dto.RatingResponseDto;
 import com.example.canya.Rating.Entity.Rating;
+import com.example.canya.Timestamp.Time;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,10 +15,12 @@ public class NewDto {
     private Map.Entry<String, Double> highestRating;
     private Map.Entry<String, Double> secondHighestRating;
     private String imageUrl;
+    private String date;
 
     public NewDto(RatingResponseDto dto, Board board) {
         this.boardId = board.getBoardId();
         this.highestRating = dto.getHighestRating();
+        this.date = Time.calculateTime(board);
         this.secondHighestRating = dto.getSecondHighestRating();
         this.imageUrl = board.getImageList().get(0).getImageUrl();
     }

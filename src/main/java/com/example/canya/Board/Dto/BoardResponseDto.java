@@ -4,6 +4,7 @@ import com.example.canya.Board.Entity.Board;
 import com.example.canya.Image.Entity.Image;
 
 import com.example.canya.Rating.Entity.Rating;
+import com.example.canya.Timestamp.Time;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,13 +26,14 @@ public class BoardResponseDto {
     private int heartCount;
     private int commentCount;
     private String imageUrl;
+    private String formData;
     private LocalDateTime createdAt;
     private Rating rating;
-    private double totalRating;
+    private String totalRating;
     private String memberNickname;
     private String memberProfileImg;
     private boolean isLiked;
-
+    private String date;
     private List<Image> imageList;
     private Map.Entry<String, Double> highestRating;
     private Map.Entry<String, Double> secondHighestRating;
@@ -45,11 +47,12 @@ public class BoardResponseDto {
         this.rating = rating;
         this.heartCount = board.getHeartCount();
         this.isLiked = isLiked;
+        this.date = Time.calculateTime(board);
         this.memberNickname = board.getMember().getMemberNickname();
         this.memberProfileImg = board.getMember().getMemberProfileImage();
         this.address = board.getAddress();
         this.imageList = imageList;
-        this.totalRating = rating.getTotalRating();
+        this.totalRating = String.format("%.1f",rating.getTotalRating());
     }
 
 }
