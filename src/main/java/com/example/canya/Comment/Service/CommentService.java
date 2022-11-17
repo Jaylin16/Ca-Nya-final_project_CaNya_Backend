@@ -28,11 +28,13 @@ public class CommentService {
 
     //댓글 생성.
     public ResponseEntity<?> createComment(Long boardId, CommentRequestDto commentRequestDto, Member member) {
-        Board board = boardRepository.findById(boardId).orElseThrow(
-                () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
-        );
+        Optional<Board> board = boardRepository.findById(boardId);
 
-        Comment commentContent = new Comment(commentRequestDto, board, member);
+        if(board.isEmpty()) {
+            return new ResponseEntity<>("해당 게시글이 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        Comment commentContent = new Comment(commentRequestDto, board.get(), member);
         commentRepository.save(commentContent);
 
         return new ResponseEntity<>("댓글 생성이 완료되었습니다.", HttpStatus.OK);
