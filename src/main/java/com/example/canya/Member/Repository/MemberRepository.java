@@ -1,5 +1,6 @@
 package com.example.canya.Member.Repository;
 
+import com.example.canya.Board.Entity.Board;
 import com.example.canya.Member.Entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

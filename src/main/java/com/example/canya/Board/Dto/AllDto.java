@@ -13,7 +13,7 @@ public class AllDto {
 
     private String address;
     private String imageUrl;
-    private double totalRating;
+    private String totalRating;
     private Map.Entry<String, Double> highestRating;
     private Map.Entry<String, Double> secondHighestRating;
 
@@ -22,6 +22,6 @@ public class AllDto {
         this.imageUrl = board.getImageList().get(0).getImageUrl();
         this.highestRating = ratingDto.getHighestRating();
         this.secondHighestRating = ratingDto.getSecondHighestRating();
-        this.totalRating = ratingDto.getTotalRating();
+        this.totalRating = String.format("%.1f",ratingDto.getTotalRating());
     }
 }
