@@ -29,6 +29,12 @@ public class BoardController {
         return boardService.getBoards();
     }
 
+//    @GetMapping("/board/main/{keyword}")
+//    public ResponseEntity<?> getMainCategory(){
+//        return boardService.getMainCategory();
+//    }
+
+
     @GetMapping("/board/{boardId}")
     public ResponseEntity<?> getBoardDetail(@PathVariable Long boardId){
         return boardService.getBoardDetail(boardId);

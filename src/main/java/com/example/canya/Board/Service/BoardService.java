@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -78,7 +79,7 @@ public class BoardService {
         return new ResponseEntity<>("수정이 완료되었습니다.", HttpStatus.OK);
     }
 
-
+    @Transactional
     public ResponseEntity<?> cancelBoard(Long boardId, Member member) {
         Optional<Board> board = boardRepository.findById(boardId);
         if (board.isEmpty()) {
@@ -111,14 +112,12 @@ public class BoardService {
     }
 
     public ResponseEntity<?> getBoards() {
-
         List<Board> createdAtBoards = boardRepository.findAllByOrderByCreatedAtDesc();
         List<Board> bestBoards = boardRepository.findBoardsByOrderByTotalHeartCountDesc();
         List<Board> canyaCoffeeBoards = boardRepository.findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc("coffee");
         List<Board> canyaMoodBoards = boardRepository.findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc("mood");
         List<Board> canyaDessertBoards = boardRepository.findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc("dessert");
 
-        List<CanyaPickDto> canyaDto = new ArrayList<>();
         List<BestDto> bestDto = new ArrayList<>();
         List<CoffeePick> coffeePickList = new ArrayList<>();
         List<MoodPick> moodPickList = new ArrayList<>();
@@ -138,7 +137,6 @@ public class BoardService {
             RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0), ratings.get(1), ratingList);
 
             coffeePickList.add(new CoffeePick(boards, ratingDto));
-            canyaDto.add(new CanyaPickDto(coffeePickList, null, null));
         }
         for (Board boards : canyaMoodBoards) {
             Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(boards, boards.getMember().getMemberId());
@@ -148,7 +146,6 @@ public class BoardService {
             RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0), ratings.get(1), ratingList);
 
             moodPickList.add(new MoodPick(boards, ratingDto));
-            canyaDto.add(new CanyaPickDto(null, null, moodPickList));
         }
         for (Board boards : canyaDessertBoards) {
             Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(boards, boards.getMember().getMemberId());
@@ -158,7 +155,6 @@ public class BoardService {
             RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0), ratings.get(1), ratingList);
 
             dessertList.add(new DessertPick(boards, ratingDto));
-            canyaDto.add(new CanyaPickDto(null, dessertList, null));
         }
 
         for (Board boards : createdAtBoards) {
@@ -172,7 +168,7 @@ public class BoardService {
             newDto.add(new NewDto(ratingDto, boards));
             allDto.add(new AllDto(boards, ratingDto));
         }
-        MainPageDto mainPageDto = new MainPageDto(canyaDto, newDto, allDto, bestDto);
+        MainPageDto mainPageDto = new MainPageDto(coffeePickList, moodPickList, dessertList, newDto, allDto, bestDto);
 
         return new ResponseEntity<>(mainPageDto, HttpStatus.OK);
     }

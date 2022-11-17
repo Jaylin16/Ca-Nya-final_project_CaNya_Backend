@@ -27,7 +27,7 @@ public class BoardResponseDto {
     private String imageUrl;
     private LocalDateTime createdAt;
     private Rating rating;
-    private double totalRating;
+    private String totalRating;
     private String memberNickname;
     private String memberProfileImg;
     private boolean isLiked;
@@ -49,7 +49,7 @@ public class BoardResponseDto {
         this.memberProfileImg = board.getMember().getMemberProfileImage();
         this.address = board.getAddress();
         this.imageList = imageList;
-        this.totalRating = rating.getTotalRating();
+        this.totalRating = String.format("%.1f",rating.getTotalRating());
     }
 
 }
