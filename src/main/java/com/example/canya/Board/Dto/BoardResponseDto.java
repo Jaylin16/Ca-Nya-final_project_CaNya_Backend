@@ -25,6 +25,7 @@ public class BoardResponseDto {
     private int heartCount;
     private int commentCount;
     private String imageUrl;
+    private String formData;
     private LocalDateTime createdAt;
     private Rating rating;
     private String totalRating;
