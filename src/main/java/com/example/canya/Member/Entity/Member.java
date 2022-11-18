@@ -56,4 +56,8 @@ public class Member {
         this.password = dto.getPassword();
     }
 
+    public void update (MemberRequestDto memberRequestDto) {
+        this.memberProfileImage = memberRequestDto.getMemberProfileImage();
+    }
+
 }

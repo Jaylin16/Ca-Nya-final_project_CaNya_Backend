@@ -18,11 +18,11 @@ public class MemberResponseDto {
     private Long boardId;
     private String boardTitle;
     private String boardContent;
+    private String address;
     private Long commentId;
     private String commentContent;
-    private String address;
     private Integer commentCount;
-    private Double totalRating;
+    private String totalRating;
     private Integer heartCount;
     private List<Rating> ratingList = new ArrayList<>();
     private List<Image> imageList = new ArrayList<>();
@@ -33,7 +33,7 @@ public class MemberResponseDto {
         this.boardTitle = board.getBoardTitle();
         this.boardContent = board.getBoardContent();
         this.address = board.getAddress();
-        this.totalRating = board.getRatingList().get(ratingList.size()).getTotalRating();
+        this.totalRating = String.format("%.1f",board.getRatingList().get(ratingList.size()).getTotalRating());
         this.imageList = board.getImageList();
         this.commentCount = board.getCommentList().size();
         this.heartCount = board.getHeartCount();
