@@ -2,6 +2,7 @@ package com.example.canya.Member.Entity;
 
 import com.example.canya.Board.Entity.Board;
 import com.example.canya.Comment.Entity.Comment;
+import com.example.canya.Heart.Entity.Heart;
 import com.example.canya.Member.Dto.MemberRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.Cascade;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +42,9 @@ public class Member {
 
     @OneToMany(mappedBy ="member", cascade = CascadeType.REMOVE)
     private List<Comment> Comment = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
+    private List<Heart> Heart = new ArrayList<>();
 
     @JsonIgnore
     @Enumerated(EnumType.STRING)

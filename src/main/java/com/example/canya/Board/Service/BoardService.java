@@ -255,10 +255,15 @@ public class BoardService {
 
     }
 
-//    public ResponseEntity<?> searchBoard(String category, String keyword) {
+//    public ResponseEntity<?> searchBoard(String category, String keyword, int page, int size) {
+//        Pageable pageable = PageRequest.of(page, size);
 //
-//        List<Board> searchResult = boardRepository.findAllBy
+//        if(category.equals("memberNickname")){
+//            boardRepository.findBoardByMemberMemberNicknameContaining(keyword,pageable);
 //
-//
-//    }
+//        }
+
+
+
+
 }
