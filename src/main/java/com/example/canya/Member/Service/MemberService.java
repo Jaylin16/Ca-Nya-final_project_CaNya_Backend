@@ -183,6 +183,7 @@ public class MemberService {
         List<Board> createdAtBoards = boardRepository.findByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId(), pageable);
         List<Heart> hearts = heartRepository.findAllByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId(), pageable);
         List<Comment> comments = commentRepository.findAllByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId(), pageable);
+        Optional<Member> memberInfo = memberRepository.findById(member.getMemberId());
 
         List<MemberResponseDto> recentlyMyBoardList = new ArrayList<>();
         List<MemberResponseDto> recentlyMyHeartBoardList = new ArrayList<>();
@@ -212,18 +213,21 @@ public class MemberService {
             recentlyMyCommentList.add(memberResponseDto);
         }
 
-        MypageResponseDto mypageTotalResponseDto = new MypageResponseDto(recentlyMyBoardList, recentlyMyHeartBoardList, recentlyMyCommentList);
+        MypageResponseDto mypageTotalResponseDto = new MypageResponseDto(recentlyMyBoardList, recentlyMyHeartBoardList, recentlyMyCommentList, memberInfo.get());
 
         return new ResponseEntity<>(mypageTotalResponseDto, HttpStatus.OK);
     }
 
     //마이페이지 내 프로필 사진 변경
-    public ResponseEntity<?> profileUpdate(Member member) {
-
-        Optional<Member> mypageMember = memberRepository.findById(member.getMemberId());
-        String profileImage = mypageMember.get().getMemberProfileImage();
-
-        return new ResponseEntity<>("프로필 사진 변경 완료!", HttpStatus.OK);
-    }
+//    @Transactional
+//    public ResponseEntity<?> profileUpdate(Member member, MemberRequestDto memberRequestDto) {
+//
+//        Optional<Member> mypageMember = memberRepository.findById(member.getMemberId());
+//        String profileImage = mypageMember.get().getMemberProfileImage();
+//
+//        mypageMember.get().update(memberRequestDto);
+//
+//        return new ResponseEntity<>("프로필 사진 변경 완료!", HttpStatus.OK);
+//    }
 
 }
