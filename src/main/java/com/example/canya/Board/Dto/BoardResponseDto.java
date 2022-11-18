@@ -77,6 +77,7 @@ public class BoardResponseDto {
         this.boardId = board.getBoardId();
         this.highestRating = dto.getHighestRating();
         this.date = Time.calculateTime(board);
+        this.heartCount = board.getHeartList().size();
         this.secondHighestRating = dto.getSecondHighestRating();
         this.imageUrl = board.getImageList().get(0).getImageUrl();
     }
@@ -84,6 +85,7 @@ public class BoardResponseDto {
         this.boardId = board.getBoardId();
         this.date = Time.calculateTime(board);
         this.boardTitle = board.getBoardTitle();
+        this.heartCount = board.getHeartList().size();
         this.imageUrl = board.getImageList().get(0).getImageUrl();
     }
 
