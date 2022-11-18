@@ -6,19 +6,20 @@ import com.example.canya.Comment.Entity.Comment;
 import com.example.canya.Comment.Repository.CommentRepository;
 import com.example.canya.Heart.Entity.Heart;
 import com.example.canya.Heart.Repository.HeartRepository;
-import com.example.canya.Image.Repository.ImageRepository;
 import com.example.canya.JWT.Dto.TokenDto;
 import com.example.canya.JWT.JwtAuthFilter;
 import com.example.canya.JWT.TokenProvider;
 import com.example.canya.Member.Dto.MemberRequestDto;
 import com.example.canya.Member.Dto.MemberResponseDto;
+import com.example.canya.Member.Dto.MypageResponseDto;
 import com.example.canya.Member.Entity.Authority;
 import com.example.canya.Member.Entity.Member;
 import com.example.canya.Member.Repository.MemberRepository;
-import com.example.canya.Rating.Repository.RatingRepository;
 import com.example.canya.RefreshToken.RefreshToken;
 import com.example.canya.RefreshToken.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -135,7 +136,7 @@ public class MemberService {
         return new ResponseEntity<>(myHeartBoardList, HttpStatus.OK);
     }
 
-    //마이페이지 내가 작성한 리뷰 전체 조회
+    //마이페이지 내가 작성한 댓글 전체 조회
     @Transactional
     public ResponseEntity<?> getMyComments(Member member) {
 
@@ -153,9 +154,14 @@ public class MemberService {
     }
 
     //마이페이지 내가 작성한 게시글 전체 조회
+    @Transactional
     public ResponseEntity<?> getMyBoards(Member member) {
 
         List<Board> boards = boardRepository.findBoardByMember(member);
+
+        if(boards.isEmpty()) {
+            return new ResponseEntity<>("작성한 게시물이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
 
         List<MemberResponseDto> myBoardList = new ArrayList<>();
         for(Board boardList : boards) {
@@ -166,6 +172,58 @@ public class MemberService {
 
         }
         return new ResponseEntity<>(myBoardList, HttpStatus.OK);
-
     }
+
+    //마이페이지 메인 (모두 보기) 최신순 기준 3개씩만 보이도록 반환
+    @Transactional
+    public ResponseEntity<?> getAllMypage(Member member) {
+
+        Pageable pageable = PageRequest.of(0, 3);
+
+        List<Board> createdAtBoards = boardRepository.findByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId(), pageable);
+        List<Heart> hearts = heartRepository.findAllByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId(), pageable);
+        List<Comment> comments = commentRepository.findAllByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId(), pageable);
+
+        List<MemberResponseDto> recentlyMyBoardList = new ArrayList<>();
+        List<MemberResponseDto> recentlyMyHeartBoardList = new ArrayList<>();
+        List<MemberResponseDto> recentlyMyCommentList = new ArrayList<>();
+
+        for (Board boardList : createdAtBoards) {
+
+            MemberResponseDto memberResponseDto = new MemberResponseDto(boardList);
+
+            recentlyMyBoardList.add(memberResponseDto);
+        }
+
+        for (Heart heartList : hearts) {
+            Long boardId = heartList.getBoard().getBoardId();
+            Optional<Board> board = boardRepository.findById(boardId);
+            if(board.isEmpty()) {
+                return new ResponseEntity<>("좋아요한 게시글이 없습니다.", HttpStatus.BAD_REQUEST);
+            }
+
+            MemberResponseDto memberResponseDto = new MemberResponseDto(board.get());
+
+            recentlyMyHeartBoardList.add(memberResponseDto);
+        }
+
+        for (Comment commentList : comments) {
+            MemberResponseDto memberResponseDto = new MemberResponseDto(commentList);
+            recentlyMyCommentList.add(memberResponseDto);
+        }
+
+        MypageResponseDto mypageTotalResponseDto = new MypageResponseDto(recentlyMyBoardList, recentlyMyHeartBoardList, recentlyMyCommentList);
+
+        return new ResponseEntity<>(mypageTotalResponseDto, HttpStatus.OK);
+    }
+
+    //마이페이지 내 프로필 사진 변경
+    public ResponseEntity<?> profileUpdate(Member member) {
+
+        Optional<Member> mypageMember = memberRepository.findById(member.getMemberId());
+        String profileImage = mypageMember.get().getMemberProfileImage();
+
+        return new ResponseEntity<>("프로필 사진 변경 완료!", HttpStatus.OK);
+    }
+
 }
