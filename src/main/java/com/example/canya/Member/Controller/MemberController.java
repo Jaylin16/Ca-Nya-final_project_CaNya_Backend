@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/member")
@@ -66,10 +67,10 @@ public class MemberController {
     }
 
     //마이페이지 내 프로필 사진 변경
-//    @PutMapping("/auth/mypage/profile-image/update")
-//    public ResponseEntity<?> profileUpdate(@RequestPart(value = "image", required = false) MultipartFile image,
-//                                           @AuthenticationPrincipal MemberDetailsImpl memberDetails){
-//        return memberService.profileUpdate(memberDetails.getMember());
-//    }
+    @PutMapping("/auth/mypage/profile-image/update")
+    public ResponseEntity<?> profileUpdate(@RequestPart(value = "image", required = false) MultipartFile image,
+                                           @AuthenticationPrincipal MemberDetailsImpl memberDetails) throws IOException {
+        return memberService.profileUpdate(memberDetails.getMember(), image);
+    }
 
 }
