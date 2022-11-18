@@ -8,14 +8,19 @@ import java.util.List;
 @Getter
 @Setter
 public class MainPageDto {
-    private List<CoffeePick> coffeePick;
-    private List<MoodPick> moodPick;
-    private List<DessertPick> dessertPick;
-    private List<NewDto> newDto;
-    private List<AllDto> allDto;
-    private List<BestDto> bestDto;
+    private List<BoardResponseDto> coffeePick;
+    private List<BoardResponseDto> moodPick;
+    private List<BoardResponseDto> dessertPick;
+    private List<BoardResponseDto> newDto;
+    private List<BoardResponseDto> allDto;
+    private List<BoardResponseDto> bestDto;
 
-    public MainPageDto(List<CoffeePick> coffeePick, List<MoodPick> moodPick, List<DessertPick> dessertPick , List<NewDto>  newDto, List<AllDto> allDto, List<BestDto> bestDto) {
+    public MainPageDto(List<BoardResponseDto> coffeePick,
+                       List<BoardResponseDto> moodPick,
+                       List<BoardResponseDto> dessertPick,
+                       List<BoardResponseDto>  newDto,
+                       List<BoardResponseDto> allDto,
+                       List<BoardResponseDto> bestDto) {
         this.coffeePick = coffeePick;
         this.moodPick = moodPick;
         this.dessertPick =dessertPick;
