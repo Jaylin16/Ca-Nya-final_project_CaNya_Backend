@@ -1,7 +1,6 @@
 package com.example.canya.Board.Controller;
 
 import com.example.canya.Board.Dto.BoardRequestDto;
-import com.example.canya.Board.Dto.CoffeePick;
 import com.example.canya.Board.Dto.UpdateUrl;
 import com.example.canya.Board.Service.BoardService;
 import com.example.canya.Member.Service.MemberDetailsImpl;
@@ -14,11 +13,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping
@@ -34,9 +31,12 @@ public class BoardController {
     }
     //메인 페이지 카테고리별 조회
     @GetMapping("/board/main/{keyword}")
-    public ResponseEntity<?> getMainCategory(@PathVariable String keyword){
+    public ResponseEntity<?> getMainCategory(@PathVariable String keyword,
+                                             @RequestParam(required = false) int page,
+                                             @RequestParam(required = false) int size){
+        int pageTemp = page -1;
 
-        return boardService.getMainCategory(keyword);
+        return boardService.getMainCategory(keyword,pageTemp, size);
     }
 
     //게시물 상세 조회
@@ -46,15 +46,7 @@ public class BoardController {
         return boardService.getBoardDetail(boardId);
     }
 
-    @GetMapping("/board/infinite")
-    public ResponseEntity <?> getCategoryListScroll(@RequestParam(required = false) int page,
-                                                               @RequestParam(required = false) int size,
-                                                               @RequestParam(required = false) String sortBy,
-                                                               @RequestParam(required = false) Boolean isAsc){
-        int pageTemp = page -1;
-        return boardService.getCategoryListScroll(pageTemp, size, sortBy, isAsc);
 
-    }
     //게시물 등록 시작
     @PostMapping("/auth/board/save")
     public ResponseEntity<?> saveBoard( @AuthenticationPrincipal MemberDetailsImpl memberDetails){
