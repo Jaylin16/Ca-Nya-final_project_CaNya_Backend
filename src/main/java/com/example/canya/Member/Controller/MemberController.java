@@ -59,17 +59,17 @@ public class MemberController {
         return memberService.getMyBoards(memberDetails.getMember());
     }
 
-    //마이페이지 메인 (모두 보기) 최신순 기준 3개씩만 보이도록 반환
+    //마이페이지 메인 (모두 보기) 최신순 기준 3개씩만 보이도록 반환 + 유저 정보 (유저프로필 이미지, 유저가 누른 총 하트수, 유저가 작성한 게시글 수, 유저가 작성한 댓글 수)
     @GetMapping("/auth/mypage/all")
     public ResponseEntity<?> getAllMypage(@AuthenticationPrincipal MemberDetailsImpl memberDetails){
         return memberService.getAllMypage(memberDetails.getMember());
     }
 
     //마이페이지 내 프로필 사진 변경
-    @PutMapping("/auth/mypage/profile-image/update")
-    public ResponseEntity<?> profileUpdate(@RequestPart(value = "image", required = false) MultipartFile image,
-                                           @AuthenticationPrincipal MemberDetailsImpl memberDetails){
-        return memberService.profileUpdate(memberDetails.getMember());
-    }
+//    @PutMapping("/auth/mypage/profile-image/update")
+//    public ResponseEntity<?> profileUpdate(@RequestPart(value = "image", required = false) MultipartFile image,
+//                                           @AuthenticationPrincipal MemberDetailsImpl memberDetails){
+//        return memberService.profileUpdate(memberDetails.getMember());
+//    }
 
 }

@@ -2,6 +2,7 @@ package com.example.canya.Member.Entity;
 
 import com.example.canya.Board.Entity.Board;
 import com.example.canya.Comment.Entity.Comment;
+import com.example.canya.Heart.Entity.Heart;
 import com.example.canya.Member.Dto.MemberRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -41,6 +42,9 @@ public class Member {
     @OneToMany(mappedBy ="member", cascade = CascadeType.REMOVE)
     private List<Comment> Comment = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
+    private List<Heart> Heart = new ArrayList<>();
+
     @JsonIgnore
     @Enumerated(EnumType.STRING)
     private Authority authority;
@@ -49,6 +53,10 @@ public class Member {
         this.memberName = dto.getMemberName();
         this.memberNickname = dto.getMemberNickname();
         this.password = dto.getPassword();
+    }
+
+    public void update (MemberRequestDto memberRequestDto) {
+        this.memberProfileImage = memberRequestDto.getMemberProfileImage();
     }
 
 }
