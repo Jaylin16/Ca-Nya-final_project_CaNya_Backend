@@ -3,8 +3,8 @@ POST http://localhost:8080/member/register
 Content-Type: application/json
 
 {
-  "memberName": "Adam40",
-  "memberNickname": "뽈깡뽈낑",
+  "memberName": "Adam",
+  "memberNickname": "마성민",
   "password" : "1234"
 }
 
@@ -13,7 +13,7 @@ POST http://localhost:8080/member/login
 Content-Type: application/json
 
 {
-  "memberName" : "Adam40",
+  "memberName" : "Adam",
   "password" : "1234"
 }
 

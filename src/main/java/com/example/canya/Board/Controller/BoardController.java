@@ -1,7 +1,7 @@
 package com.example.canya.Board.Controller;
 
 import com.example.canya.Board.Dto.BoardRequestDto;
-import com.example.canya.Board.Dto.UpdateUrl;
+import com.example.canya.Board.Dto.UpdateUrlDto;
 import com.example.canya.Board.Service.BoardService;
 import com.example.canya.Member.Service.MemberDetailsImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -46,6 +46,12 @@ public class BoardController {
         return boardService.getBoardDetail(boardId);
     }
 
+    //게시물 검색
+//    @GetMapping("/board/search/{category}/{keyword}")
+//    public ResponseEntity<?> searchBoard(@PathVariable String category, @PathVariable String keyword){
+//
+//        return boardService.searchBoard(category,keyword);
+//    }
 
     //게시물 등록 시작
     @PostMapping("/auth/board/save")
@@ -65,12 +71,12 @@ public class BoardController {
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});
         if(urlList != null){
-            UpdateUrl urlDto = objectMapper.readValue(urlList, new TypeReference<>(){});
+            UpdateUrlDto urlDto = objectMapper.readValue(urlList, new TypeReference<>(){});
             System.out.println("edit controller line 79 " + Arrays.toString(urlDto.getUrlList()));
             return boardService.editBoard(dto, images, boardId,memberDetails.getMember(),urlDto.getUrlList());
         }
 
-        UpdateUrl urlDto = new UpdateUrl();
+        UpdateUrlDto urlDto = new UpdateUrlDto();
 
         return boardService.editBoard(dto, images, boardId,memberDetails.getMember(),urlDto.getUrlList());
     };

@@ -13,8 +13,10 @@ import java.util.List;
 @Repository
 public interface BoardRepository extends JpaRepository<Board,Long> {
 
+
     List<Board> findBoardByMember(Member member);
     List<Board> findAllByOrderByCreatedAtDesc();
+    Slice<Board> findAllByOrderByCreatedAtDesc(Pageable pageable);
     List<Board> findByMember_MemberIdOrderByCreatedAtDesc(Long memberId, Pageable pageable);
 
 
@@ -23,6 +25,6 @@ public interface BoardRepository extends JpaRepository<Board,Long> {
     Slice<Board> findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc(String ratingName, Pageable pageable);
 //    Slice<Board> findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc(String ratingName, Pageable pageable);
 
-    List<Board> findBoardsByOrderByTotalHeartCountDesc();
+    Slice<Board> findBoardsByOrderByTotalHeartCountDesc(Pageable pageable);
 
 }
