@@ -6,8 +6,6 @@ import com.example.canya.Heart.Entity.Heart;
 import com.example.canya.Member.Dto.MemberRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -55,8 +53,8 @@ public class Member {
         this.password = dto.getPassword();
     }
 
-    public void update (MemberRequestDto memberRequestDto) {
-        this.memberProfileImage = memberRequestDto.getMemberProfileImage();
+    public void update (String imageUrl) {
+        this.memberProfileImage = imageUrl;
     }
 
 }

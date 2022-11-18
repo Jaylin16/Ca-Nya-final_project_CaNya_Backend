@@ -17,6 +17,7 @@ import com.example.canya.Member.Entity.Member;
 import com.example.canya.Member.Repository.MemberRepository;
 import com.example.canya.RefreshToken.RefreshToken;
 import com.example.canya.RefreshToken.RefreshTokenRepository;
+import com.example.canya.S3.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,9 +29,11 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +49,7 @@ public class MemberService {
     private final HeartRepository heartRepository;
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
+    private final S3Uploader s3Uploader;
 
 
     private final String DEFAULT_IMAGE = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLxVwdzaxNLKosglrrPJRFG8ojryDuVby2yL8J4zwn&s";
@@ -219,15 +223,22 @@ public class MemberService {
     }
 
     //마이페이지 내 프로필 사진 변경
-//    @Transactional
-//    public ResponseEntity<?> profileUpdate(Member member, MemberRequestDto memberRequestDto) {
-//
-//        Optional<Member> mypageMember = memberRepository.findById(member.getMemberId());
-//        String profileImage = mypageMember.get().getMemberProfileImage();
-//
-//        mypageMember.get().update(memberRequestDto);
-//
-//        return new ResponseEntity<>("프로필 사진 변경 완료!", HttpStatus.OK);
-//    }
+    @Transactional
+    public ResponseEntity<?> profileUpdate(Member member, MultipartFile image) throws IOException {
+
+        Optional<Member> mypageMember = memberRepository.findById(member.getMemberId());
+        if (mypageMember.isEmpty()) {
+            return new ResponseEntity<>("로그인이 필요한 서비스 입니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        String originProfile = mypageMember.get().getMemberProfileImage();
+        String targetProfileName = "memberProfileImage" + originProfile.substring(originProfile.lastIndexOf("/"));
+        s3Uploader.deleteFile(targetProfileName);
+
+        String newProfileImage = s3Uploader.upload(image, "memberProfileImage");
+        mypageMember.get().update(newProfileImage);
+
+        return new ResponseEntity<>("프로필 사진 변경 완료!", HttpStatus.OK);
+    }
 
 }
