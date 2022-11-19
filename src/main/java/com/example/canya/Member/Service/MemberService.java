@@ -182,11 +182,9 @@ public class MemberService {
     @Transactional
     public ResponseEntity<?> getAllMypage(Member member) {
 
-        Pageable pageable = PageRequest.of(0, 3);
-
-        List<Board> createdAtBoards = boardRepository.findByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId(), pageable);
-        List<Heart> hearts = heartRepository.findAllByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId(), pageable);
-        List<Comment> comments = commentRepository.findAllByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId(), pageable);
+        List<Board> createdAtBoards = boardRepository.findTop3ByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId());
+        List<Heart> hearts = heartRepository.findTop3ByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId());
+        List<Comment> comments = commentRepository.findTop3ByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId());
         Optional<Member> memberInfo = memberRepository.findById(member.getMemberId());
 
         List<MemberResponseDto> recentlyMyBoardList = new ArrayList<>();

@@ -18,5 +18,6 @@ public interface HeartRepository extends JpaRepository<Heart, Long> {
     List<Heart>findAllByBoard(Board board);
 
     List<Heart> findAllByMember_MemberId(Long memberId);
-    List<Heart> findAllByMember_MemberIdOrderByCreatedAtDesc(Long memberId, Pageable pageable);
+
+    List<Heart> findTop3ByMember_MemberIdOrderByCreatedAtDesc(Long memberId);
 }
