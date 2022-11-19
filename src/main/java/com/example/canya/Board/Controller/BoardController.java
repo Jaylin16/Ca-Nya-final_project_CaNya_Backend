@@ -47,11 +47,15 @@ public class BoardController {
     }
 
     //게시물 검색
-//    @GetMapping("/board/search/{category}/{keyword}")
-//    public ResponseEntity<?> searchBoard(@PathVariable String category, @PathVariable String keyword){
-//
-//        return boardService.searchBoard(category,keyword);
-//    }
+    @GetMapping("/board/search/{category}/{keyword}")
+    public ResponseEntity<?> searchBoard(@PathVariable String category,
+                                         @PathVariable String keyword,
+                                         @RequestParam(required = false) int page,
+                                         @RequestParam(required = false) int size){
+
+        int pageTemp = page -1;
+        return boardService.searchBoard(category,keyword,pageTemp,size);
+    }
 
     //게시물 등록 시작
     @PostMapping("/auth/board/save")

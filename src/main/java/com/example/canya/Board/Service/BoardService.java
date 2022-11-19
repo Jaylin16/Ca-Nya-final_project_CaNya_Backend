@@ -7,6 +7,7 @@ import com.example.canya.Heart.Repository.HeartRepository;
 import com.example.canya.Image.Entity.Image;
 import com.example.canya.Image.Repository.ImageRepository;
 import com.example.canya.Member.Entity.Member;
+import com.example.canya.Member.Repository.MemberRepository;
 import com.example.canya.Member.Service.MemberDetailsImpl;
 import com.example.canya.Rating.Dto.RatingRequestDto;
 import com.example.canya.Rating.Dto.RatingResponseDto;
@@ -17,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -38,7 +38,129 @@ public class BoardService {
     private final ImageRepository imageRepository;
     private final RatingRepository ratingRepository;
     private final HeartRepository heartRepository;
+    private final MemberRepository memberRepository;
     private final S3Uploader s3Uploader;
+
+    public ResponseEntity<?> addBoards(List<Board> boardList, List<BoardResponseDto> returningDto){
+        for (Board board : boardList) {
+            Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(board, board.getMember().getMemberId());
+
+            List<Map.Entry<String, Double>> ratings = ratingList.getTwoHighestRatings(ratingList);
+
+            RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0), ratings.get(1), ratingList);
+            boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
+
+            returningDto.add(new BoardResponseDto(board, ratingDto,isLiked));
+        }
+        return new ResponseEntity<>(returningDto,HttpStatus.OK);
+    }
+    public ResponseEntity<?> getBoards() {
+
+        List<Board> allBoards = boardRepository.findTop8ByOrderByCreatedAtDesc();
+        List<Board> bestBoards = boardRepository.findTop4ByOrderByTotalHeartCountDesc();
+        List<Board> newBoards = boardRepository.findTop6ByOrderByCreatedAtDesc();
+
+        List<Board> canyaCoffeeBoards =
+                boardRepository.findTop3ByHighestRatingContainingOrderByTotalHeartCountDesc("coffee");
+        List<Board> canyaMoodBoards =
+                boardRepository.findTop3ByHighestRatingContainingOrderByTotalHeartCountDesc("mood");
+        List<Board> canyaDessertBoards =
+                boardRepository.findTop3ByHighestRatingContainingOrderByTotalHeartCountDesc("dessert");
+
+        List<BoardResponseDto> bestDto = new ArrayList<>();
+        List<BoardResponseDto> dessertResponseDto = new ArrayList<>();
+        List<BoardResponseDto> coffeeResponseDto = new ArrayList<>();
+        List<BoardResponseDto> moodResponseDto = new ArrayList<>();
+        List<BoardResponseDto> newDto = new ArrayList<>();
+        List<BoardResponseDto> allDto = new ArrayList<>();
+
+        for (Board board : bestBoards) {
+            BoardResponseDto boardResponseDto = new BoardResponseDto(board);
+
+            bestDto.add(boardResponseDto);
+        }
+
+        addBoards(canyaCoffeeBoards,coffeeResponseDto);
+        addBoards(canyaMoodBoards, moodResponseDto);
+        addBoards(canyaDessertBoards, dessertResponseDto);
+        addBoards(allBoards , allDto);
+        addBoards(newBoards , newDto);
+        return new ResponseEntity<>(new MainPageDto(coffeeResponseDto, moodResponseDto, dessertResponseDto, newDto, allDto, bestDto),HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> getMainCategory(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        List<BoardResponseDto> keywordPick = new ArrayList<>();
+
+        int boardNum = boardRepository.findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc(keyword).size();
+
+        Slice<Board> boardList = boardRepository.findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc(keyword, pageable);
+
+        for (Board board : boardList) {
+            Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(board, board.getMember().getMemberId());
+
+            List<Map.Entry<String, Double>> ratings = ratingList.getTwoHighestRatings(ratingList);
+
+            boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
+            RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0), ratings.get(1), ratingList);
+
+            keywordPick.add(new BoardResponseDto(board, ratingDto, isLiked));
+        }
+
+        return new ResponseEntity<>(new BoardResponseDto(keywordPick, size, boardNum, page), HttpStatus.OK);
+    }
+    // 이 부분은 query DSL 로 바꾸기.
+    public ResponseEntity<?> searchBoard(String category, String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
+        int boardNum = 0;
+        if (category.equals("memberNickname")) {
+
+            List<Member> memberList = memberRepository.findMembersByMemberNicknameContaining(keyword);
+
+            for (Member member : memberList) {
+
+                boardNum += boardRepository.findBoardByMember(member).size();
+
+                Slice<Board> boards = boardRepository.findBoardByMember(member, pageable);
+
+                for (Board board : boards) {
+
+                    boardResponseDtos.add(new BoardResponseDto(board));
+
+                }
+            }
+
+            return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boardNum, page), HttpStatus.OK);
+        }
+        if (category.equals("boardTitle")) {
+            boardNum = boardRepository.findBoardsByBoardTitleContaining(keyword).size();
+
+            Slice<Board> boardList = boardRepository.findBoardsByBoardTitleContaining(keyword, pageable);
+
+            for (Board board : boardList) {
+
+                boardResponseDtos.add(new BoardResponseDto(board));
+            }
+            return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boardNum, page), HttpStatus.OK);
+        }
+        if (category.equals("boardContent")) {
+
+            boardNum = boardRepository.findBoardsByBoardContentContaining(keyword).size();
+
+            Slice<Board> boardLists = boardRepository.findBoardsByBoardContentContaining(keyword, pageable);
+
+            for (Board board : boardLists) {
+
+                boardResponseDtos.add(new BoardResponseDto(board));
+
+            }
+            return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boardNum, page), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("해당되는 카테고리를 넣어주세요", HttpStatus.BAD_REQUEST);
+    }
 
     @Transactional
     public ResponseEntity<?> saveBoard(MemberDetailsImpl memberDetails) {
@@ -78,8 +200,6 @@ public class BoardService {
                 }
             }
         }
-
-
         return new ResponseEntity<>("수정이 완료되었습니다.", HttpStatus.OK);
     }
 
@@ -105,100 +225,11 @@ public class BoardService {
         List<Image> imageList = board.getImageList();
         Rating rating = ratingRepository.findRatingByBoard(board);
 
-        BoardResponseDto responseDto = BoardResponseDto.builder().board(board).imageList(imageList).rating(rating).isLiked(isLiked).build();
+        BoardResponseDto responseDto = new BoardResponseDto(board, imageList, rating, isLiked);
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
-
-    public ResponseEntity<?> getBoards() {
-        Pageable pageable = PageRequest.of(0, 3);
-        Pageable pageableBy4 = PageRequest.of(0,4);
-        Pageable pageableBy6 = PageRequest.of(0,6);
-        Pageable pageableBy8 = PageRequest.of(0,8);
-
-        Slice<Board> allBoards = boardRepository.findAllByOrderByCreatedAtDesc(pageableBy8);
-        Slice<Board> bestBoards = boardRepository.findBoardsByOrderByTotalHeartCountDesc(pageableBy4);
-        Slice<Board> newBoards = boardRepository.findAllByOrderByCreatedAtDesc(pageableBy6);
-
-        Slice<Board> canyaCoffeeBoards =
-                boardRepository.findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc("coffee",pageable);
-        Slice<Board> canyaMoodBoards =
-                boardRepository.findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc("mood",pageable);
-        Slice<Board> canyaDessertBoards =
-                boardRepository.findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc("dessert",pageable);
-
-        List<BoardResponseDto> bestDto = new ArrayList<>();
-        List<BoardResponseDto> dessertResponseDto = new ArrayList<>();
-        List<BoardResponseDto> coffeeResponseDto = new ArrayList<>();
-        List<BoardResponseDto> moodResponseDto = new ArrayList<>();
-        List<BoardResponseDto> newDto = new ArrayList<>();
-        List<BoardResponseDto> allDto = new ArrayList<>();
-
-        for (Board bestBoard : bestBoards) {
-            bestDto.add(new BoardResponseDto(bestBoard));
-        }
-
-        for (Board boards : canyaCoffeeBoards) {
-            Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(boards, boards.getMember().getMemberId());
-
-            List<Map.Entry<String, Double>> ratings = ratingList.getTwoHighestRatings(ratingList);
-
-            RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0), ratings.get(1), ratingList);
-
-            coffeeResponseDto.add(new BoardResponseDto(boards, ratingDto));
-            System.out.println(coffeeResponseDto.get(0));
-        }
-        for (Board boards : canyaMoodBoards) {
-            Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(boards, boards.getMember().getMemberId());
-
-            List<Map.Entry<String, Double>> ratings = ratingList.getTwoHighestRatings(ratingList);
-
-            RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0), ratings.get(1), ratingList);
-
-            moodResponseDto.add(new BoardResponseDto(boards, ratingDto));
-        }
-        for (Board boards : canyaDessertBoards) {
-            Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(boards, boards.getMember().getMemberId());
-
-            List<Map.Entry<String, Double>> ratings = ratingList.getTwoHighestRatings(ratingList);
-
-            RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0), ratings.get(1), ratingList);
-
-            dessertResponseDto.add(new BoardResponseDto(boards, ratingDto));
-        }
-
-        for (Board boards : allBoards) {
-
-            Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(boards, boards.getMember().getMemberId());
-
-            if(ratingList == null){
-                continue;
-            }
-            List<Map.Entry<String, Double>> ratings = ratingList.getTwoHighestRatings(ratingList);
-
-            RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0), ratings.get(1), ratingList);
-
-            allDto.add(new BoardResponseDto(ratingDto, boards));
-        }
-        for (Board boards : newBoards) {
-
-            Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(boards, boards.getMember().getMemberId());
-
-            if(ratingList == null){
-                continue;
-            }
-            List<Map.Entry<String, Double>> ratings = ratingList.getTwoHighestRatings(ratingList);
-
-            RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0), ratings.get(1), ratingList);
-
-            newDto.add(new BoardResponseDto(ratingDto, boards));
-        }
-        MainPageDto mainPageDto = new MainPageDto(coffeeResponseDto,moodResponseDto, dessertResponseDto, newDto, allDto, bestDto);
-
-        return new ResponseEntity<>(mainPageDto, HttpStatus.OK);
-    }
-
-
+    // try to divide the sections up. takes too long to get the result at the moment.
     @Transactional
     public ResponseEntity<?> confirmBoard(BoardRequestDto dto, List<MultipartFile> images, Long boardId) throws IOException {
         Board board = boardRepository.findById(boardId).orElse(null);
@@ -206,7 +237,6 @@ public class BoardService {
         if (images != null) {
             for (MultipartFile image : images) {
                 assert board != null;
-
                 imageRepository.save(new Image(board, s3Uploader.upload(image, "boardImage"), board.getMember()));
             }
         }
@@ -236,34 +266,4 @@ public class BoardService {
         boardRepository.deleteById(boardId);
         return new ResponseEntity<>("삭제가 완료 되었습니다", HttpStatus.OK);
     }
-
-    public ResponseEntity<?> getMainCategory(String keyword, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        List<BoardResponseDto> keywordPick = new ArrayList<>();
-        Slice<Board> boardList = boardRepository.findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc(keyword, pageable);
-
-        for (Board board : boardList) {
-            Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(board, board.getMember().getMemberId());
-            List<Map.Entry<String, Double>> ratings = ratingList.getTwoHighestRatings(ratingList);
-
-            RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0), ratings.get(1), ratingList);
-
-            keywordPick.add(new BoardResponseDto(board, ratingDto));
-        }
-
-        return new ResponseEntity<>(keywordPick,HttpStatus.OK);
-
-    }
-
-//    public ResponseEntity<?> searchBoard(String category, String keyword, int page, int size) {
-//        Pageable pageable = PageRequest.of(page, size);
-//
-//        if(category.equals("memberNickname")){
-//            boardRepository.findBoardByMemberMemberNicknameContaining(keyword,pageable);
-//
-//        }
-
-
-
-
 }
