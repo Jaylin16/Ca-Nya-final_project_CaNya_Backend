@@ -13,7 +13,7 @@ public interface BoardRepository extends JpaRepository<Board,Long> {
 
     List<Board> findBoardByMember(Member member);
     List<Board> findAllByOrderByCreatedAtDesc();
-    List<Board> findByMember_MemberIdOrderByCreatedAtDesc(Long memberId, Pageable pageable);
+    List<Board> findTop3ByMember_MemberIdOrderByCreatedAtDesc(Long memberId);
 
 //    List<Board> findAllByOrderByTotalRating();
     List<Board> findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc(String ratingName);
