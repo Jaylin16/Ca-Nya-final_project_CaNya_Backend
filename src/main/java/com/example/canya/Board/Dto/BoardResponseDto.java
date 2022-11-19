@@ -3,6 +3,7 @@ package com.example.canya.Board.Dto;
 import com.example.canya.Board.Entity.Board;
 import com.example.canya.Image.Entity.Image;
 
+import com.example.canya.Rating.Dto.RatingResponseDto;
 import com.example.canya.Rating.Entity.Rating;
 import com.example.canya.Timestamp.Time;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -31,7 +32,7 @@ public class BoardResponseDto {
     private Rating rating;
     private String totalRating;
     private String memberNickname;
-    private String memberProfileImg;
+    private String memberProfileImage;
     private boolean isLiked;
     private String date;
     private List<Image> imageList;
@@ -49,10 +50,43 @@ public class BoardResponseDto {
         this.isLiked = isLiked;
         this.date = Time.calculateTime(board);
         this.memberNickname = board.getMember().getMemberNickname();
-        this.memberProfileImg = board.getMember().getMemberProfileImage();
+        this.memberProfileImage = board.getMember().getMemberProfileImage();
         this.address = board.getAddress();
         this.imageList = imageList;
         this.totalRating = String.format("%.1f",rating.getTotalRating());
+    }
+
+    public BoardResponseDto(Board board, RatingResponseDto dto){
+        this.memberProfileImage = board.getMember().getMemberProfileImage();
+        this.memberNickname = board.getMember().getMemberNickname();
+        this.address = board.getAddress();
+        this.boardId = board.getBoardId();
+        this.date = Time.calculateTime(board);
+        this.boardTitle = board.getBoardTitle();
+        this.boardContent = board.getBoardContent();
+        this.commentCount = board.getCommentList().size();
+        this.heartCount = board.getHeartList().size();
+        this.totalRating = String.format("%.1f",dto.getTotalRating());
+        this.imageUrl = board.getImageList().get(0).getImageUrl();
+        this.highestRating = dto.getHighestRating();
+        this.secondHighestRating = dto.getSecondHighestRating();
+    }
+
+    public BoardResponseDto(RatingResponseDto dto, Board board) {
+        this.address = board.getAddress();
+        this.boardId = board.getBoardId();
+        this.highestRating = dto.getHighestRating();
+        this.date = Time.calculateTime(board);
+        this.heartCount = board.getHeartList().size();
+        this.secondHighestRating = dto.getSecondHighestRating();
+        this.imageUrl = board.getImageList().get(0).getImageUrl();
+    }
+    public BoardResponseDto(Board board) {
+        this.boardId = board.getBoardId();
+        this.date = Time.calculateTime(board);
+        this.boardTitle = board.getBoardTitle();
+        this.heartCount = board.getHeartList().size();
+        this.imageUrl = board.getImageList().get(0).getImageUrl();
     }
 
 }
