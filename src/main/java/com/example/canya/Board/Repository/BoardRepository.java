@@ -2,6 +2,7 @@ package com.example.canya.Board.Repository;
 
 import com.example.canya.Board.Entity.Board;
 import com.example.canya.Member.Entity.Member;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +15,11 @@ import java.util.List;
 @Repository
 public interface BoardRepository extends JpaRepository<Board,Long> {
 
+
+
+    List<Board> findBoardByMember_MemberNickname(String keyword);
+    List<Board> findBoardByMemberMemberNicknameContaining(String keyword);
+    Slice<Board> findBoardByMemberMemberNicknameContaining(String keyword,Pageable pageable);
     List<Board> findBoardsByBoardContentContaining(String keyword);
     Slice<Board> findBoardsByBoardContentContaining(String keyword, Pageable pageable);
     List<Board> findBoardsByBoardTitleContaining(String keyword);

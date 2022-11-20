@@ -22,7 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,7 +37,6 @@ public class BoardService {
     private final ImageRepository imageRepository;
     private final RatingRepository ratingRepository;
     private final HeartRepository heartRepository;
-    private final MemberRepository memberRepository;
     private final S3Uploader s3Uploader;
 
     public ResponseEntity<?> addBoards(List<Board> boardList, List<BoardResponseDto> returningDto){
@@ -115,29 +113,47 @@ public class BoardService {
         Pageable pageable = PageRequest.of(page, size);
         List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
         int boardNum = 0;
+        if(category.equals("all")){
+//            List<Board> boards = boardRepository.findBoardByMember_MemberNicknameBoardContentAndBoardTitleContaining(keyword);
+//            Slice<Board> boardList = boardRepository.findBoardByMember_MemberNicknameBoardContentAndBoardTitleContaining(keyword, pageable);
+//            List<BoardResponseDto> dtoList = new ArrayList<>();
+//            for (Board board : boardList) {
+//                dtoList.add(new BoardResponseDto(board));
+//                return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boards.size(), page), HttpStatus.OK);
+//            }
+            return new ResponseEntity<>("아직은...못햇어 지영아", HttpStatus.OK);
+
+        }
+        if(Objects.equals(keyword, "")){
+            List<Board> boards = boardRepository.findAll();
+            List<BoardResponseDto> dtoList = new ArrayList<>();
+            for (Board board : boards) {
+                dtoList.add(new BoardResponseDto(board));
+                return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boards.size(), page), HttpStatus.OK);
+            }
+        }
+
         if (category.equals("memberNickname")) {
 
-            List<Member> memberList = memberRepository.findMembersByMemberNicknameContaining(keyword);
-
-            for (Member member : memberList) {
-
-                boardNum += boardRepository.findBoardByMember(member).size();
-
-                Slice<Board> boards = boardRepository.findBoardByMember(member, pageable);
-
-                for (Board board : boards) {
-
-                    boardResponseDtos.add(new BoardResponseDto(board));
-
-                }
+            List<Board> boards = boardRepository.findBoardByMemberMemberNicknameContaining(keyword);
+            Slice<Board> boardList = boardRepository.findBoardByMemberMemberNicknameContaining(keyword,pageable);
+            if(boardList.isEmpty()){
+                return new ResponseEntity<>("해당 조회 결과가 없습니다." , HttpStatus.OK);
             }
 
-            return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boardNum, page), HttpStatus.OK);
+            for (Board board : boardList) {
+                boardResponseDtos.add(new BoardResponseDto(board));
+            }
+
+            return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boards.size(), page), HttpStatus.OK);
         }
         if (category.equals("boardTitle")) {
             boardNum = boardRepository.findBoardsByBoardTitleContaining(keyword).size();
 
             Slice<Board> boardList = boardRepository.findBoardsByBoardTitleContaining(keyword, pageable);
+            if(boardList.isEmpty()){
+                return new ResponseEntity<>("해당 조회 결과가 없습니다." , HttpStatus.OK);
+            }
 
             for (Board board : boardList) {
 
@@ -149,9 +165,13 @@ public class BoardService {
 
             boardNum = boardRepository.findBoardsByBoardContentContaining(keyword).size();
 
-            Slice<Board> boardLists = boardRepository.findBoardsByBoardContentContaining(keyword, pageable);
+            Slice<Board> boardList = boardRepository.findBoardsByBoardContentContaining(keyword, pageable);
 
-            for (Board board : boardLists) {
+            if(boardList.isEmpty()){
+                return new ResponseEntity<>("해당 조회 결과가 없습니다." , HttpStatus.OK);
+            }
+
+            for (Board board : boardList) {
 
                 boardResponseDtos.add(new BoardResponseDto(board));
 

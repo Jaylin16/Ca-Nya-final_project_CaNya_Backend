@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByMemberName(String MemberName);
 
-    List<Member> findMembersByMemberNicknameContaining(String keyword);
+
     Optional<Member> findByMemberNickname(String MemberNickname);
 
 

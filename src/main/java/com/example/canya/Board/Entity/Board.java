@@ -19,9 +19,6 @@ import java.util.*;
 @NoArgsConstructor
 public class Board extends Timestamp {
 
-
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long boardId;
@@ -70,6 +67,7 @@ public class Board extends Timestamp {
 
     public Board(Member member) {
         this.member = member;
+
     }
 
     public int getHeartCount() {
