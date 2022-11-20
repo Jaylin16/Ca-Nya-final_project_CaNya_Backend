@@ -53,11 +53,15 @@ public class BoardController {
     }
 
     //게시물 검색
-//    @GetMapping("/board/search/{category}/{keyword}")
-//    public ResponseEntity<?> searchBoard(@PathVariable String category, @PathVariable String keyword){
-//
-//        return boardService.searchBoard(category,keyword);
-//    }
+    @GetMapping("/board/search/{category}/{keyword}")
+    public ResponseEntity<?> searchBoard(@PathVariable String category,
+                                         @PathVariable String keyword,
+                                         @RequestParam(required = false) int page,
+                                         @RequestParam(required = false) int size){
+
+        int pageTemp = page -1;
+        return boardService.searchBoard(category,keyword,pageTemp,size);
+    }
 
     //게시물 등록 시작
     @Operation(summary = "게시물 ID 생성", description = "게시물 작성 페이지 진입시 boardId 부여")
