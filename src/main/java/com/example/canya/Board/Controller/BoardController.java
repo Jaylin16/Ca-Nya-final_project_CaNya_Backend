@@ -7,6 +7,8 @@ import com.example.canya.Member.Service.MemberDetailsImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,16 +22,19 @@ import java.util.List;
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
+@Api(tags = "Board (메인 페이지, 게시글)")
 public class BoardController {
     private final BoardService boardService;
 
     //메인 페이지 조회
+    @Operation(summary = "메인 페이지", description = "메인 페이지 조회 기능")
     @GetMapping("/board/main")
     public ResponseEntity<?> getMainBoards(){
 
         return boardService.getBoards();
     }
     //메인 페이지 카테고리별 조회
+    @Operation(summary = "메인 카테고리별 조회", description = "메인 페이지 카테고리별 조회 기능")
     @GetMapping("/board/main/{keyword}")
     public ResponseEntity<?> getMainCategory(@PathVariable String keyword,
                                              @RequestParam(required = false) int page,
@@ -40,6 +45,7 @@ public class BoardController {
     }
 
     //게시물 상세 조회
+    @Operation(summary = "게시물 상세 조회", description = "각 게시된 글 조회 기능")
     @GetMapping("/board/{boardId}")
     public ResponseEntity<?> getBoardDetail(@PathVariable Long boardId){
 
@@ -58,6 +64,7 @@ public class BoardController {
     }
 
     //게시물 등록 시작
+    @Operation(summary = "게시물 ID 생성", description = "게시물 작성 페이지 진입시 boardId 부여")
     @PostMapping("/auth/board/save")
     public ResponseEntity<?> saveBoard( @AuthenticationPrincipal MemberDetailsImpl memberDetails){
 
@@ -65,6 +72,7 @@ public class BoardController {
     }
 
     //게시물 수정 완료
+    @Operation(summary = "게시물 편집", description = "게시글 수정 기능")
     @PutMapping("/auth/board/update/{boardId}")
     public ResponseEntity<?> editBoard(@RequestPart(value = "images", required = false) List<MultipartFile> images,
                                        @RequestParam("data") String dataList,
@@ -86,6 +94,7 @@ public class BoardController {
     };
 
     //게시물 등록 완료
+    @Operation(summary = "게시물 등록", description = "기존 boardId 부여된 게시글 작성 완료 기능")
     @PutMapping("/auth/board/submit/{boardId}")
     public ResponseEntity<?> confirmBoard(@RequestPart(value = "image",required = false) List<MultipartFile> image,
                                           @RequestParam("data")String dataList,
@@ -100,6 +109,7 @@ public class BoardController {
     }
 
     //게시물 등록 중 취소
+    @Operation(summary = "게시물 등록 중 취소", description = "게시글 작성 도중 취소하는 기능")
     @DeleteMapping("/auth/board/cancel/{boardId}")
     public ResponseEntity<?> cancelBoard(@PathVariable Long boardId , @AuthenticationPrincipal MemberDetailsImpl memberDetails){
 
@@ -107,6 +117,7 @@ public class BoardController {
     }
 
     //게시물 삭제
+    @Operation(summary = "게시물 삭제", description = "작성된 게시글 삭제 기능")
     @DeleteMapping("/auth/board/delete/{boardId}")
     public ResponseEntity<?> deleteBoard(@PathVariable Long boardId, @AuthenticationPrincipal MemberDetailsImpl memberDetails){
 
