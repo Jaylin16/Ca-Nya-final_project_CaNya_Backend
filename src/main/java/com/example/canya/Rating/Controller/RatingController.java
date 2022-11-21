@@ -21,7 +21,7 @@ public class RatingController {
     @Operation(summary = "게시물별 별점 추가", description = "각 게시물별 별점 생성 기능")
     @PostMapping("/auth/rating/{boardId}")
     public ResponseEntity<?> rating(@RequestBody RatingRequestDto dto, @PathVariable Long boardId){
-        System.out.println("boardId = " + boardId);
+
         return ratingService.rating(dto, boardId);
     }
 

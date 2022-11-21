@@ -7,7 +7,6 @@ import com.example.canya.Heart.Repository.HeartRepository;
 import com.example.canya.Image.Entity.Image;
 import com.example.canya.Image.Repository.ImageRepository;
 import com.example.canya.Member.Entity.Member;
-import com.example.canya.Member.Repository.MemberRepository;
 import com.example.canya.Member.Service.MemberDetailsImpl;
 import com.example.canya.Rating.Dto.RatingRequestDto;
 import com.example.canya.Rating.Dto.RatingResponseDto;
@@ -35,13 +34,13 @@ import java.util.*;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final String DEFAULT_THUMBNAIL = "https://assets.website-files.com/5ee732bebd9839b494ff27cd/5ef0a6c746931523ace53017_Starbucks.jpg";
     private final ImageRepository imageRepository;
     private final RatingRepository ratingRepository;
     private final HeartRepository heartRepository;
-    private final MemberRepository memberRepository;
     private final S3Uploader s3Uploader;
 
-    public ResponseEntity<?> addBoards(List<Board> boardList, List<BoardResponseDto> returningDto){
+    public ResponseEntity<?> addBoards(List<Board> boardList, List<BoardResponseDto> returningDto) {
         for (Board board : boardList) {
             Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(board, board.getMember().getMemberId());
 
@@ -50,10 +49,11 @@ public class BoardService {
             RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0), ratings.get(1), ratingList);
             boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
 
-            returningDto.add(new BoardResponseDto(board, ratingDto,isLiked));
+            returningDto.add(new BoardResponseDto(board, ratingDto, isLiked));
         }
-        return new ResponseEntity<>(returningDto,HttpStatus.OK);
+        return new ResponseEntity<>(returningDto, HttpStatus.OK);
     }
+
     public ResponseEntity<?> getBoards() {
 
         List<Board> allBoards = boardRepository.findTop8ByOrderByCreatedAtDesc();
@@ -80,12 +80,12 @@ public class BoardService {
             bestDto.add(boardResponseDto);
         }
 
-        addBoards(canyaCoffeeBoards,coffeeResponseDto);
+        addBoards(canyaCoffeeBoards, coffeeResponseDto);
         addBoards(canyaMoodBoards, moodResponseDto);
         addBoards(canyaDessertBoards, dessertResponseDto);
-        addBoards(allBoards , allDto);
-        addBoards(newBoards , newDto);
-        return new ResponseEntity<>(new MainPageDto(coffeeResponseDto, moodResponseDto, dessertResponseDto, newDto, allDto, bestDto),HttpStatus.OK);
+        addBoards(allBoards, allDto);
+        addBoards(newBoards, newDto);
+        return new ResponseEntity<>(new MainPageDto(coffeeResponseDto, moodResponseDto, dessertResponseDto, newDto, allDto, bestDto), HttpStatus.OK);
     }
 
     public ResponseEntity<?> getMainCategory(String keyword, int page, int size) {
@@ -110,34 +110,54 @@ public class BoardService {
 
         return new ResponseEntity<>(new BoardResponseDto(keywordPick, size, boardNum, page), HttpStatus.OK);
     }
+
     // 이 부분은 query DSL 로 바꾸기.
     public ResponseEntity<?> searchBoard(String category, String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
         int boardNum = 0;
+        if (category.equals("all")) {
+//            List<Board> boards = boardRepository.findBoardByMember_MemberNicknameBoardContentAndBoardTitleContaining(keyword);
+//            Slice<Board> boardList = boardRepository.findBoardByMember_MemberNicknameBoardContentAndBoardTitleContaining(keyword, pageable);
+//            List<BoardResponseDto> dtoList = new ArrayList<>();
+//            for (Board board : boardList) {
+//                dtoList.add(new BoardResponseDto(board));
+//                return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boards.size(), page), HttpStatus.OK);
+//            }
+            return new ResponseEntity<>("나중에 할꺼", HttpStatus.OK);
+
+        }
+        if (Objects.equals(keyword, "")) {
+            List<Board> boards = boardRepository.findAll();
+            List<BoardResponseDto> dtoList = new ArrayList<>();
+            for (Board board : boards) {
+                dtoList.add(new BoardResponseDto(board));
+                return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boards.size(), page), HttpStatus.OK);
+            }
+        }
+
         if (category.equals("memberNickname")) {
 
-            List<Member> memberList = memberRepository.findMembersByMemberNicknameContaining(keyword);
+            List<Board> boards = boardRepository.findBoardByMemberMemberNicknameContaining(keyword);
+            Slice<Board> boardList = boardRepository.findBoardByMemberMemberNicknameContaining(keyword, pageable);
 
-            for (Member member : memberList) {
-
-                boardNum += boardRepository.findBoardByMember(member).size();
-
-                Slice<Board> boards = boardRepository.findBoardByMember(member, pageable);
-
-                for (Board board : boards) {
-
-                    boardResponseDtos.add(new BoardResponseDto(board));
-
-                }
+            if (boardList.isEmpty()) {
+                return new ResponseEntity<>("해당 조회 결과가 없습니다.", HttpStatus.OK);
             }
 
-            return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boardNum, page), HttpStatus.OK);
+            for (Board board : boardList) {
+                boardResponseDtos.add(new BoardResponseDto(board));
+            }
+
+            return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boards.size(), page), HttpStatus.OK);
         }
         if (category.equals("boardTitle")) {
             boardNum = boardRepository.findBoardsByBoardTitleContaining(keyword).size();
 
             Slice<Board> boardList = boardRepository.findBoardsByBoardTitleContaining(keyword, pageable);
+            if (boardList.isEmpty()) {
+                return new ResponseEntity<>("해당 조회 결과가 없습니다.", HttpStatus.OK);
+            }
 
             for (Board board : boardList) {
 
@@ -149,9 +169,14 @@ public class BoardService {
 
             boardNum = boardRepository.findBoardsByBoardContentContaining(keyword).size();
 
-            Slice<Board> boardLists = boardRepository.findBoardsByBoardContentContaining(keyword, pageable);
+            Slice<Board> boardList = boardRepository.findBoardsByBoardContentContaining(keyword, pageable);
 
-            for (Board board : boardLists) {
+            if (boardList.isEmpty()) {
+
+                return new ResponseEntity<>("해당 조회 결과가 없습니다.", HttpStatus.OK);
+            }
+
+            for (Board board : boardList) {
 
                 boardResponseDtos.add(new BoardResponseDto(board));
 
@@ -164,10 +189,21 @@ public class BoardService {
 
     @Transactional
     public ResponseEntity<?> saveBoard(MemberDetailsImpl memberDetails) {
-        Board board = boardRepository.save(new Board(memberDetails.getMember()));
-        return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
+
+        int lastBoardIndex = boardRepository.findBoardByMember(memberDetails.getMember()).size();
+        List<Board> boardList = boardRepository.findBoardByMember(memberDetails.getMember());
+       if(boardList.get(lastBoardIndex-1).getImageList().size() == 0){
+
+           return new ResponseEntity<>("이미 만든 보드가 존재합니다.", HttpStatus.BAD_REQUEST);
+       }
+       else{
+           Board board = boardRepository.save(new Board(memberDetails.getMember()));
+           return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
+       }
     }
 
+
+    // s3 uploader 에서 삭제 해주는 부분 추가하기.
     @Transactional
     public ResponseEntity<?> editBoard(BoardRequestDto dto, List<MultipartFile> images, Long boardId, Member member, String[] urls) throws IOException {
 
@@ -191,29 +227,23 @@ public class BoardService {
             board.update(dto, twoHighestRatings.get(0).getKey(), twoHighestRatings.get(1).getKey());
 
             imageRepository.deleteAll(imageList);
-            for (String url : urls) {
-                imageRepository.save(new Image(board, url, board.getMember()));
+            if (urls != null) {
+                for (String url : urls) {
+                    imageRepository.save(new Image(board, url, board.getMember()));
+                }
             }
             if (images != null) {
                 for (MultipartFile image : images) {
                     imageRepository.save(new Image(board, s3Uploader.upload(image, "boardImage"), board.getMember()));
                 }
             }
+            for (Image deletingImage : imageList) {
+                String imageUrl = deletingImage.getImageUrl();
+                String target = "boardImage" + imageUrl.substring(imageUrl.lastIndexOf("/"));
+                s3Uploader.deleteFile(target);
+            }
         }
         return new ResponseEntity<>("수정이 완료되었습니다.", HttpStatus.OK);
-    }
-
-    @Transactional
-    public ResponseEntity<?> cancelBoard(Long boardId, Member member) {
-        Optional<Board> board = boardRepository.findById(boardId);
-        if (board.isEmpty()) {
-            return new ResponseEntity<>("게시글이 존재 하지 않습니다", HttpStatus.BAD_REQUEST);
-        }
-        if (board.get().getMember() != member) {
-            return new ResponseEntity<>("작성자가 일치하지 않습니다", HttpStatus.BAD_REQUEST);
-        }
-        boardRepository.deleteById(boardId);
-        return new ResponseEntity<>("작성이 취소 되었습니다.", HttpStatus.OK);
     }
 
     public ResponseEntity<?> getBoardDetail(Long boardId) {
@@ -229,20 +259,22 @@ public class BoardService {
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
+
     // try to divide the sections up. takes too long to get the result at the moment.
     @Transactional
     public ResponseEntity<?> confirmBoard(BoardRequestDto dto, List<MultipartFile> images, Long boardId) throws IOException {
         Board board = boardRepository.findById(boardId).orElse(null);
-
+        Member member = board.getMember();
         if (images != null) {
             for (MultipartFile image : images) {
                 assert board != null;
-                imageRepository.save(new Image(board, s3Uploader.upload(image, "boardImage"), board.getMember()));
+                imageRepository.save(new Image(board, s3Uploader.upload(image, "boardImage"), member));
             }
+        } else {
+            imageRepository.save(new Image(board, DEFAULT_THUMBNAIL, member));
         }
-
         RatingRequestDto ratingDto = new RatingRequestDto(dto.getRatings()[0], dto.getRatings()[1], dto.getRatings()[2], dto.getRatings()[3], dto.getRatings()[4], dto.getRatings()[5]);
-        assert board != null;
+
         Rating rating = new Rating(ratingDto, board, board.getMember());
         ratingRepository.save(rating);
 
@@ -264,6 +296,15 @@ public class BoardService {
             return new ResponseEntity<>("작성자가 일치 하지 않습니다", HttpStatus.BAD_REQUEST);
         }
         boardRepository.deleteById(boardId);
+
+        List<Image> deletingImages = board.get().getImageList();
+
+        for (Image deletingImage : deletingImages) {
+            String imageUrl = deletingImage.getImageUrl();
+            String target = "boardImage" + imageUrl.substring(imageUrl.lastIndexOf("/"));
+            s3Uploader.deleteFile(target);
+        }
+
         return new ResponseEntity<>("삭제가 완료 되었습니다", HttpStatus.OK);
     }
 }

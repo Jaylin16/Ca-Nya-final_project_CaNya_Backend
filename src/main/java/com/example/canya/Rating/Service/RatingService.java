@@ -22,18 +22,16 @@ public class RatingService {
     private final BoardRepository boardRepository;
     @Transactional
     public ResponseEntity<?> rating(RatingRequestDto requestDto, Long boardId){
-        System.out.println("boardId in service= " + boardId);
+
         Optional<Board> board = boardRepository.findById(boardId);
         if(board.isEmpty()){
             return new ResponseEntity<>("요청 하신 게시글이 존재하지않습니다.", HttpStatus.BAD_REQUEST);
         }
 
-
         Rating rating = new Rating(requestDto,board.get(), board.get().getMember());
         ratingRepository.save(rating);
 
         return new ResponseEntity<>(requestDto,HttpStatus.CREATED);
-
     }
 
 }

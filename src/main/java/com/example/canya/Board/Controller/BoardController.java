@@ -72,13 +72,17 @@ public class BoardController {
     }
 
     //게시물 수정 완료
+    // 이 부분에서 수정을 할때, 프론트에서 boardContent / boardTitle 은 무조건 받아야함.
+    // 기존 값이라도 오게 해야함. 아무것도 없는 공란이라면 Request 금지.
+    // 만약 아무런 값도 안오게 한다면 boardService 에 추가 method 생성 하고 할순있지만...
     @Operation(summary = "게시물 편집", description = "게시글 수정 기능")
     @PutMapping("/auth/board/update/{boardId}")
     public ResponseEntity<?> editBoard(@RequestPart(value = "images", required = false) List<MultipartFile> images,
-                                       @RequestParam("data") String dataList,
+                                       @RequestParam(value = "data", required = false) String dataList,
                                        @PathVariable Long boardId,
                                        @RequestParam(value = "url", required = false) String urlList,
                                        @AuthenticationPrincipal MemberDetailsImpl memberDetails) throws IOException{
+
 
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});
@@ -106,14 +110,6 @@ public class BoardController {
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});
 
         return boardService.confirmBoard(dto, image, boardId);
-    }
-
-    //게시물 등록 중 취소
-    @Operation(summary = "게시물 등록 중 취소", description = "게시글 작성 도중 취소하는 기능")
-    @DeleteMapping("/auth/board/cancel/{boardId}")
-    public ResponseEntity<?> cancelBoard(@PathVariable Long boardId , @AuthenticationPrincipal MemberDetailsImpl memberDetails){
-
-        return boardService.cancelBoard(boardId,memberDetails.getMember());
     }
 
     //게시물 삭제
