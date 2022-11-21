@@ -10,6 +10,8 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -61,6 +63,7 @@ public class TokenProvider {
                 // paload 부분에 필드, 값 넣기
                 .setSubject(authentication.getName())
                 .setAudience(member.getMemberNickname())
+                .claim("memberStatus", member.getStatus())
                 .claim(AUTHORITIES_KEY, authorities)
                 .setExpiration(accessTokenExpires)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -121,6 +124,7 @@ public class TokenProvider {
             log.info("JWT 올바르게 구성되지 않았습니다");
         } catch (ExpiredJwtException e) {
             log.info("JWT 유효시간이 초과되었습니다");
+            tokenErrorHandler(e);
         } catch (UnsupportedJwtException e) {
             log.info("JWT 형식이 일치 하지 않습니다");
         } catch (PrematureJwtException e) {
@@ -129,6 +133,11 @@ public class TokenProvider {
             log.info("JWT PAYLOAD 분석에 실패했습니다");
         }
         return false;
+    }
+
+    // 이 부분, refresh token 이랑 연결 시켜보기.
+    private ResponseEntity<?> tokenErrorHandler(ExpiredJwtException e) {
+        return new ResponseEntity<>("토큰이 만료되었습니다. 다시 로그인해 주세요", HttpStatus.BAD_REQUEST);
     }
 
     // Security 에서 인증 유저 정보 가져오기

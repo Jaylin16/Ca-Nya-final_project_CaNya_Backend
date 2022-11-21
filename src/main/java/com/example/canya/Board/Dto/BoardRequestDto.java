@@ -15,5 +15,5 @@ public class BoardRequestDto {
     private String boardContent;
     private String address;
     private Long[] ratings;
-    private String[] imageUrls;
+
 }

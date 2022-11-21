@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +24,9 @@ public class Member {
 
     @Column
     private String memberName;
+
+    @Column
+    private String status;
 
     @Column
     private String memberNickname;
@@ -52,6 +54,21 @@ public class Member {
         this.memberName = dto.getMemberName();
         this.memberNickname = dto.getMemberNickname();
         this.password = dto.getPassword();
+    }
+    public String getStatus(){
+        int boardNum = this.Board.size();
+        System.out.println("boardNum = " + boardNum);
+        if(this.Board.size() == 0 ){
+            System.out.println("it should be tall");
+            this.status = "tall";
+            return this.status;
+        }
+        if(this.Board.size() == 1){
+            this.status = "grande";
+            return this.status;
+        }
+        this.status = "venti";
+        return this.status;
     }
 
     public void update (String imageUrl) {

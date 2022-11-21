@@ -12,12 +12,17 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.example.canya.Board.Entity.QBoard.board;
+import static com.querydsl.core.types.Ops.LIKE;
+import static org.apache.coyote.http11.Constants.a;
+import static org.hibernate.loader.Loader.SELECT;
+
 @Repository
 public interface BoardRepository extends JpaRepository<Board,Long> {
 
 
-
-    List<Board> findBoardByMember_MemberNickname(String keyword);
+    List<Board> findAllByBoardId(Long id);
+//    List<Board> findBoardByMember_MemberNickname(String keyword);
     List<Board> findBoardByMemberMemberNicknameContaining(String keyword);
     Slice<Board> findBoardByMemberMemberNicknameContaining(String keyword,Pageable pageable);
     List<Board> findBoardsByBoardContentContaining(String keyword);
@@ -35,3 +40,4 @@ public interface BoardRepository extends JpaRepository<Board,Long> {
     List<Board> findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc(String ratingName);
 
 }
+
