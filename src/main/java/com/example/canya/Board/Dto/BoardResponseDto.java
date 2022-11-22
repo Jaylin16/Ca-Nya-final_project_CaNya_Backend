@@ -88,7 +88,7 @@ public class BoardResponseDto {
     }
 
     @Builder
-    public BoardResponseDto(Board board) {
+    public BoardResponseDto(Board board, boolean isLiked) {
         this.memberNickname = board.getMember().getMemberNickname();
         this.memberProfileImage = board.getMember().getMemberProfileImage();
         this.boardContent = board.getBoardContent();
@@ -97,6 +97,7 @@ public class BoardResponseDto {
         this.date = Time.calculateTime(board);
         this.boardTitle = board.getBoardTitle();
         this.heartCount = board.getHeartList().size();
+        this.isLiked = isLiked;
         this.imageUrl = board.getImageList().get(0).getImageUrl();
     }
 }

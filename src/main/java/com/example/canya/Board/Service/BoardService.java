@@ -40,7 +40,7 @@ public class BoardService {
     private final HeartRepository heartRepository;
     private final S3Uploader s3Uploader;
 
-    public ResponseEntity<?> addBoards(List<Board> boardList, List<BoardResponseDto> returningDto) {
+    public void addBoards(List<Board> boardList, List<BoardResponseDto> returningDto) {
         for (Board board : boardList) {
             Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(board, board.getMember().getMemberId());
 
@@ -51,7 +51,7 @@ public class BoardService {
 
             returningDto.add(new BoardResponseDto(board, ratingDto, isLiked));
         }
-        return new ResponseEntity<>(returningDto, HttpStatus.OK);
+        new ResponseEntity<>(returningDto, HttpStatus.OK);
     }
 
     public ResponseEntity<?> getBoards() {
@@ -75,8 +75,9 @@ public class BoardService {
         List<BoardResponseDto> allDto = new ArrayList<>();
 
         for (Board board : bestBoards) {
-            BoardResponseDto boardResponseDto = new BoardResponseDto(board);
 
+            boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
+            BoardResponseDto boardResponseDto = new BoardResponseDto(board,isLiked);
             bestDto.add(boardResponseDto);
         }
 
@@ -131,7 +132,8 @@ public class BoardService {
             List<Board> boards = boardRepository.findAll();
             List<BoardResponseDto> dtoList = new ArrayList<>();
             for (Board board : boards) {
-                dtoList.add(new BoardResponseDto(board));
+                boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
+                dtoList.add(new BoardResponseDto(board,isLiked));
                 return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boards.size(), page), HttpStatus.OK);
             }
         }
@@ -146,7 +148,8 @@ public class BoardService {
             }
 
             for (Board board : boardList) {
-                boardResponseDtos.add(new BoardResponseDto(board));
+                boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
+                boardResponseDtos.add(new BoardResponseDto(board,isLiked));
             }
 
             return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boards.size(), page), HttpStatus.OK);
@@ -160,8 +163,8 @@ public class BoardService {
             }
 
             for (Board board : boardList) {
-
-                boardResponseDtos.add(new BoardResponseDto(board));
+                boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
+                boardResponseDtos.add(new BoardResponseDto(board,isLiked));
             }
             return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boardNum, page), HttpStatus.OK);
         }
@@ -177,8 +180,8 @@ public class BoardService {
             }
 
             for (Board board : boardList) {
-
-                boardResponseDtos.add(new BoardResponseDto(board));
+                boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
+                boardResponseDtos.add(new BoardResponseDto(board,isLiked));
 
             }
             return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boardNum, page), HttpStatus.OK);
@@ -192,14 +195,17 @@ public class BoardService {
 
         int lastBoardIndex = boardRepository.findBoardByMember(memberDetails.getMember()).size();
         List<Board> boardList = boardRepository.findBoardByMember(memberDetails.getMember());
-       if(boardList.get(lastBoardIndex-1).getImageList().size() == 0){
+        if (lastBoardIndex == 0) {
+            Board board = boardRepository.save(new Board(memberDetails.getMember()));
+            return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
+        }
+        if (boardList.get(lastBoardIndex - 1).getImageList().size() == 0) {
 
-           return new ResponseEntity<>("이미 만든 보드가 존재합니다.", HttpStatus.BAD_REQUEST);
-       }
-       else{
-           Board board = boardRepository.save(new Board(memberDetails.getMember()));
-           return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
-       }
+            return new ResponseEntity<>("이미 만든 보드가 존재합니다.", HttpStatus.BAD_REQUEST);
+        } else {
+            Board board = boardRepository.save(new Board(memberDetails.getMember()));
+            return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
+        }
     }
 
 
@@ -264,10 +270,10 @@ public class BoardService {
     @Transactional
     public ResponseEntity<?> confirmBoard(BoardRequestDto dto, List<MultipartFile> images, Long boardId) throws IOException {
         Board board = boardRepository.findById(boardId).orElse(null);
+        assert board != null;
         Member member = board.getMember();
         if (images != null) {
             for (MultipartFile image : images) {
-                assert board != null;
                 imageRepository.save(new Image(board, s3Uploader.upload(image, "boardImage"), member));
             }
         } else {
