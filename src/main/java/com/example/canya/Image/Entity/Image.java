@@ -5,7 +5,6 @@ import com.example.canya.Member.Entity.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 
 @Entity

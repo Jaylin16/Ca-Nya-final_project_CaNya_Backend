@@ -19,8 +19,6 @@ import com.example.canya.RefreshToken.RefreshToken;
 import com.example.canya.RefreshToken.RefreshTokenRepository;
 import com.example.canya.S3.S3Uploader;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +28,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -68,7 +65,6 @@ public class MemberService {
         }
         return new ResponseEntity<>("중복 된 닉네임 입니다", HttpStatus.BAD_REQUEST);
     }
-
 
     public ResponseEntity<?> signUp(MemberRequestDto requestDto){
 

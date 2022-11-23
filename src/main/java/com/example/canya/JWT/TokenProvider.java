@@ -19,12 +19,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
 import java.security.Key;
 import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import static com.example.canya.JWT.JwtAuthFilter.BEARER_PREFIX;
 
 @Slf4j
