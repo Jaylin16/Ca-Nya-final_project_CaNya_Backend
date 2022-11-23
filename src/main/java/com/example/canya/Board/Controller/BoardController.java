@@ -37,9 +37,9 @@ public class BoardController {
     @Operation(summary = "메인 카테고리별 조회", description = "메인 페이지 카테고리별 조회 기능")
     @GetMapping("/board/main/{keyword}")
     public ResponseEntity<?> getMainCategory(@PathVariable String keyword,
-                                             @RequestParam(required = false) int page,
-                                             @RequestParam(required = false) int size){
-        int pageTemp = page -1;
+                                             @RequestParam(value = "page",required = false) Integer page,
+                                             @RequestParam(value = "size" , required = false) Integer size){
+        Integer pageTemp = page -1;
 
         return boardService.getMainCategory(keyword,pageTemp, size);
     }
@@ -56,10 +56,10 @@ public class BoardController {
     @GetMapping("/board/search/{category}/{keyword}")
     public ResponseEntity<?> searchBoard(@PathVariable String category,
                                          @PathVariable String keyword,
-                                         @RequestParam(required = false) int page,
-                                         @RequestParam(required = false) int size){
+                                         @RequestParam(required = false) Integer page,
+                                         @RequestParam(required = false) Integer size){
 
-        int pageTemp = page -1;
+        Integer pageTemp = page -1;
         return boardService.searchBoard(category,keyword,pageTemp,size);
     }
 
@@ -83,12 +83,10 @@ public class BoardController {
                                        @RequestParam(value = "url", required = false) String urlList,
                                        @AuthenticationPrincipal MemberDetailsImpl memberDetails) throws IOException{
 
-
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});
         if(urlList != null){
             UpdateUrlDto urlDto = objectMapper.readValue(urlList, new TypeReference<>(){});
-            System.out.println("edit controller line 79 " + Arrays.toString(urlDto.getUrlList()));
             return boardService.editBoard(dto, images, boardId,memberDetails.getMember(),urlDto.getUrlList());
         }
 

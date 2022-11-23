@@ -22,7 +22,6 @@ public interface BoardRepository extends JpaRepository<Board,Long> {
 
 
     List<Board> findAllByBoardId(Long id);
-//    List<Board> findBoardByMember_MemberNickname(String keyword);
     List<Board> findBoardByMemberMemberNicknameContaining(String keyword);
     Slice<Board> findBoardByMemberMemberNicknameContaining(String keyword,Pageable pageable);
     List<Board> findBoardsByBoardContentContaining(String keyword);
@@ -36,7 +35,7 @@ public interface BoardRepository extends JpaRepository<Board,Long> {
     List<Board> findTop8ByOrderByCreatedAtDesc();
     List<Board> findTop3ByMember_MemberIdOrderByCreatedAtDesc(Long memberId);
     List<Board> findTop3ByHighestRatingContainingOrderByTotalHeartCountDesc(String ratingName);
-    Slice<Board> findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc(String ratingName, Pageable pageable);
+    List<Board> findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc(String ratingName, Pageable pageable);
     List<Board> findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc(String ratingName);
 
 }
