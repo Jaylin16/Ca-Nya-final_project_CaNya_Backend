@@ -200,13 +200,14 @@ public class BoardService {
         Board board = boardRepository.findById(boardId).orElse(null);
         List<Image> imageList = imageRepository.findAllByBoard(board);
         List<String> imageUrlList = new ArrayList<>();
+
         for (Image image : imageList) {
             imageUrlList.add(image.getImageUrl());
         }
-
-        for (String s : urls) {
+        // 2중 for loop 고쳐야함
+        for (String url : urls) {
             for (int j = 0; j < imageUrlList.size(); j++) {
-                if (Objects.equals(s, imageUrlList.get(j))) {
+                if (Objects.equals(url, imageUrlList.get(j))) {
                     imageUrlList.remove(j);
                 }
             }
