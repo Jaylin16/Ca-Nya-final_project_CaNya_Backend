@@ -14,9 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -33,16 +31,6 @@ public class BoardController {
 
         return boardService.getBoards();
     }
-    //메인 페이지 카테고리별 조회
-    @Operation(summary = "메인 카테고리별 조회", description = "메인 페이지 카테고리별 조회 기능")
-    @GetMapping("/board/main/{keyword}")
-    public ResponseEntity<?> getMainCategory(@PathVariable String keyword,
-                                             @RequestParam(value = "page",required = false) Integer page,
-                                             @RequestParam(value = "size" , required = false) Integer size){
-        Integer pageTemp = page -1;
-
-        return boardService.getMainCategory(keyword,pageTemp, size);
-    }
 
     //게시물 상세 조회
     @Operation(summary = "게시물 상세 조회", description = "각 게시된 글 조회 기능")
@@ -50,17 +38,6 @@ public class BoardController {
     public ResponseEntity<?> getBoardDetail(@PathVariable Long boardId){
 
         return boardService.getBoardDetail(boardId);
-    }
-
-    //게시물 검색
-    @GetMapping("/board/search/{category}/{keyword}")
-    public ResponseEntity<?> searchBoard(@PathVariable String category,
-                                         @PathVariable String keyword,
-                                         @RequestParam(required = false) Integer page,
-                                         @RequestParam(required = false) Integer size){
-
-        Integer pageTemp = page -1;
-        return boardService.searchBoard(category,keyword,pageTemp,size);
     }
 
     //게시물 등록 시작
@@ -72,9 +49,6 @@ public class BoardController {
     }
 
     //게시물 수정 완료
-    // 이 부분에서 수정을 할때, 프론트에서 boardContent / boardTitle 은 무조건 받아야함.
-    // 기존 값이라도 오게 해야함. 아무것도 없는 공란이라면 Request 금지.
-    // 만약 아무런 값도 안오게 한다면 boardService 에 추가 method 생성 하고 할순있지만...
     @Operation(summary = "게시물 편집", description = "게시글 수정 기능")
     @PutMapping("/auth/board/update/{boardId}")
     public ResponseEntity<?> editBoard(@RequestPart(value = "images", required = false) List<MultipartFile> images,

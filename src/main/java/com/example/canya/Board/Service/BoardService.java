@@ -39,12 +39,45 @@ public class BoardService {
     private final HeartRepository heartRepository;
     private final S3Uploader s3Uploader;
 
+    // 이 부분은 여러 API 로 나눌 예정 (속도 개선)
+    public ResponseEntity<?> getBoards() {
+
+        List<Board> allBoards = boardRepository.findTop8ByOrderByCreatedAtDesc();
+        List<Board> bestBoards = boardRepository.findTop4ByOrderByTotalHeartCountDesc();
+        List<Board> newBoards = boardRepository.findTop6ByOrderByCreatedAtDesc();
+        List<Board> canyaCoffeeBoards =
+                boardRepository.findTop3ByHighestRatingContainingOrderByTotalHeartCountDesc("coffee");
+        List<Board> canyaMoodBoards =
+                boardRepository.findTop3ByHighestRatingContainingOrderByTotalHeartCountDesc("mood");
+        List<Board> canyaDessertBoards =
+                boardRepository.findTop3ByHighestRatingContainingOrderByTotalHeartCountDesc("dessert");
+        List<BoardResponseDto> bestDto = new ArrayList<>();
+        List<BoardResponseDto> dessertResponseDto = new ArrayList<>();
+        List<BoardResponseDto> coffeeResponseDto = new ArrayList<>();
+        List<BoardResponseDto> moodResponseDto = new ArrayList<>();
+        List<BoardResponseDto> newDto = new ArrayList<>();
+        List<BoardResponseDto> allDto = new ArrayList<>();
+
+        addBoards(bestBoards, bestDto);
+        addBoards(canyaCoffeeBoards, coffeeResponseDto);
+        addBoards(canyaMoodBoards, moodResponseDto);
+        addBoards(canyaDessertBoards, dessertResponseDto);
+        addBoards(allBoards, allDto);
+        addBoards(newBoards, newDto);
+
+        return new ResponseEntity<>(new MainPageDto(coffeeResponseDto, moodResponseDto, dessertResponseDto,
+                newDto, allDto, bestDto), HttpStatus.OK);
+    }
     public void addBoards(List<Board> boardList, List<BoardResponseDto> returningDto) {
+
         for (Board board : boardList) {
+            if(board.getBoardContent() == null || board.getBoardTitle() == null){
+                boardList.remove(board);
+                break;
+            }
+
             Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(board, board.getMember().getMemberId());
-
             List<Map.Entry<String, Double>> ratings = ratingList.getTwoHighestRatings(ratingList);
-
             RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0), ratings.get(1), ratingList);
             boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
 
@@ -53,147 +86,28 @@ public class BoardService {
         new ResponseEntity<>(returningDto, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> getBoards() {
-
-        List<Board> allBoards = boardRepository.findTop8ByOrderByCreatedAtDesc();
-        List<Board> bestBoards = boardRepository.findTop4ByOrderByTotalHeartCountDesc();
-        List<Board> newBoards = boardRepository.findTop6ByOrderByCreatedAtDesc();
-
-        List<Board> canyaCoffeeBoards =
-                boardRepository.findTop3ByHighestRatingContainingOrderByTotalHeartCountDesc("coffee");
-        List<Board> canyaMoodBoards =
-                boardRepository.findTop3ByHighestRatingContainingOrderByTotalHeartCountDesc("mood");
-        List<Board> canyaDessertBoards =
-                boardRepository.findTop3ByHighestRatingContainingOrderByTotalHeartCountDesc("dessert");
-
-        List<BoardResponseDto> bestDto = new ArrayList<>();
-        List<BoardResponseDto> dessertResponseDto = new ArrayList<>();
-        List<BoardResponseDto> coffeeResponseDto = new ArrayList<>();
-        List<BoardResponseDto> moodResponseDto = new ArrayList<>();
-        List<BoardResponseDto> newDto = new ArrayList<>();
-        List<BoardResponseDto> allDto = new ArrayList<>();
-
-        //이 부분 그냥 다 보내 줘도 괜찮을지?
-        for (Board board : bestBoards) {
-
-            boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
-            BoardResponseDto boardResponseDto = new BoardResponseDto(board, isLiked);
-            bestDto.add(boardResponseDto);
-        }
-
-        addBoards(canyaCoffeeBoards, coffeeResponseDto);
-        addBoards(canyaMoodBoards, moodResponseDto);
-        addBoards(canyaDessertBoards, dessertResponseDto);
-        addBoards(allBoards, allDto);
-        addBoards(newBoards, newDto);
-        return new ResponseEntity<>(new MainPageDto(coffeeResponseDto, moodResponseDto, dessertResponseDto, newDto, allDto, bestDto), HttpStatus.OK);
-    }
-
-    public ResponseEntity<?> getMainCategory(String keyword, Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-
-        List<BoardResponseDto> keywordPick = new ArrayList<>();
-
-        int boardNum = boardRepository.findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc(keyword).size();
-
-        List<Board> boardList = boardRepository.findBoardsByHighestRatingContainingOrderByTotalHeartCountDesc(keyword, pageable);
-
-        addBoards(boardList, keywordPick);
-
-        return new ResponseEntity<>(new BoardResponseDto(keywordPick, size, boardNum, page), HttpStatus.OK);
-    }
-
-    // 이 부분은 query DSL 로 바꾸기.
-    public ResponseEntity<?> searchBoard(String category, String keyword, Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
-        int boardNum = 0;
-        if (category.equals("all")) {
-
-            return new ResponseEntity<>("나중에 할꺼", HttpStatus.OK);
-
-        }
-        if (Objects.equals(keyword, "")) {
-            List<Board> boards = boardRepository.findAll();
-            List<BoardResponseDto> dtoList = new ArrayList<>();
-            for (Board board : boards) {
-                boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
-                dtoList.add(new BoardResponseDto(board, isLiked));
-                return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boards.size(), page), HttpStatus.OK);
-            }
-        }
-
-        if (category.equals("memberNickname")) {
-
-            List<Board> boards = boardRepository.findBoardByMemberMemberNicknameContaining(keyword);
-            Slice<Board> boardList = boardRepository.findBoardByMemberMemberNicknameContaining(keyword, pageable);
-
-            if (boardList.isEmpty()) {
-                return new ResponseEntity<>("해당 조회 결과가 없습니다.", HttpStatus.OK);
-            }
-
-            for (Board board : boardList) {
-                boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
-                boardResponseDtos.add(new BoardResponseDto(board, isLiked));
-            }
-
-            return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boards.size(), page), HttpStatus.OK);
-        }
-        if (category.equals("boardTitle")) {
-            boardNum = boardRepository.findBoardsByBoardTitleContaining(keyword).size();
-
-            Slice<Board> boardList = boardRepository.findBoardsByBoardTitleContaining(keyword, pageable);
-            if (boardList.isEmpty()) {
-                return new ResponseEntity<>("해당 조회 결과가 없습니다.", HttpStatus.OK);
-            }
-
-            for (Board board : boardList) {
-                boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
-                boardResponseDtos.add(new BoardResponseDto(board, isLiked));
-            }
-            return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boardNum, page), HttpStatus.OK);
-        }
-        if (category.equals("boardContent")) {
-
-            boardNum = boardRepository.findBoardsByBoardContentContaining(keyword).size();
-
-            Slice<Board> boardList = boardRepository.findBoardsByBoardContentContaining(keyword, pageable);
-
-            if (boardList.isEmpty()) {
-
-                return new ResponseEntity<>("해당 조회 결과가 없습니다.", HttpStatus.OK);
-            }
-
-            for (Board board : boardList) {
-                boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
-                boardResponseDtos.add(new BoardResponseDto(board, isLiked));
-
-            }
-            return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boardNum, page), HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>("해당되는 카테고리를 넣어주세요", HttpStatus.BAD_REQUEST);
-    }
-
     @Transactional
     public ResponseEntity<?> saveBoard(MemberDetailsImpl memberDetails) {
 
         int lastBoardIndex = boardRepository.findBoardByMember(memberDetails.getMember()).size();
         List<Board> boardList = boardRepository.findBoardByMember(memberDetails.getMember());
+
         if (lastBoardIndex == 0) {
             Board board = boardRepository.save(new Board(memberDetails.getMember()));
+
             return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
         }
+
         if (boardList.get(lastBoardIndex - 1).getImageList().size() == 0) {
 
             return new ResponseEntity<>("이미 만든 보드가 존재합니다.", HttpStatus.BAD_REQUEST);
         } else {
             Board board = boardRepository.save(new Board(memberDetails.getMember()));
+
             return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
         }
     }
 
-    // s3 uploader 에서 삭제 해주는 부분 추가하기.
     @Transactional
     public ResponseEntity<?> editBoard(BoardRequestDto dto, List<MultipartFile> images, Long boardId, Member member, String[] urls) throws IOException {
 
@@ -222,7 +136,8 @@ public class BoardService {
         if (member.getMemberId().equals(board.getMember().getMemberId())) {
             board.update(dto);
 
-            RatingRequestDto ratingDto = new RatingRequestDto(dto.getRatings()[0], dto.getRatings()[1], dto.getRatings()[2], dto.getRatings()[3], dto.getRatings()[4], dto.getRatings()[5]);
+            RatingRequestDto ratingDto = new RatingRequestDto(dto.getRatings()[0], dto.getRatings()[1], dto.getRatings()[2],
+                    dto.getRatings()[3], dto.getRatings()[4], dto.getRatings()[5]);
 
             rating.update(ratingDto);
 
@@ -244,29 +159,29 @@ public class BoardService {
                 s3Uploader.deleteFile(target);
             }
         }
+
         return new ResponseEntity<>("수정이 완료되었습니다.", HttpStatus.OK);
     }
 
     public ResponseEntity<?> getBoardDetail(Long boardId) {
-        Board board = boardRepository.findById(boardId).orElse(null);
-        if (board == null) {
-            return new ResponseEntity<>("존재 하지 않는 게시물입니다", HttpStatus.BAD_REQUEST);
-        }
-        boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
-        List<Image> imageList = board.getImageList();
-        Rating rating = ratingRepository.findRatingByBoard(board);
 
-        BoardResponseDto responseDto = new BoardResponseDto(board, imageList, rating, isLiked);
+        Board board = boardRepository.findById(boardId).orElse(null);
+
+        assert board != null;
+        boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
+
+        BoardResponseDto responseDto = new BoardResponseDto(board,isLiked);
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    // try to divide the sections up. takes too long to get the result at the moment.
     @Transactional
     public ResponseEntity<?> confirmBoard(BoardRequestDto dto, List<MultipartFile> images, Long boardId) throws IOException {
+
         Board board = boardRepository.findById(boardId).orElse(null);
         assert board != null;
         Member member = board.getMember();
+
         if (images != null) {
             for (MultipartFile image : images) {
                 imageRepository.save(new Image(board, s3Uploader.upload(image, "boardImage"), member));
@@ -278,10 +193,12 @@ public class BoardService {
         RatingRequestDto ratingDto = new RatingRequestDto(dto.getRatings()[0], dto.getRatings()[1], dto.getRatings()[2], dto.getRatings()[3], dto.getRatings()[4], dto.getRatings()[5]);
 
         Rating rating = new Rating(ratingDto, board, board.getMember());
+
         ratingRepository.save(rating);
 
         List<Map.Entry<String, Double>> twoHighestRatings = rating.getTwoHighestRatings(rating);
         board.update(dto, twoHighestRatings.get(0).getKey(), twoHighestRatings.get(1).getKey());
+
         boardRepository.save(board);
 
         return new ResponseEntity<>("게시글 작성이 완료 되었습니다.", HttpStatus.CREATED);
@@ -291,12 +208,15 @@ public class BoardService {
     public ResponseEntity<?> deleteBoard(Long boardId, Member member) {
 
         Optional<Board> board = boardRepository.findById(boardId);
+
         if (board.isEmpty()) {
             return new ResponseEntity<>("게시글이 존재 하지 않습니다", HttpStatus.BAD_REQUEST);
         }
+
         if (!Objects.equals(board.get().getMember().getMemberId(), member.getMemberId())) {
             return new ResponseEntity<>("작성자가 일치 하지 않습니다", HttpStatus.BAD_REQUEST);
         }
+
         boardRepository.deleteById(boardId);
 
         List<Image> deletingImages = board.get().getImageList();

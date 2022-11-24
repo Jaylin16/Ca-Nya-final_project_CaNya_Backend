@@ -21,7 +21,6 @@ public class BoardResponseDto {
     private Long boardId;
     private int heartCount;
     private int commentCount;
-
     private String boardTitle;
     private String boardContent;
     private String address;
@@ -39,21 +38,9 @@ public class BoardResponseDto {
     private Map.Entry<String, Double> highestRating;
     private Map.Entry<String, Double> secondHighestRating;
 
-    @Builder
-    public BoardResponseDto(Board board, List<Image> imageList, Rating rating, boolean isLiked){
-        this.boardContent = board.getBoardContent();
-        this.boardId = board.getBoardId();
-        this.boardTitle = board.getBoardTitle();
-        this.createdAt = board.getCreatedAt();
-        this.rating = rating;
-        this.heartCount = board.getHeartCount();
-        this.isLiked = isLiked;
-        this.date = Time.calculateTime(board);
-        this.memberNickname = board.getMember().getMemberNickname();
-        this.memberProfileImage = board.getMember().getMemberProfileImage();
-        this.address = board.getAddress();
-        this.imageList = imageList;
-        this.totalRating = String.format("%.1f",rating.getTotalRating());
+    public BoardResponseDto(Board board) {
+        this.rating = board.getRatingList().get(0);
+        this.imageList = board.getImageList();
     }
 
     public BoardResponseDto(Board board, RatingResponseDto dto, boolean isLiked){
@@ -73,31 +60,25 @@ public class BoardResponseDto {
         this.secondHighestRating = dto.getSecondHighestRating();
     }
 
-    public BoardResponseDto(RatingResponseDto dto, Board board) {
-        this.address = board.getAddress();
-        this.boardId = board.getBoardId();
-        this.highestRating = dto.getHighestRating();
-        this.date = Time.calculateTime(board);
-        this.heartCount = board.getHeartList().size();
-        this.secondHighestRating = dto.getSecondHighestRating();
-        this.imageUrl = board.getImageList().get(0).getImageUrl();
-    }
     public BoardResponseDto(List<BoardResponseDto> dto, int size, int boardNum, int pageNum) {
         this.isLastPage = pageNum == Math.ceil(boardNum/size) || size >= boardNum;
         this.boardResponseDto = dto;
     }
 
-    @Builder
-    public BoardResponseDto(Board board, boolean isLiked) {
+    public BoardResponseDto(Board board,boolean isLiked){
+        this.boardContent = board.getBoardContent();
+        this.boardId = board.getBoardId();
+        this.boardTitle = board.getBoardTitle();
+        this.createdAt = board.getCreatedAt();
+        this.rating = board.getRatingList().get(0);
+        this.heartCount = board.getHeartCount();
+        this.isLiked = isLiked;
+        this.date = Time.calculateTime(board);
         this.memberNickname = board.getMember().getMemberNickname();
         this.memberProfileImage = board.getMember().getMemberProfileImage();
-        this.boardContent = board.getBoardContent();
         this.address = board.getAddress();
-        this.boardId = board.getBoardId();
-        this.date = Time.calculateTime(board);
-        this.boardTitle = board.getBoardTitle();
-        this.heartCount = board.getHeartList().size();
-        this.isLiked = isLiked;
+        this.imageList = board.getImageList();
         this.imageUrl = board.getImageList().get(0).getImageUrl();
+        this.totalRating = String.format("%.1f",rating.getTotalRating());
     }
 }
