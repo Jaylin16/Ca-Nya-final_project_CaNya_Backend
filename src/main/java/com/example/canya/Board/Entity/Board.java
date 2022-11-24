@@ -45,7 +45,7 @@ public class Board extends Timestamp {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rating> ratingList = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
@@ -99,6 +99,7 @@ public class Board extends Timestamp {
             this.totalHeartCount = this.totalHeartCount - 1;
         }
     }
+
 
 
 
