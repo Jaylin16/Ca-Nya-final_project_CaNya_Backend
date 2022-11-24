@@ -19,9 +19,6 @@ import java.util.*;
 @NoArgsConstructor
 public class Board extends Timestamp {
 
-
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long boardId;
@@ -48,7 +45,7 @@ public class Board extends Timestamp {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rating> ratingList = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
@@ -70,6 +67,7 @@ public class Board extends Timestamp {
 
     public Board(Member member) {
         this.member = member;
+
     }
 
     public int getHeartCount() {
@@ -77,7 +75,6 @@ public class Board extends Timestamp {
     }
 
     public void update(BoardRequestDto dto) {
-        System.out.println("update called in board.java");
         this.address = dto.getAddress() != null ? dto.getAddress() : this.address;
         this.boardContent = dto.getBoardContent() != null ? dto.getBoardContent() : this.boardContent;
         this.boardTitle = dto.getBoardTitle() != null ? dto.getBoardTitle() : this.boardTitle;
@@ -94,14 +91,15 @@ public class Board extends Timestamp {
 
     public void updateHeartCount(boolean isLiked) {
         if (isLiked) {
-            System.out.println("is liked is true");
+
             this.totalHeartCount = this.heartList.size();
         }
         if (!isLiked) {
-            System.out.println("is liked is false");
+
             this.totalHeartCount = this.totalHeartCount - 1;
         }
     }
+
 
 
 

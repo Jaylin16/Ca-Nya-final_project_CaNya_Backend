@@ -19,8 +19,6 @@ import com.example.canya.RefreshToken.RefreshToken;
 import com.example.canya.RefreshToken.RefreshTokenRepository;
 import com.example.canya.S3.S3Uploader;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +28,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -51,7 +48,6 @@ public class MemberService {
     private final CommentRepository commentRepository;
     private final S3Uploader s3Uploader;
 
-
     private final String DEFAULT_IMAGE = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLxVwdzaxNLKosglrrPJRFG8ojryDuVby2yL8J4zwn&s";
 
     public ResponseEntity<?> nameCheck(String memberName){
@@ -70,7 +66,6 @@ public class MemberService {
         return new ResponseEntity<>("중복 된 닉네임 입니다", HttpStatus.BAD_REQUEST);
     }
 
-
     public ResponseEntity<?> signUp(MemberRequestDto requestDto){
 
         Member member = Member.builder()
@@ -79,6 +74,7 @@ public class MemberService {
                 .memberNickname(requestDto.getMemberNickname())
                 .memberProfileImage(DEFAULT_IMAGE)
                 .authority(Authority.ROLE_USER)
+                .status("tall")
                 .build();
 
         memberRepository.save(member);
@@ -90,11 +86,9 @@ public class MemberService {
     public ResponseEntity<?> login(MemberRequestDto requestDto, HttpServletResponse response){
         UsernamePasswordAuthenticationToken authenticationToken = requestDto.toAuthentication();
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-//        Member member = memberRepository.findByMemberName(requestDto.getMemberName())
-//                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 유저입니다."));
         Optional<Member> member = memberRepository.findByMemberName(requestDto.getMemberName());
         if(member.isEmpty()){
-            return new ResponseEntity<>("아이도 혹은 패스워드를 확인해주세요",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("아이디 혹은 패스워드를 확인해주세요",HttpStatus.BAD_REQUEST);
         }
 
         if (!passwordEncoder.matches(requestDto.getPassword(), member.get().getPassword())){
@@ -112,7 +106,6 @@ public class MemberService {
         HttpHeaders httpHeaders= new HttpHeaders();
         httpHeaders.add(JwtAuthFilter.AUTHORIZATION_HEADER , JwtAuthFilter.BEARER_PREFIX + tokenDto.getAccessToken());
         httpHeaders.add("Refresh-Token" , tokenDto.getRefreshToken());
-        httpHeaders.add("memberNickname",requestDto.getMemberNickname());
 
 
         return new ResponseEntity<>("로그인에 성공하셨습니다.", httpHeaders, HttpStatus.OK);
@@ -221,6 +214,7 @@ public class MemberService {
     }
 
     //마이페이지 내 프로필 사진 변경
+
     @Transactional
     public ResponseEntity<?> profileUpdate(Member member, MultipartFile image) throws IOException {
 
@@ -231,9 +225,12 @@ public class MemberService {
 
         String originProfile = mypageMember.get().getMemberProfileImage();
         String targetProfileName = "memberProfileImage" + originProfile.substring(originProfile.lastIndexOf("/"));
+
+
         s3Uploader.deleteFile(targetProfileName);
 
         String newProfileImage = s3Uploader.upload(image, "memberProfileImage");
+
         mypageMember.get().update(newProfileImage);
 
         return new ResponseEntity<>("프로필 사진 변경 완료!", HttpStatus.OK);

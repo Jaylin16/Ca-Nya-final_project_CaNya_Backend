@@ -7,5 +7,4 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class ImageRequestDto {
     private MultipartFile imageFile;
-
 }

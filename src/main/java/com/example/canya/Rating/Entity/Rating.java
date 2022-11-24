@@ -1,13 +1,11 @@
 package com.example.canya.Rating.Entity;
 
-import com.example.canya.Board.Dto.BoardRequestDto;
 import com.example.canya.Board.Entity.Board;
 import com.example.canya.Member.Entity.Member;
 import com.example.canya.Rating.Dto.RatingRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashMap;

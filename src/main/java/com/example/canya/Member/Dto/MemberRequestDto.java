@@ -3,7 +3,6 @@ package com.example.canya.Member.Dto;
 import com.example.canya.Member.Entity.Authority;
 import com.example.canya.Member.Entity.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.istack.NotNull;
 import lombok.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 

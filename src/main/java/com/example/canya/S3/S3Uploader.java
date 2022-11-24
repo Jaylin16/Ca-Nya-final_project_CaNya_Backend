@@ -41,7 +41,6 @@ public class S3Uploader {
         return uploadImageUrl;  // 업로드된 파일의 S3 URL 주소 반환
     }
 
-
     // S3로 업로드
     private String putS3(File uploadFile, String fileName) {
         // PublicRead 권한으로 업로드 됨

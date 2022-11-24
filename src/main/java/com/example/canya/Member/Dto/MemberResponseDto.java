@@ -60,4 +60,9 @@ public class MemberResponseDto {
         this.memberNickname = member.getMemberNickname();
     }
 
+    public MemberResponseDto(Member member){
+        this.memberId =member.getMemberId();
+        this.memberNickname = member.getMemberNickname();
+    }
+
 }
