@@ -8,6 +8,7 @@ import com.example.canya.Rating.Entity.Rating;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +23,11 @@ public class MemberResponseDto {
     private String memberNickname;
     private String boardContent;
     private String address;
+    private String boardCreatedAt;
     private Long commentId;
     private String commentContent;
     private Integer commentCount;
+    private String commentCreatedAt;
     private String totalRating;
     private Integer heartCount;
     private List<Rating> ratingList = new ArrayList<>();
@@ -35,6 +38,7 @@ public class MemberResponseDto {
         this.boardId = board.getBoardId();
         this.boardTitle = board.getBoardTitle();
         this.boardContent = board.getBoardContent();
+        this.boardCreatedAt = board.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.address = board.getAddress();
         this.totalRating = String.format("%.1f",board.getRatingList().get(ratingList.size()).getTotalRating());
         this.imageList = board.getImageList();
@@ -48,6 +52,12 @@ public class MemberResponseDto {
         this.boardContent = comment.getBoard().getBoardContent();
         this.commentId = comment.getCommentId();
         this.commentContent = comment.getCommentContent();
+        this.commentCreatedAt = comment.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
+    public MemberResponseDto(Member member){
+        this.memberId =member.getMemberId();
+        this.memberNickname = member.getMemberNickname();
     }
 
     public MemberResponseDto(Member member){
