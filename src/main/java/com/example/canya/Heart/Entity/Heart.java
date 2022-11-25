@@ -1,24 +1,32 @@
 package com.example.canya.Heart.Entity;
 
 import com.example.canya.Board.Entity.Board;
+import com.example.canya.Member.Entity.Member;
+import com.example.canya.Timestamp.Timestamp;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
-public class Heart {
+@NoArgsConstructor
+public class Heart extends Timestamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long heartId;
 
-    @Column
-    private Long memberId;
-
     @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;
 
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    public Heart(Member member, Board board) {
+        this.member = member;
+        this.board = board;
+    }
 }

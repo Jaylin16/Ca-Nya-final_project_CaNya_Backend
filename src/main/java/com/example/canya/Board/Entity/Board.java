@@ -5,13 +5,14 @@ import com.example.canya.Comment.Entity.Comment;
 import com.example.canya.Heart.Entity.Heart;
 import com.example.canya.Image.Entity.Image;
 import com.example.canya.Member.Entity.Member;
+import com.example.canya.Rating.Dto.RatingRequestDto;
+import com.example.canya.Rating.Entity.Rating;
 import com.example.canya.Timestamp.Timestamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Getter
@@ -31,9 +32,21 @@ public class Board extends Timestamp {
     @Column
     private String address;
 
+    @Column
+    private int totalHeartCount;
+
+    @Column
+    private String highestRating;
+
+    @Column
+    private String secondHighestRating;
+
     @ManyToOne
-    @JoinColumn(name="member_id")
+    @JoinColumn(name = "member_id")
     private Member member;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Rating> ratingList = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Comment> commentList = new ArrayList<>();
@@ -43,20 +56,48 @@ public class Board extends Timestamp {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Image> imageList = new ArrayList<>();
-    public Board(BoardRequestDto dto, Member member){
+
+    public Board(BoardRequestDto dto, Member member, RatingRequestDto ratingDto) {
         this.member = member;
         this.boardContent = dto.getBoardContent();
         this.boardTitle = dto.getBoardTitle();
         this.address = dto.getAddress();
-    }
-    public Board(Member member){
-        this.member = member;
+        this.totalHeartCount = this.heartList.size() != 0 ? this.heartList.size() : 0;
     }
 
-    public void update(BoardRequestDto dto){
-        this.address= dto.getAddress() != null ? dto.getAddress() : this.address;
+    public Board(Member member) {
+        this.member = member;
+
+    }
+
+    public int getHeartCount() {
+        return this.heartList.size();
+    }
+
+    public void update(BoardRequestDto dto) {
+        this.address = dto.getAddress() != null ? dto.getAddress() : this.address;
         this.boardContent = dto.getBoardContent() != null ? dto.getBoardContent() : this.boardContent;
-        this.boardTitle = dto.getBoardTitle()!= null ? dto.getBoardTitle() : this.boardTitle;
+        this.boardTitle = dto.getBoardTitle() != null ? dto.getBoardTitle() : this.boardTitle;
+    }
+
+    public void update(BoardRequestDto dto, String highestRate, String secondHighestRate) {
+        this.address = dto.getAddress() != null ? dto.getAddress() : this.address;
+        this.boardContent = dto.getBoardContent() != null ? dto.getBoardContent() : this.boardContent;
+        this.boardTitle = dto.getBoardTitle() != null ? dto.getBoardTitle() : this.boardTitle;
+        this.highestRating = highestRate;
+        this.secondHighestRating = secondHighestRate;
+
+    }
+
+    public void updateHeartCount(boolean isLiked) {
+        if (isLiked) {
+
+            this.totalHeartCount = this.heartList.size();
+        }
+        if (!isLiked) {
+
+            this.totalHeartCount = this.totalHeartCount - 1;
+        }
     }
 
 

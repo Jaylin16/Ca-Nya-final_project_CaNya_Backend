@@ -27,10 +27,8 @@ public class S3Uploader {
 
     // MultipartFile을 전달받아 File로 전환한 후 S3에 업로드
     public String upload(MultipartFile multipartFile, String dirName) throws IOException {
-        System.out.println(multipartFile);
         File uploadFile = convert(multipartFile)
                 .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
-
         return upload(uploadFile, dirName);
     }
 
@@ -42,7 +40,6 @@ public class S3Uploader {
 
         return uploadImageUrl;  // 업로드된 파일의 S3 URL 주소 반환
     }
-
 
     // S3로 업로드
     private String putS3(File uploadFile, String fileName) {
