@@ -41,6 +41,9 @@ public class Board extends Timestamp {
     @Column
     private String secondHighestRating;
 
+    @Column
+    private Boolean isReady;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
@@ -80,13 +83,13 @@ public class Board extends Timestamp {
         this.boardTitle = dto.getBoardTitle() != null ? dto.getBoardTitle() : this.boardTitle;
     }
 
-    public void update(BoardRequestDto dto, String highestRate, String secondHighestRate) {
+    public void update(BoardRequestDto dto, List<String> highestRatings) {
         this.address = dto.getAddress() != null ? dto.getAddress() : this.address;
         this.boardContent = dto.getBoardContent() != null ? dto.getBoardContent() : this.boardContent;
         this.boardTitle = dto.getBoardTitle() != null ? dto.getBoardTitle() : this.boardTitle;
-        this.highestRating = highestRate;
-        this.secondHighestRating = secondHighestRate;
-
+        this.highestRating = highestRatings.get(0);
+        this.secondHighestRating = highestRatings.get(1);
+        this.isReady = true;
     }
 
     public void updateHeartCount(boolean isLiked) {

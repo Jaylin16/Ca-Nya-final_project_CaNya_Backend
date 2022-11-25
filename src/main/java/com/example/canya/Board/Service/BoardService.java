@@ -42,9 +42,10 @@ public class BoardService {
     // 이 부분은 여러 API 로 나눌 예정 (속도 개선)
     public ResponseEntity<?> getBoards() {
 
-        List<Board> allBoards = boardRepository.findTop8ByOrderByCreatedAtDesc();
-        List<Board> bestBoards = boardRepository.findTop4ByOrderByTotalHeartCountDesc();
-        List<Board> newBoards = boardRepository.findTop6ByOrderByCreatedAtDesc();
+        List<Board> allBoards = boardRepository.findTop8ByIsReadyTrueOrderByCreatedAtDesc();
+        System.out.println(allBoards);
+        List<Board> bestBoards = boardRepository.findTop4ByIsReadyTrueOrderByTotalHeartCountDesc();
+        List<Board> newBoards = boardRepository.findTop6ByIsReadyTrueOrderByCreatedAtDesc();
         List<Board> canyaCoffeeBoards =
                 boardRepository.findTop3ByHighestRatingContainingOrderByTotalHeartCountDesc("coffee");
         List<Board> canyaMoodBoards =
@@ -73,15 +74,17 @@ public class BoardService {
         for (Board board : boardList) {
             if(board.getBoardContent() == null || board.getBoardTitle() == null){
                 boardList.remove(board);
-                break;
+                continue;
             }
 
-            Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(board, board.getMember().getMemberId());
-            List<Map.Entry<String, Double>> ratings = ratingList.getTwoHighestRatings(ratingList);
-            RatingResponseDto ratingDto = new RatingResponseDto(ratings.get(0), ratings.get(1), ratingList);
-            boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
+                Rating ratingList = ratingRepository.findRatingByBoardAndMemberId(board, board.getMember().getMemberId());
+                List<String> ratings = ratingList.getTwoHighestRatings(ratingList);
+                RatingResponseDto ratingDto = new RatingResponseDto(ratingList, ratings);
 
-            returningDto.add(new BoardResponseDto(board, ratingDto, isLiked));
+                boolean isLiked = heartRepository.existsByBoardAndMember_MemberId(board, board.getMember().getMemberId());
+
+                returningDto.add(new BoardResponseDto(board, ratingDto, isLiked));
+
         }
         new ResponseEntity<>(returningDto, HttpStatus.OK);
     }
@@ -141,8 +144,8 @@ public class BoardService {
 
             rating.update(ratingDto);
 
-            List<Map.Entry<String, Double>> twoHighestRatings = rating.getTwoHighestRatings(rating);
-            board.update(dto, twoHighestRatings.get(0).getKey(), twoHighestRatings.get(1).getKey());
+            List<String> twoHighestRatings = rating.getTwoHighestRatings(rating);
+            board.update(dto, twoHighestRatings);
 
             imageRepository.deleteAll(imageList);
             for (String url : urls) {
@@ -195,9 +198,8 @@ public class BoardService {
         Rating rating = new Rating(ratingDto, board, board.getMember());
 
         ratingRepository.save(rating);
-
-        List<Map.Entry<String, Double>> twoHighestRatings = rating.getTwoHighestRatings(rating);
-        board.update(dto, twoHighestRatings.get(0).getKey(), twoHighestRatings.get(1).getKey());
+        List<String> twoHighestRatings = rating.getTwoHighestRatings(rating);
+        board.update(dto, twoHighestRatings);
 
         boardRepository.save(board);
 
