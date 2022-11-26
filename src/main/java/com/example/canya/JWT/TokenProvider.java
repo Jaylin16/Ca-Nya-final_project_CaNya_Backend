@@ -62,6 +62,7 @@ public class TokenProvider {
                 .setSubject(authentication.getName())
                 .setAudience(member.getMemberNickname())
                 .claim("memberStatus", member.getStatus())
+                .claim("profileImageUrl",member.getMemberProfileImage())
                 .claim(AUTHORITIES_KEY, authorities)
                 .setExpiration(accessTokenExpires)
                 .signWith(key, SignatureAlgorithm.HS256)

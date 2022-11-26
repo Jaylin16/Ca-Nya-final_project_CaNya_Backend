@@ -6,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RatingRequestDto {
-
     private double coffeeRate;
 
     private double dessertRate;
@@ -31,5 +30,4 @@ public class RatingRequestDto {
         this.parkingRate = parkingRate;
         this.totalRating = (coffeeRate + dessertRate + priceRate + moodRate + kindnessRate + parkingRate)/6;
     }
-    
 }

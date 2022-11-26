@@ -3,12 +3,10 @@ package com.example.canya.Timestamp;
 import com.example.canya.Board.Entity.Board;
 import com.example.canya.Comment.Entity.Comment;
 import org.springframework.stereotype.Component;
-
 import java.sql.Timestamp;
 
 @Component
 public class Time {
-
     private static class TIME_MAXIMUM {
         public static final int SEC = 60;
         public static final int MIN = 60;

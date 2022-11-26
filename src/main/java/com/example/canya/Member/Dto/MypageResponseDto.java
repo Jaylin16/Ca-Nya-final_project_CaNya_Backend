@@ -8,19 +8,13 @@ import java.util.List;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MypageResponseDto {
-
-
     private final List<MemberResponseDto> recentlyMyBoardList;
-
     private final List<MemberResponseDto> recentlyMyHeartBoardList;
-
     private final List<MemberResponseDto> recentlyMyCommentList;
-
     private final String memberProfileImage;
     private final Integer memberBoardCount;
     private final Integer memberHeartCount;
     private final Integer memberCommentCount;
-
 
     public MypageResponseDto(List<MemberResponseDto> recentlyMyBoardList, List<MemberResponseDto> recentlyMyHeartBoardList, List<MemberResponseDto> recentlyMyCommentList, Member member) {
         this.recentlyMyBoardList = recentlyMyBoardList;
@@ -30,7 +24,5 @@ public class MypageResponseDto {
         this.memberBoardCount = member.getBoard().size();
         this.memberHeartCount = member.getHeart().size();
         this.memberCommentCount = member.getComment().size();
-
     }
-
 }

@@ -62,24 +62,20 @@ public class Rating {
     public double getTotalRating(){
         return (this.coffeeRate + this.dessertRate + this.priceRate + this.moodRate + this.kindnessRate + this.parkingRate)/6;
     }
-    public Rating(Board board){
-        this.board = board;
-    }
-    public List<Map.Entry<String, Double>> getTwoHighestRatings(Rating ratingList){
+    public List<String> getTwoHighestRatings(Rating ratingList){
         HashMap<String, Double> ratingMap = new HashMap<String, Double>();
-        ratingMap.put("coffeeRating", ratingList.getCoffeeRate());
-        ratingMap.put("dessertRating", ratingList.getDessertRate());
-        ratingMap.put("kindnessRating", ratingList.getKindnessRate());
-        ratingMap.put("moodRating", ratingList.getMoodRate());
-        ratingMap.put("parkingRating", ratingList.getParkingRate());
-        ratingMap.put("priceRating", ratingList.getPriceRate());
-
+        ratingMap.put("커피 맛집", ratingList.getCoffeeRate());
+        ratingMap.put("디저트 맛집", ratingList.getDessertRate());
+        ratingMap.put("친절 맛집", ratingList.getKindnessRate());
+        ratingMap.put("분위기 맛집", ratingList.getMoodRate());
+        ratingMap.put("주차 맛집", ratingList.getParkingRate());
+        ratingMap.put("가성비 맛집", ratingList.getPriceRate());
         List<Map.Entry<String, Double>> entries = ratingMap.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toList());
-        List<Map.Entry<String, Double>> twoRatings = new ArrayList<>();
-        twoRatings.add(entries.get(5));
-        twoRatings.add(entries.get(4));
+        List<String> twoRatings = new ArrayList<>();
+        twoRatings.add(String.valueOf(entries.get(5).getKey()));
+        twoRatings.add(String.valueOf(entries.get(4).getKey()));
     return twoRatings;
     }
 

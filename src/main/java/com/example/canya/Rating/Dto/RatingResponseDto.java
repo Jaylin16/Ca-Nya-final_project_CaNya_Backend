@@ -4,21 +4,17 @@ import com.example.canya.Rating.Entity.Rating;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.Map;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class RatingResponseDto {
-
     private double totalRating;
-    private Map.Entry<String, Double> highestRating;
-    private Map.Entry<String, Double> secondHighestRating;
+    private List<String> highestRatings;
+    public RatingResponseDto(Rating ratingList , List<String>highestRatings) {
 
-
-    public RatingResponseDto(Map.Entry<String, Double> maxEntry, Map.Entry<String, Double> secondMaxEntry, Rating ratingList) {
-        this.highestRating = maxEntry;
-        this.secondHighestRating = secondMaxEntry;
+        this.highestRatings = highestRatings;
         this.totalRating = (ratingList.getDessertRate()+
                 ratingList.getCoffeeRate()+
                 ratingList.getKindnessRate()+
@@ -26,5 +22,4 @@ public class RatingResponseDto {
                 ratingList.getPriceRate()+
                 ratingList.getMoodRate())/6;
     }
-
 }

@@ -10,7 +10,6 @@ import com.example.canya.Rating.Entity.Rating;
 import com.example.canya.Timestamp.Timestamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.util.*;
 
@@ -41,6 +40,9 @@ public class Board extends Timestamp {
     @Column
     private String secondHighestRating;
 
+    @Column
+    private Boolean isReady;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
@@ -57,17 +59,8 @@ public class Board extends Timestamp {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Image> imageList = new ArrayList<>();
 
-    public Board(BoardRequestDto dto, Member member, RatingRequestDto ratingDto) {
-        this.member = member;
-        this.boardContent = dto.getBoardContent();
-        this.boardTitle = dto.getBoardTitle();
-        this.address = dto.getAddress();
-        this.totalHeartCount = this.heartList.size() != 0 ? this.heartList.size() : 0;
-    }
-
     public Board(Member member) {
         this.member = member;
-
     }
 
     public int getHeartCount() {
@@ -75,32 +68,27 @@ public class Board extends Timestamp {
     }
 
     public void update(BoardRequestDto dto) {
-        this.address = dto.getAddress() != null ? dto.getAddress() : this.address;
-        this.boardContent = dto.getBoardContent() != null ? dto.getBoardContent() : this.boardContent;
-        this.boardTitle = dto.getBoardTitle() != null ? dto.getBoardTitle() : this.boardTitle;
+        this.address = dto.getAddress();
+        this.boardContent = dto.getBoardContent();
+        this.boardTitle = dto.getBoardTitle();
+        this.isReady = true;
     }
 
-    public void update(BoardRequestDto dto, String highestRate, String secondHighestRate) {
-        this.address = dto.getAddress() != null ? dto.getAddress() : this.address;
-        this.boardContent = dto.getBoardContent() != null ? dto.getBoardContent() : this.boardContent;
-        this.boardTitle = dto.getBoardTitle() != null ? dto.getBoardTitle() : this.boardTitle;
-        this.highestRating = highestRate;
-        this.secondHighestRating = secondHighestRate;
-
+    public void update(BoardRequestDto dto, List<String> highestRatings) {
+        this.address = dto.getAddress();
+        this.boardContent = dto.getBoardContent();
+        this.boardTitle = dto.getBoardTitle();
+        this.highestRating = highestRatings.get(0);
+        this.secondHighestRating = highestRatings.get(1);
+        this.isReady = true;
     }
 
     public void updateHeartCount(boolean isLiked) {
         if (isLiked) {
-
             this.totalHeartCount = this.heartList.size();
         }
         if (!isLiked) {
-
             this.totalHeartCount = this.totalHeartCount - 1;
         }
     }
-
-
-
-
 }

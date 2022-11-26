@@ -24,7 +24,6 @@ import java.util.List;
 public class BoardController {
     private final BoardService boardService;
 
-    //메인 페이지 조회
     @Operation(summary = "메인 페이지", description = "메인 페이지 조회 기능")
     @GetMapping("/board/main")
     public ResponseEntity<?> getMainBoards(){
@@ -32,7 +31,6 @@ public class BoardController {
         return boardService.getBoards();
     }
 
-    //게시물 상세 조회
     @Operation(summary = "게시물 상세 조회", description = "각 게시된 글 조회 기능")
     @GetMapping("/board/{boardId}")
     public ResponseEntity<?> getBoardDetail(@PathVariable Long boardId){
@@ -40,7 +38,6 @@ public class BoardController {
         return boardService.getBoardDetail(boardId);
     }
 
-    //게시물 등록 시작
     @Operation(summary = "게시물 ID 생성", description = "게시물 작성 페이지 진입시 boardId 부여")
     @PostMapping("/auth/board/save")
     public ResponseEntity<?> saveBoard( @AuthenticationPrincipal MemberDetailsImpl memberDetails){
@@ -48,7 +45,6 @@ public class BoardController {
         return boardService.saveBoard(memberDetails);
     }
 
-    //게시물 수정 완료
     @Operation(summary = "게시물 편집", description = "게시글 수정 기능")
     @PutMapping("/auth/board/update/{boardId}")
     public ResponseEntity<?> editBoard(@RequestPart(value = "images", required = false) List<MultipartFile> images,
@@ -59,7 +55,7 @@ public class BoardController {
 
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});
-        if(urlList != null){
+        if(urlList.length()!=0){
             UpdateUrlDto urlDto = objectMapper.readValue(urlList, new TypeReference<>(){});
             return boardService.editBoard(dto, images, boardId,memberDetails.getMember(),urlDto.getUrlList());
         }
@@ -69,7 +65,6 @@ public class BoardController {
         return boardService.editBoard(dto, images, boardId,memberDetails.getMember(),urlDto.getUrlList());
     };
 
-    //게시물 등록 완료
     @Operation(summary = "게시물 등록", description = "기존 boardId 부여된 게시글 작성 완료 기능")
     @PutMapping("/auth/board/submit/{boardId}")
     public ResponseEntity<?> confirmBoard(@RequestPart(value = "image",required = false) List<MultipartFile> image,
@@ -84,7 +79,6 @@ public class BoardController {
         return boardService.confirmBoard(dto, image, boardId);
     }
 
-    //게시물 삭제
     @Operation(summary = "게시물 삭제", description = "작성된 게시글 삭제 기능")
     @DeleteMapping("/auth/board/delete/{boardId}")
     public ResponseEntity<?> deleteBoard(@PathVariable Long boardId, @AuthenticationPrincipal MemberDetailsImpl memberDetails){
