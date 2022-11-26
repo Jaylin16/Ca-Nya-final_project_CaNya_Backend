@@ -15,7 +15,6 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    //메인 페이지 카테고리별 조회
     @Operation(summary = "메인 카테고리별 조회", description = "메인 페이지 카테고리별 조회 기능")
     @GetMapping("/board/main/{keyword}")
     public ResponseEntity<?> getMainCategory(@PathVariable String keyword,
@@ -26,7 +25,6 @@ public class CategoryController {
         return categoryService.getMainCategory(keyword,pageTemp, size);
     }
 
-    //게시물 검색
     @GetMapping("/board/search/{category}/{keyword}")
     public ResponseEntity<?> searchBoard(@PathVariable String category,
                                          @PathVariable String keyword,

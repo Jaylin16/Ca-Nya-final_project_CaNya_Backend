@@ -15,10 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Api(tags = "Heart (좋아요)")
 public class HeartController {
-
     private final HeartService heartService;
 
-    //좋아요 생성 및 삭제
     @Operation(summary = "좋아요 생성/삭제", description = "좋아요 기능")
     @PostMapping("/auth/{boardId}/heart/create")
     public ResponseEntity<?> heartCreate (@PathVariable Long boardId, @AuthenticationPrincipal MemberDetailsImpl memberDetails) {

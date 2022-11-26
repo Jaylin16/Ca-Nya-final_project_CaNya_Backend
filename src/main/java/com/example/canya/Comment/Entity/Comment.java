@@ -6,7 +6,6 @@ import com.example.canya.Member.Entity.Member;
 import com.example.canya.Timestamp.Timestamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 
 @Entity
@@ -37,5 +36,4 @@ public class Comment extends Timestamp {
     public void update(CommentRequestDto commentRequestDto) {
         this.commentContent = commentRequestDto.getCommentContent();
     }
-
 }

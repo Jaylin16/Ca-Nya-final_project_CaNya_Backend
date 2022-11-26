@@ -9,9 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,11 +19,9 @@ public class HeartService {
     private final HeartRepository heartRepository;
     private final BoardRepository boardRepository;
 
-
     @Transactional
     public ResponseEntity<?> heartCreate(Long boardId, Member member) {
         Optional<Board> board = boardRepository.findById(boardId);
-        boolean isLiked =false;
 
         if (board.isEmpty()) {
             return new ResponseEntity<>("해당 게시글이 없습니다.", HttpStatus.BAD_REQUEST);

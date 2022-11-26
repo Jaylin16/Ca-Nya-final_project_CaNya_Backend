@@ -23,9 +23,7 @@ public class CategoryService {
 
     private final BoardRepository boardRepository;
     private final HeartRepository heartRepository;
-
     private final BoardService boardService;
-
 
     public ResponseEntity<?> getMainCategory(String keyword, Integer page, Integer size) {
 
@@ -48,7 +46,6 @@ public class CategoryService {
         }
     }
 
-    // 이 부분은 query DSL 로 바꾸기.(다른 대안도 찾아보는중)
     public ResponseEntity<?> searchBoard(String category, String keyword, Integer page, Integer size) {
 
         Pageable pageable = PageRequest.of(page, size);
@@ -94,7 +91,6 @@ public class CategoryService {
                                              int size, int boardNum, int page) {
 
         if (boardList.isEmpty()) {
-
             return new ResponseEntity<>("해당 조회 결과가 없습니다.", HttpStatus.OK);
         } else {
             addSearchBoard(boardList, boardResponseDtos);

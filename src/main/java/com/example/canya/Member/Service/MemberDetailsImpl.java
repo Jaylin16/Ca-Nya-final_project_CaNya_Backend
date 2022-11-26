@@ -50,7 +50,6 @@ public class MemberDetailsImpl implements UserDetails {
         return true;
     }
 
-    // 유저 권한 설정
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Authority authority = member.getAuthority();
