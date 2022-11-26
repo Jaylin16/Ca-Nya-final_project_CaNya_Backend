@@ -5,7 +5,6 @@ import com.example.canya.Member.Entity.Member;
 import com.example.canya.Timestamp.Timestamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 
 @Getter

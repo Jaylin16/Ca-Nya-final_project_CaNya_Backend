@@ -10,7 +10,4 @@ import org.springframework.stereotype.Repository;
 public interface RatingRepository extends JpaRepository<Rating, Long> {
     @EntityGraph(attributePaths = {"board"})
     Rating findRatingByBoardAndMemberId(Board board, Long memberId);
-
-    @EntityGraph(attributePaths = {"board"})
-    Rating findRatingByBoard(Board board);
 }

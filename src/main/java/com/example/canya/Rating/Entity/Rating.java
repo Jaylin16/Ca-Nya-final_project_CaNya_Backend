@@ -62,9 +62,6 @@ public class Rating {
     public double getTotalRating(){
         return (this.coffeeRate + this.dessertRate + this.priceRate + this.moodRate + this.kindnessRate + this.parkingRate)/6;
     }
-    public Rating(Board board){
-        this.board = board;
-    }
     public List<String> getTwoHighestRatings(Rating ratingList){
         HashMap<String, Double> ratingMap = new HashMap<String, Double>();
         ratingMap.put("커피 맛집", ratingList.getCoffeeRate());

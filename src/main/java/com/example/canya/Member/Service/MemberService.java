@@ -47,7 +47,6 @@ public class MemberService {
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
     private final S3Uploader s3Uploader;
-
     private final String DEFAULT_IMAGE = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLxVwdzaxNLKosglrrPJRFG8ojryDuVby2yL8J4zwn&s";
 
     public ResponseEntity<?> nameCheck(String memberName){
@@ -111,7 +110,6 @@ public class MemberService {
         return new ResponseEntity<>("로그인에 성공하셨습니다.", httpHeaders, HttpStatus.OK);
     }
 
-    //마이페이지 내가 좋아요한 게시글 전체 조회
     @Transactional
     public ResponseEntity<?> getHeartBoards(Member member) {
 
@@ -133,7 +131,6 @@ public class MemberService {
         return new ResponseEntity<>(myHeartBoardList, HttpStatus.OK);
     }
 
-    //마이페이지 내가 작성한 댓글 전체 조회
     @Transactional
     public ResponseEntity<?> getMyComments(Member member) {
 
@@ -150,7 +147,6 @@ public class MemberService {
         return new ResponseEntity<>(myCommentList, HttpStatus.OK);
     }
 
-    //마이페이지 내가 작성한 게시글 전체 조회
     @Transactional
     public ResponseEntity<?> getMyBoards(Member member) {
 
@@ -171,7 +167,6 @@ public class MemberService {
         return new ResponseEntity<>(myBoardList, HttpStatus.OK);
     }
 
-    //마이페이지 메인 (모두 보기) 최신순 기준 3개씩만 보이도록 반환
     @Transactional
     public ResponseEntity<?> getAllMypage(Member member) {
 
@@ -213,7 +208,6 @@ public class MemberService {
         return new ResponseEntity<>(mypageTotalResponseDto, HttpStatus.OK);
     }
 
-    //마이페이지 내 프로필 사진 변경
 
     @Transactional
     public ResponseEntity<?> profileUpdate(Member member, MultipartFile image) throws IOException {
@@ -235,5 +229,4 @@ public class MemberService {
 
         return new ResponseEntity<>("프로필 사진 변경 완료!", HttpStatus.OK);
     }
-
 }

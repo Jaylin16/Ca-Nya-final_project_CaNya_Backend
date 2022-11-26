@@ -2,7 +2,6 @@ package com.example.canya.Board.Dto;
 
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.List;
 
 @Getter

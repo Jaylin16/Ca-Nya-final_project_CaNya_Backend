@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +24,6 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
 
-
-    //댓글 생성.
     public ResponseEntity<?> createComment(Long boardId, CommentRequestDto commentRequestDto, Member member) {
         Optional<Board> board = boardRepository.findById(boardId);
 
@@ -40,7 +37,6 @@ public class CommentService {
         return new ResponseEntity<>("댓글 생성이 완료되었습니다.", HttpStatus.OK);
     }
 
-    //댓글 전체 불러오기.
     public ResponseEntity<?> getCommentList() {
         List<Comment> comments = commentRepository.findAll();
 
@@ -54,7 +50,6 @@ public class CommentService {
         return new ResponseEntity<>(commentList, HttpStatus.OK);
     }
 
-    //댓글 삭제
     @Transactional
     public ResponseEntity<?> deleteComment(Long commentId, Member member) {
         Optional<Comment> comment = commentRepository.findById(commentId);
@@ -71,7 +66,6 @@ public class CommentService {
         return new ResponseEntity<>("삭제가 완료되었습니다.",HttpStatus.OK);
     }
 
-    //댓글 수정
     @Transactional
     public ResponseEntity<?> commentUpdate(Long commentId, CommentRequestDto commentRequestDto, Member member) {
         Optional<Comment> comment = commentRepository.findById(commentId);

@@ -2,17 +2,13 @@ package com.example.canya.Board.Dto;
 
 import com.example.canya.Board.Entity.Board;
 import com.example.canya.Image.Entity.Image;
-
 import com.example.canya.Rating.Dto.RatingResponseDto;
 import com.example.canya.Rating.Entity.Rating;
 import com.example.canya.Timestamp.Time;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
@@ -36,7 +32,6 @@ public class BoardResponseDto {
     private List<Image> imageList;
     private List<BoardResponseDto> boardResponseDto;
     private List<String> highestRatings;
-
 
     public BoardResponseDto(Board board, RatingResponseDto dto, boolean isLiked) {
         this.memberProfileImage = board.getMember().getMemberProfileImage();
