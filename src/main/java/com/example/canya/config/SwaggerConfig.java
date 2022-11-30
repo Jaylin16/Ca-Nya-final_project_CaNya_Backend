@@ -27,8 +27,8 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo())
-                .securityContexts(Arrays.asList(securityContext())) // JWT
-                .securitySchemes(Arrays.asList(apiKey())); // JWT
+                .securityContexts(Arrays.asList(securityContext())) // jwt
+                .securitySchemes(Arrays.asList(apiKey())); // jwt
     }
 
     private ApiInfo apiInfo() {
@@ -42,19 +42,19 @@ public class SwaggerConfig {
 
     //Api key 만들어주기
     private ApiKey apiKey() {
-        return new ApiKey("JWT", "Authorization", "header");
+        return new ApiKey("jwt", "Authorization", "header");
     }
 
-    //JWT SecurityContext
+    //jwt SecurityContext
     private SecurityContext securityContext() {
         return SecurityContext.builder().securityReferences(defaultAuth()).build();
     }
 
-    //전역으로 JWT 적용.
+    //전역으로 jwt 적용.
     private List<SecurityReference> defaultAuth() {
         AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEveryThing");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
-        return Arrays.asList(new SecurityReference("JWT", authorizationScopes));
+        return Arrays.asList(new SecurityReference("jwt", authorizationScopes));
     }
 }

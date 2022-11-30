@@ -1,9 +1,9 @@
 package com.example.canya.config;
 
-import com.example.canya.JWT.JwtAccessDeniedHandler;
-import com.example.canya.JWT.JwtAuthenticationEntryPoint;
-import com.example.canya.JWT.JwtSecurityConfig;
-import com.example.canya.JWT.TokenProvider;
+import com.example.canya.jwt.JwtAccessDeniedHandler;
+import com.example.canya.jwt.JwtAuthenticationEntryPoint;
+import com.example.canya.jwt.JwtSecurityConfig;
+import com.example.canya.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.ConditionalOnDefaultWebSecurity;
