@@ -1,5 +1,6 @@
 package com.example.canya.category.service;
 
+import com.example.canya.annotations.SetPageable;
 import com.example.canya.board.dto.BoardResponseDto;
 import com.example.canya.board.entity.Board;
 import com.example.canya.board.repository.BoardRepository;
@@ -25,6 +26,7 @@ public class CategoryService {
     private final HeartRepository heartRepository;
     private final BoardService boardService;
 
+    @SetPageable
     public ResponseEntity<?> getMainCategory(String keyword, Integer page, Integer size) {
 
         Pageable pageable = PageRequest.of(page, size);
@@ -46,6 +48,7 @@ public class CategoryService {
         }
     }
 
+    @SetPageable
     public ResponseEntity<?> searchBoard(String category, String keyword, Integer page, Integer size) {
 
         Pageable pageable = PageRequest.of(page, size);
