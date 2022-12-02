@@ -25,6 +25,14 @@ jobs:
 #      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
 #      with:
 #        arguments: build
+    - name: make application.properties
+      run: |
+        echo ">> mkdir & touch"
+        mkdir -p ./src/main/resources
+        cd ./src/main/resources
+        touch ./application.properties
+        echo ">> copy application.properties"
+        echo "${{ secrets.APPLICATION_PROPERTIES }}" >> ./application.properties
 
     ## gradle caching
     - name: Gradle Caching
