@@ -5,9 +5,7 @@ import com.example.canya.community.dto.CommunityRequestDto;
 import com.example.canya.member.entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import com.example.canya.member.entity.Member;
 import com.example.canya.timestamp.Timestamp;
-import lombok.Getter;
 
 import javax.persistence.*;
 
