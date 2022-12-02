@@ -60,7 +60,8 @@ jobs:
 
     # 압축파일 형태로 전달
     - name: Make zip file
-      run: zip -r -qq -j ./canya.zip ./deploy
+      run: zip -r ./wef.zip .
+      shell: bash
       
     #   
     - name: Upload to S3
