@@ -29,16 +29,22 @@ public class CommentController {
         return commentService.getCommentList();
     }
 
-    @Operation(summary = "댓글 삭제", description = "댓글 삭제 기능")
-    @DeleteMapping("/auth/comment/{commentId}/delete")
-    public ResponseEntity<?> commentDelete(@PathVariable Long commentId, @AuthenticationPrincipal MemberDetailsImpl memberDetails) {
-        return commentService.deleteComment(commentId, memberDetails.getMember());
+    @Operation(summary = "게시물 댓글 조회", description = "게시물 별 댓글 전체 조회 기능")
+    @GetMapping("/get/{boardId}/comments")
+    public ResponseEntity<?> boardCommentList (@PathVariable Long boardId) {
+        return commentService.getBoardCommentList(boardId);
     }
 
     @Operation(summary = "댓글 수정", description = "댓글 수정 기능")
     @PutMapping("/auth/comment/{commentId}/update")
     public ResponseEntity<?> commentUpdate(@PathVariable Long commentId, @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetails) {
         return commentService.commentUpdate(commentId, commentRequestDto, memberDetails.getMember());
+    }
+
+    @Operation(summary = "댓글 삭제", description = "댓글 삭제 기능")
+    @DeleteMapping("/auth/comment/{commentId}/delete")
+    public ResponseEntity<?> commentDelete(@PathVariable Long commentId, @AuthenticationPrincipal com.example.canya.member.service.MemberDetailsImpl memberDetails) {
+        return commentService.deleteComment(commentId, memberDetails.getMember());
     }
 
 
