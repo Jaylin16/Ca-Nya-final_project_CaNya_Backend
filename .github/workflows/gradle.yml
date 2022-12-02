@@ -22,6 +22,8 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
+        
+    - run: echo ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     - name: make application.properties
       run: |
