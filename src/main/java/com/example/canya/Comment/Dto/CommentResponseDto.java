@@ -1,6 +1,6 @@
-package com.example.canya.Comment.Dto;
+package com.example.canya.comment.dto;
 
-import com.example.canya.Comment.Entity.Comment;
+import com.example.canya.comment.entity.Comment;
 import lombok.Getter;
 import lombok.Setter;
 

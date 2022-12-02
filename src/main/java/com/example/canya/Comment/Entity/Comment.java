@@ -1,8 +1,8 @@
-package com.example.canya.Comment.Entity;
+package com.example.canya.comment.entity;
 
-import com.example.canya.Board.Entity.Board;
-import com.example.canya.Comment.Dto.CommentRequestDto;
-import com.example.canya.Member.Entity.Member;
+import com.example.canya.board.entity.Board;
+import com.example.canya.comment.dto.CommentRequestDto;
+import com.example.canya.member.entity.Member;
 import com.example.canya.Timestamp.Timestamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

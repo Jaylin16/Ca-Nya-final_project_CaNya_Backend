@@ -1,4 +1,4 @@
-package com.example.canya.Comment.Dto;
+package com.example.canya.comment.dto;
 
 import com.sun.istack.NotNull;
 import lombok.Getter;
