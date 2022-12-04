@@ -30,11 +30,10 @@ import java.util.Optional;
 public class BoardAOP {
 
     private final BoardRepository boardRepository;
-    private final BoardService boardService;
     private final S3Uploader s3Uploader;
     private final ImageRepository imageRepository;
 
-    @Pointcut("@annotation(com.example.canya.annotations.VerifyMember)")
+    @Pointcut("@annotation(com.example.canya.annotations.VerifyMemberBoard)")
     private void verifyMember(){}
 
     @Pointcut("@annotation(com.example.canya.annotations.AddImage)")
@@ -44,7 +43,6 @@ public class BoardAOP {
     public ResponseEntity<?> verify(ProceedingJoinPoint joinPoint, MemberDetailsImpl memberDetails, Long boardId ) throws Throwable{
         Object currentMember = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Board> optionalBoard = boardRepository.findById(boardId);
-
 
         if(optionalBoard.isEmpty()){
             return new ResponseEntity<>("게시글이 존재하지 않습니다",HttpStatus.BAD_REQUEST);

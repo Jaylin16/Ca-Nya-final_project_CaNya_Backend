@@ -1,5 +1,6 @@
 package com.example.canya.comment.controller;
 
+import com.example.canya.annotations.VerifyMemberComment;
 import com.example.canya.comment.dto.CommentRequestDto;
 import com.example.canya.comment.service.CommentService;
 import com.example.canya.member.service.MemberDetailsImpl;
@@ -30,14 +31,16 @@ public class CommentController {
     }
 
     @Operation(summary = "댓글 삭제", description = "댓글 삭제 기능")
+    @VerifyMemberComment
     @DeleteMapping("/auth/comment/{commentId}/delete")
     public ResponseEntity<?> commentDelete(@PathVariable Long commentId, @AuthenticationPrincipal MemberDetailsImpl memberDetails) {
         return commentService.deleteComment(commentId, memberDetails.getMember());
     }
 
     @Operation(summary = "댓글 수정", description = "댓글 수정 기능")
+    @VerifyMemberComment
     @PutMapping("/auth/comment/{commentId}/update")
-    public ResponseEntity<?> commentUpdate(@PathVariable Long commentId, @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetails) {
+    public ResponseEntity<?> commentUpdate(@RequestBody CommentRequestDto commentRequestDto, @PathVariable Long commentId, @AuthenticationPrincipal MemberDetailsImpl memberDetails) {
         return commentService.commentUpdate(commentId, commentRequestDto, memberDetails.getMember());
     }
 

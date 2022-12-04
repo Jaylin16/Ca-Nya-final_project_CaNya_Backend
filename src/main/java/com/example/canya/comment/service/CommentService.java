@@ -53,14 +53,14 @@ public class CommentService {
 
     @Transactional
     public ResponseEntity<?> deleteComment(Long commentId, Member member) {
-        Optional<Comment> comment = commentRepository.findById(commentId);
-        if(comment.isEmpty()){
-            return new ResponseEntity<>("해당 댓글이 없습니다.", HttpStatus.BAD_REQUEST);
-        }
-
-        if(!(Objects.equals(comment.get().getMember().getMemberId(), member.getMemberId()))){
-            return new ResponseEntity<>("본인이 작성한 댓글만 삭제 가능합니다.", HttpStatus.BAD_REQUEST);
-        }
+//        Optional<Comment> comment = commentRepository.findById(commentId);
+//        if(comment.isEmpty()){
+//            return new ResponseEntity<>("해당 댓글이 없습니다.", HttpStatus.BAD_REQUEST);
+//        }
+//
+//        if(!(Objects.equals(comment.get().getMember().getMemberId(), member.getMemberId()))){
+//            return new ResponseEntity<>("본인이 작성한 댓글만 삭제 가능합니다.", HttpStatus.BAD_REQUEST);
+//        }
 
         commentRepository.deleteById(commentId);
 
@@ -70,13 +70,13 @@ public class CommentService {
     @Transactional
     public ResponseEntity<?> commentUpdate(Long commentId, CommentRequestDto commentRequestDto, Member member) {
         Optional<Comment> comment = commentRepository.findById(commentId);
-        if (comment.isEmpty()) {
-            return new ResponseEntity<>("해당 댓글이 없습니다.", HttpStatus.BAD_REQUEST);
-        }
-
-        if (!(Objects.equals(comment.get().getMember().getMemberId(), member.getMemberId()))) {
-            return new ResponseEntity<>("본인이 작성한 댓글만 수정 가능합니다.", HttpStatus.BAD_REQUEST);
-        }
+//        if (comment.isEmpty()) {
+//            return new ResponseEntity<>("해당 댓글이 없습니다.", HttpStatus.BAD_REQUEST);
+//        }
+//
+//        if (!(Objects.equals(comment.get().getMember().getMemberId(), member.getMemberId()))) {
+//            return new ResponseEntity<>("본인이 작성한 댓글만 수정 가능합니다.", HttpStatus.BAD_REQUEST);
+//        }
 
         comment.get().update(commentRequestDto);
 
