@@ -30,41 +30,43 @@ public class CommunityService {
     @Transactional
     public ResponseEntity<?> saveCommunity(CommunityRequestDto communityRequestDto, Member member, MultipartFile image) throws IOException {
 
-        Community community = new Community(communityRequestDto, member, s3Uploader.upload(image, "communityImage"));
-
+        Community community = new Community(communityRequestDto, member, image !=null ?s3Uploader.upload(image, "communityImage"):"https://img.siksinhot.com/article/1557391416433073.jpg");
         communityRepository.save(community);
 
         return new ResponseEntity<>("작성이 완료되었습니다", HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseEntity<?> updateCommunity(Long communityId, CommunityRequestDto communityRequestDto, MemberDetailsImpl memberDetails, MultipartFile image) throws IOException {
+    public ResponseEntity<?> updateCommunity(Long communityId, CommunityRequestDto communityRequestDto, MemberDetailsImpl memberDetails, MultipartFile image, String url) throws IOException {
 
         Optional<Community> community = communityRepository.findById(communityId);
 
         if (community.isEmpty()){
-
             return new ResponseEntity<>("해당 게시글을 찾을 수 없습니다", HttpStatus.BAD_REQUEST);
         }
 
         if (!(community.get().getMember().getMemberId().equals(memberDetails.getMember().getMemberId()))) {
-
             return new ResponseEntity<>("작성자가 아닙니다", HttpStatus.BAD_REQUEST);
         }
 
-        String originImage = community.get().getCommunityImage();
+        if (url != null) {
+            community.get().update(communityRequestDto, url);
+        }
 
-        String targetImage = "communityImage" + originImage.substring(originImage.lastIndexOf("/"));
+        if (image != null) {
+            String originImage = community.get().getCommunityImage();
+            String targetImage = "communityImage" + originImage.substring(originImage.lastIndexOf("/"));
 
-        s3Uploader.deleteFile(targetImage);
+            s3Uploader.deleteFile(targetImage);
 
-        String newImage = s3Uploader.upload(image, "communityImage");
-
-        community.get().update(communityRequestDto, newImage);
+            String newImage = s3Uploader.upload(image, "communityImage");
+            community.get().update(communityRequestDto, newImage);
+        }
 
         return new ResponseEntity<>("수정이 완료되었습니다", HttpStatus.OK);
     }
 
+    @Transactional
     public ResponseEntity<?> getCommunityList() {
         List<Community> communities = communityRepository.findAll();
 
@@ -86,6 +88,7 @@ public class CommunityService {
         }
 
         CommunityResponseDto communityResponseDto = new CommunityResponseDto(community.get());
+        community.get().addHitCount();
 
         return new ResponseEntity<>(communityResponseDto, HttpStatus.OK);
     }

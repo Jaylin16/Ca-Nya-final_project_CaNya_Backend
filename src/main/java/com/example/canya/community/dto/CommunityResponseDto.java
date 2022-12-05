@@ -13,7 +13,7 @@ public class CommunityResponseDto {
     private String communityTitle;
     private String communityContent;
     private String communityImage;
-    private Integer communityHitCount;
+    private Long communityHitCount;
     private String createdAt;
     private String memberNickname;
     private String memberProfileImage;
