@@ -7,6 +7,7 @@ import com.example.canya.communityComment.dto.CommunityCommentResponseDto;
 import com.example.canya.communityComment.entity.CommunityComment;
 import com.example.canya.communityComment.repository.CommunityCommentRepository;
 import com.example.canya.member.entity.Member;
+import com.example.canya.member.service.MemberDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,4 +55,37 @@ public class CommunityCommentService {
 
         return new ResponseEntity<>(communityCommentResponseDtoList, HttpStatus.OK);
     }
+
+    @Transactional
+    public ResponseEntity<?> updateCommunityComment(Long communityCommentId, CommunityCommentRequestDto communityCommentRequestDto, MemberDetailsImpl memberDetails) {
+
+        Optional<CommunityComment> communityComment = communityCommentRepository.findById(communityCommentId);
+        if (communityComment.isEmpty()) {
+            return new ResponseEntity<>("해당 댓글이 존재하지 않습니다", HttpStatus.BAD_REQUEST);
+        }
+
+        if (!(communityComment.get().getMember().getMemberId().equals(memberDetails.getMember().getMemberId()))) {
+            return new ResponseEntity<>("댓글 작성자가 아닙니다", HttpStatus.BAD_REQUEST);
+        }
+
+        communityComment.get().update(communityCommentRequestDto);
+        return new ResponseEntity<>("수정이 완료되었습니다", HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<?> deleteCommunityComment(Long communityCommentId, Member member) {
+
+        Optional<CommunityComment> communityComment = communityCommentRepository.findById(communityCommentId);
+        if (communityComment.isEmpty()) {
+            return new ResponseEntity<>("해당 댓글이 존재하지 않습니다", HttpStatus.BAD_REQUEST);
+        }
+
+        if (!(communityComment.get().getMember().getMemberId().equals(member.getMemberId()))) {
+            return new ResponseEntity<>("댓글 작성자가 아닙니다", HttpStatus.BAD_REQUEST);
+        }
+
+        communityCommentRepository.deleteById(communityCommentId);
+        return new ResponseEntity<>("삭제가 완료되었습니다", HttpStatus.OK);
+    }
+
 }

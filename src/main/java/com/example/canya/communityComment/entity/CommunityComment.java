@@ -34,4 +34,9 @@ public class CommunityComment extends Timestamp {
         this.community = community;
         this.member = member;
     }
+
+    public void update(CommunityCommentRequestDto communityCommentRequestDto) {
+        this.communityCommentContent = communityCommentRequestDto.getCommunityCommentContent();
+    }
+
 }
