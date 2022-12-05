@@ -20,7 +20,7 @@ public class Community extends Timestamp {
     private String communityTitle;
     private String communityContent;
     private String communityImage;
-    private Integer communityHitCount;
+    private Long communityHitCount = 0L;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
@@ -37,5 +37,9 @@ public class Community extends Timestamp {
         this.communityTitle = communityRequestDto.getCommunityTitle();
         this.communityContent = communityRequestDto.getCommunityContent();
         this.communityImage = image;
+    }
+
+    public void addHitCount() {
+        this.communityHitCount += 1;
     }
 }
