@@ -63,10 +63,6 @@ public class BoardController {
                                        @AuthenticationPrincipal MemberDetailsImpl memberDetails) throws IOException{
 
 
-        System.out.println("images in update = " + images);
-        System.out.println("dataList in update = " + dataList);
-        System.out.println("urlList in update = " + urlList);
-
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});
 
@@ -88,9 +84,11 @@ public class BoardController {
 
         System.out.println("image in create = " + image);
         System.out.println("dataList in create = " + dataList);
+        
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});
-
+        System.out.println("dto.getAddressId() = " + dto.getAddressId());
+        System.out.println("dto.getBoardTitle() = " + dto.getBoardTitle());
         return boardService.confirmBoard(dto, image, boardId);
     }
 
