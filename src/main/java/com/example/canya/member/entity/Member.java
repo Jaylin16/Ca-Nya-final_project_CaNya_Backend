@@ -7,7 +7,11 @@ import com.example.canya.communityComment.entity.CommunityComment;
 import com.example.canya.heart.entity.Heart;
 import com.example.canya.member.dto.MemberRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +43,7 @@ public class Member {
     private String memberProfileImage;
 
     @OneToMany(mappedBy ="member", cascade = CascadeType.REMOVE)
-    private List<Board> Board = new ArrayList<>();
+    private List<com.example.canya.board.entity.Board> Board = new ArrayList<>();
 
     @OneToMany(mappedBy ="member", cascade = CascadeType.REMOVE)
     private List<Comment> Comment = new ArrayList<>();

@@ -1,7 +1,7 @@
 package com.example.canya.board.controller;
 
 import com.example.canya.annotations.Timer;
-import com.example.canya.annotations.VerifyMember;
+import com.example.canya.annotations.VerifyMemberBoard;
 import com.example.canya.board.dto.BoardRequestDto;
 import com.example.canya.board.dto.UpdateUrlDto;
 import com.example.canya.board.service.BoardService;
@@ -21,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping
+@CrossOrigin("https://final-project-frontend-phi.vercel.app")
 @RequiredArgsConstructor
 @Api(tags = "board (메인 페이지, 게시글)")
 public class BoardController {
@@ -54,13 +55,14 @@ public class BoardController {
     }
 
     @Operation(summary = "게시물 편집", description = "게시글 수정 기능")
-    @VerifyMember
+    @VerifyMemberBoard
     @PutMapping("/auth/board/update/{boardId}")
     public ResponseEntity<?> editBoard(@RequestPart(value = "images", required = false) List<MultipartFile> images,
                                        @RequestParam(value = "data", required = false) String dataList,
                                        @RequestParam(value = "url", required = false) String urlList,
                                        @PathVariable Long boardId,
                                        @AuthenticationPrincipal MemberDetailsImpl memberDetails) throws IOException{
+
 
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});
@@ -81,14 +83,18 @@ public class BoardController {
                                           @RequestParam("data")String dataList,
                                           @PathVariable Long boardId) throws IOException {
 
+        System.out.println("image in create = " + image);
+        System.out.println("dataList in create = " + dataList);
+        
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});
-
+        System.out.println("dto.getAddressId() = " + dto.getAddressId());
+        System.out.println("dto.getBoardTitle() = " + dto.getBoardTitle());
         return boardService.confirmBoard(dto, image, boardId);
     }
 
     @Operation(summary = "게시물 삭제", description = "작성된 게시글 삭제 기능")
-    @VerifyMember
+    @VerifyMemberBoard
     @DeleteMapping("/auth/board/delete/{boardId}")
     public ResponseEntity<?> deleteBoard(@PathVariable Long boardId, @AuthenticationPrincipal MemberDetailsImpl memberDetails){
 

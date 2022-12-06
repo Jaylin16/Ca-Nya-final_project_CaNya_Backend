@@ -10,9 +10,9 @@ import com.example.canya.communityComment.entity.CommunityComment;
 import com.example.canya.communityComment.repository.CommunityCommentRepository;
 import com.example.canya.heart.entity.Heart;
 import com.example.canya.heart.repository.HeartRepository;
-import com.example.canya.jwt.dto.TokenDto;
 import com.example.canya.jwt.JwtAuthFilter;
 import com.example.canya.jwt.TokenProvider;
+import com.example.canya.jwt.dto.TokenDto;
 import com.example.canya.member.dto.MemberRequestDto;
 import com.example.canya.member.dto.MemberResponseDto;
 import com.example.canya.member.dto.MypageResponseDto;
@@ -35,6 +35,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -313,5 +314,5 @@ public class MemberService {
 
         return new ResponseEntity<>("프로필 사진 변경 완료!", HttpStatus.OK);
     }
-
+    
 }

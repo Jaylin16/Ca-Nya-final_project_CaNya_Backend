@@ -3,6 +3,7 @@ package com.example.canya.member.dto;
 import com.example.canya.member.entity.Member;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+
 import java.util.List;
 
 @Getter
