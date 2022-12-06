@@ -13,6 +13,6 @@ POST http://localhost:8080/member/login
 Content-Type: application/json
 
 {
-  "memberName" : "Adam",
-  "password" : "1234"
+  "memberName" : "apple",
+  "password" : "apple12"
 }

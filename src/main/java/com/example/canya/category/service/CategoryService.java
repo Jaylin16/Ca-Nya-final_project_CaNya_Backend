@@ -7,6 +7,7 @@ import com.example.canya.board.repository.BoardRepository;
 import com.example.canya.board.service.BoardService;
 import com.example.canya.heart.repository.HeartRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -26,7 +27,7 @@ public class CategoryService {
     private final HeartRepository heartRepository;
     private final BoardService boardService;
 
-    @SetPageable
+
     public ResponseEntity<?> getMainCategory(String keyword, Integer page, Integer size) {
 
         Pageable pageable = PageRequest.of(page, size);
@@ -37,6 +38,34 @@ public class CategoryService {
         boardService.addBoards(boardList, keywordPick);
 
         return new ResponseEntity<>(new BoardResponseDto(keywordPick, size, boardNum, page), HttpStatus.OK);
+    }
+    public ResponseEntity<?> getMainCategories(String keyword, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page,size);
+        List<BoardResponseDto> keywordPick = new ArrayList<>();
+        int boardNum = 0;
+
+        if(Objects.equals(keyword, "인기")){
+
+            System.out.println("인기 조회");
+            boardNum = boardRepository.findAll().size();
+            System.out.println("boardNum in 인기= " + boardNum);;
+            List<Board> boardList = boardRepository.findBoardsByOrderByTotalHeartCountDesc(pageable);
+            boardService.addBoards(boardList, keywordPick);
+
+        }
+        if(Objects.equals(keyword,"최신")){
+
+            System.out.println("최신 조회");
+            boardNum = boardRepository.findAll().size();
+            System.out.println("boardNum in 최신= " + boardNum);
+            List<Board> boardList = boardRepository.findBoardsByOrderByCreatedAtDesc(pageable);
+            System.out.println(boardList.get(0));
+            boardService.addBoards(boardList, keywordPick);
+
+
+        }
+        return new ResponseEntity<>(new BoardResponseDto(keywordPick, size, boardNum, page), HttpStatus.OK);
+
     }
 
 
@@ -101,4 +130,6 @@ public class CategoryService {
 
         return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boardNum, page), HttpStatus.OK);
     }
+
+
 }

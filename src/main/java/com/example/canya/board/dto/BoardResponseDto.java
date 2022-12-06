@@ -24,6 +24,7 @@ public class BoardResponseDto {
     private String memberNickname;
     private String memberProfileImage;
     private String imageUrl;
+    private String addressId;
     private String date;
     private LocalDateTime createdAt;
     private Rating rating;
@@ -38,6 +39,7 @@ public class BoardResponseDto {
         this.memberNickname = board.getMember().getMemberNickname();
         this.address = board.getAddress();
         this.isLiked = isLiked;
+        this.addressId = board.getAddressId();
         this.boardId = board.getBoardId();
         this.date = Time.calculateTime(board);
         this.boardTitle = board.getBoardTitle();
@@ -57,6 +59,7 @@ public class BoardResponseDto {
     public BoardResponseDto(Board board, boolean isLiked) {
         this.boardContent = board.getBoardContent();
         this.boardId = board.getBoardId();
+        this.addressId = board.getAddressId();
         this.boardTitle = board.getBoardTitle();
         this.createdAt = board.getCreatedAt();
         this.rating = board.getRatingList().get(0);

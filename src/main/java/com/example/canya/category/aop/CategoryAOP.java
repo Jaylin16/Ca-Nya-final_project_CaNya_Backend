@@ -10,22 +10,22 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-@Aspect
-@Component
-@Slf4j
-@RequiredArgsConstructor
-public class CategoryAOP {
-
-    @Pointcut("@annotation(com.example.canya.annotations.Search)")
-    private void search(){}
-
-    @Pointcut("@annotation(com.example.canya.annotations.SetPageable)")
-    private void setPageable(){}
-
-    @Around(value = "setPageable() && args(..,page,size)")
-    private Pageable setPageable(ProceedingJoinPoint joinPoint, Integer page, Integer size) throws Throwable {
-        Pageable pageable = PageRequest.of(page, size);
-        return pageable;
-    }
-
-}
+//@Aspect
+//@Component
+//@Slf4j
+//@RequiredArgsConstructor
+//public class CategoryAOP {
+//
+//    @Pointcut("@annotation(com.example.canya.annotations.Search)")
+//    private void search(){}
+//
+//    @Pointcut("@annotation(com.example.canya.annotations.SetPageable)")
+//    private void setPageable(){}
+//
+//    @Around(value = "setPageable() && args(..,page,size)")
+//    private Pageable setPageable(ProceedingJoinPoint joinPoint, Integer page, Integer size) throws Throwable {
+//        Pageable pageable = PageRequest.of(page, size);
+//        return pageable;
+//    }
+//
+//}
