@@ -2,11 +2,15 @@ package com.example.canya.member.service;
 
 import com.example.canya.member.entity.Authority;
 import com.example.canya.member.entity.Member;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.Collection;
+
 
 public class MemberDetailsImpl implements UserDetails {
 

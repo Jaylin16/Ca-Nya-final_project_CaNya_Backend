@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Objects;
+
 @RestController
 @RequiredArgsConstructor
 public class CategoryController {
@@ -19,17 +21,23 @@ public class CategoryController {
     @GetMapping("/board/main/{keyword}")
     public ResponseEntity<?> getMainCategory(@PathVariable String keyword,
                                              @RequestParam(value = "page",required = false) Integer page,
-                                             @RequestParam(value = "size" , required = false) Integer size){
-        Integer pageTemp = page -1;
+                                             @RequestParam(value = "size" , required = false) Integer size) {
+        Integer pageTemp = page - 1;
 
-        return categoryService.getMainCategory(keyword,pageTemp, size);
+        if (Objects.equals(keyword, "최신") || Objects.equals(keyword, "전체") || Objects.equals(keyword, "인기")) {
+
+            return categoryService.getMainCategories(keyword, pageTemp, size);
+        } else {
+
+            return categoryService.getMainCategory(keyword, pageTemp, size);
+        }
     }
-
     @GetMapping("/board/search/{category}/{keyword}")
     public ResponseEntity<?> searchBoard(@PathVariable String category,
                                          @PathVariable String keyword,
                                          @RequestParam(required = false) Integer page,
                                          @RequestParam(required = false) Integer size){
+
 
         Integer pageTemp = page -1;
         return categoryService.searchBoard(category,keyword,pageTemp,size);

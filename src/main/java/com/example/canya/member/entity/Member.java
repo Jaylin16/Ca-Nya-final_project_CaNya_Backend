@@ -1,6 +1,7 @@
 package com.example.canya.member.entity;
 
 import com.example.canya.board.entity.Board;
+import com.example.canya.chat.entity.ChatRoom;
 import com.example.canya.comment.entity.Comment;
 import com.example.canya.heart.entity.Heart;
 import com.example.canya.member.dto.MemberRequestDto;
@@ -44,6 +45,7 @@ public class Member {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
     private List<Heart> Heart = new ArrayList<>();
+
 
     @JsonIgnore
     @Enumerated(EnumType.STRING)

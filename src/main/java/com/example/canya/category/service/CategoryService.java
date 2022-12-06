@@ -1,11 +1,13 @@
 package com.example.canya.category.service;
 
+import com.example.canya.annotations.SetPageable;
 import com.example.canya.board.dto.BoardResponseDto;
 import com.example.canya.board.entity.Board;
 import com.example.canya.board.repository.BoardRepository;
 import com.example.canya.board.service.BoardService;
 import com.example.canya.heart.repository.HeartRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -25,6 +27,7 @@ public class CategoryService {
     private final HeartRepository heartRepository;
     private final BoardService boardService;
 
+
     public ResponseEntity<?> getMainCategory(String keyword, Integer page, Integer size) {
 
         Pageable pageable = PageRequest.of(page, size);
@@ -36,6 +39,29 @@ public class CategoryService {
 
         return new ResponseEntity<>(new BoardResponseDto(keywordPick, size, boardNum, page), HttpStatus.OK);
     }
+    public ResponseEntity<?> getMainCategories(String keyword, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page,size);
+        List<BoardResponseDto> keywordPick = new ArrayList<>();
+
+        if(Objects.equals(keyword, "인기")){
+
+            int boardNum = boardRepository.findAll().size();
+            List<Board> boardList = boardRepository.findBoardsByOrderByTotalHeartCountDesc(pageable);
+            boardService.addBoards(boardList, keywordPick);
+            return new ResponseEntity<>(new BoardResponseDto(keywordPick, size, boardNum, page), HttpStatus.OK);
+
+        }
+        if(Objects.equals(keyword,"최신")){
+            int boardNum = boardRepository.findAll().size();
+            List<Board> boardList = boardRepository.findBoardsByOrderByCreatedAtDesc(pageable);
+            boardService.addBoards(boardList, keywordPick);
+            return new ResponseEntity<>(new BoardResponseDto(keywordPick, size, boardNum, page), HttpStatus.OK);
+
+        }
+        else{
+            return new ResponseEntity<>("다른 카테고리를 선택해 주세요", HttpStatus.BAD_REQUEST);
+        }
+    }
 
 
     public void addSearchBoard(Slice<Board> boardList, List<BoardResponseDto> boardResponseDtos) {
@@ -46,6 +72,7 @@ public class CategoryService {
         }
     }
 
+    @SetPageable
     public ResponseEntity<?> searchBoard(String category, String keyword, Integer page, Integer size) {
 
         Pageable pageable = PageRequest.of(page, size);
@@ -98,4 +125,6 @@ public class CategoryService {
 
         return new ResponseEntity<>(new BoardResponseDto(boardResponseDtos, size, boardNum, page), HttpStatus.OK);
     }
+
+
 }
