@@ -39,6 +39,7 @@ public class BoardResponseDto {
         this.memberNickname = board.getMember().getMemberNickname();
         this.address = board.getAddress();
         this.isLiked = isLiked;
+        this.addressId = board.getAddressId();
         this.boardId = board.getBoardId();
         this.date = Time.calculateTime(board);
         this.boardTitle = board.getBoardTitle();

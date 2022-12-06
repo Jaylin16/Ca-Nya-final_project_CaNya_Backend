@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -101,14 +100,14 @@ public class BoardService {
             return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
         }
 
-        if (boardList.get(lastBoardIndex - 1).getImageList().size() == 0) {
-
-            return new ResponseEntity<>("이미 만든 보드가 존재합니다.", HttpStatus.BAD_REQUEST);
-        } else {
+//        if (boardList.get(lastBoardIndex - 1).getImageList().size() == 0) {
+//
+//            return new ResponseEntity<>("이미 만든 보드가 존재합니다.", HttpStatus.BAD_REQUEST);
+//        } else {
             Board board = boardRepository.save(new Board(member));
 
             return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
-        }
+//        }
     }
 
     public ResponseEntity<?> getBoardDetail(Long boardId, MemberDetailsImpl memberDetails) {

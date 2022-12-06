@@ -3,12 +3,11 @@ package com.example.canya.member.service;
 import com.example.canya.board.entity.Board;
 import com.example.canya.board.repository.BoardRepository;
 import com.example.canya.comment.entity.Comment;
-import com.example.canya.comment.repository.CommentRepository;
 import com.example.canya.heart.entity.Heart;
 import com.example.canya.heart.repository.HeartRepository;
-import com.example.canya.jwt.dto.TokenDto;
 import com.example.canya.jwt.JwtAuthFilter;
 import com.example.canya.jwt.TokenProvider;
+import com.example.canya.jwt.dto.TokenDto;
 import com.example.canya.member.dto.MemberRequestDto;
 import com.example.canya.member.dto.MemberResponseDto;
 import com.example.canya.member.dto.MypageResponseDto;
@@ -28,6 +27,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -45,7 +45,7 @@ public class MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final HeartRepository heartRepository;
     private final BoardRepository boardRepository;
-    private final CommentRepository commentRepository;
+    private final com.example.canya.comment.repository.CommentRepository commentRepository;
     private final S3Uploader s3Uploader;
     private final String DEFAULT_IMAGE = "http://doograpys.com/common/img/default_profile.png";
 

@@ -1,6 +1,5 @@
 package com.example.canya.member.controller;
 
-import com.example.canya.annotations.VerifyMember;
 import com.example.canya.member.dto.MemberRequestDto;
 import com.example.canya.member.service.MemberDetailsImpl;
 import com.example.canya.member.service.MemberService;
@@ -37,7 +36,6 @@ public class MemberController {
 
     @Operation(summary = "아이디 중복 체크", description = "회원 가입시 사용자 아이디 중복 체크 기능")
     @GetMapping("/name/check/{memberName}")
-    @VerifyMember
     public ResponseEntity<?> nameCheck(@PathVariable String memberName){
         return memberService.nameCheck(memberName);
 
@@ -45,7 +43,6 @@ public class MemberController {
 
     @Operation(summary = "닉네임 중복 체크", description = "회원 가입시 사용자 닉네임 중복 체크 기능")
     @GetMapping("/nickname/check/{memberNickname}")
-    @VerifyMember
     public ResponseEntity<?> nicknameCheck(@PathVariable String memberNickname){
         return memberService.nicknameCheck(memberNickname);
 

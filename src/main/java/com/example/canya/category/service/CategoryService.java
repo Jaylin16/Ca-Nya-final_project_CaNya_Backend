@@ -42,25 +42,30 @@ public class CategoryService {
     public ResponseEntity<?> getMainCategories(String keyword, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page,size);
         List<BoardResponseDto> keywordPick = new ArrayList<>();
+        int boardNum = 0;
 
         if(Objects.equals(keyword, "인기")){
 
-            int boardNum = boardRepository.findAll().size();
+            System.out.println("인기 조회");
+            boardNum = boardRepository.findAll().size();
+            System.out.println("boardNum in 인기= " + boardNum);;
             List<Board> boardList = boardRepository.findBoardsByOrderByTotalHeartCountDesc(pageable);
             boardService.addBoards(boardList, keywordPick);
-            return new ResponseEntity<>(new BoardResponseDto(keywordPick, size, boardNum, page), HttpStatus.OK);
 
         }
         if(Objects.equals(keyword,"최신")){
-            int boardNum = boardRepository.findAll().size();
+
+            System.out.println("최신 조회");
+            boardNum = boardRepository.findAll().size();
+            System.out.println("boardNum in 최신= " + boardNum);
             List<Board> boardList = boardRepository.findBoardsByOrderByCreatedAtDesc(pageable);
+            System.out.println(boardList.get(0));
             boardService.addBoards(boardList, keywordPick);
-            return new ResponseEntity<>(new BoardResponseDto(keywordPick, size, boardNum, page), HttpStatus.OK);
+
 
         }
-        else{
-            return new ResponseEntity<>("다른 카테고리를 선택해 주세요", HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(new BoardResponseDto(keywordPick, size, boardNum, page), HttpStatus.OK);
+
     }
 
 

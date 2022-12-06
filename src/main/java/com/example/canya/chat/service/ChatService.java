@@ -7,7 +7,7 @@
 //import com.example.canya.chat.entity.ChatRoom;
 //import com.example.canya.chat.repository.ChatMessageRepository;
 //import com.example.canya.chat.repository.ChatRoomRepository;
-//import com.example.canya.member.entity.Member;
+//import com.example.canya.member.entity.member;
 //import com.example.canya.member.repository.MemberRepository;
 //import lombok.RequiredArgsConstructor;
 //import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@
 //    private final MemberRepository memberRepository;
 //    private final ChatRoomRepository chatRoomRepository;
 //    public List getChatRoom(Long id){       // 채팅방 목록 조회 ( 재접속시 )
-//        Member member = memberRepository.findById(id).orElseThrow();
+//        member member = memberRepository.findById(id).orElseThrow();
 //        List list = new ArrayList<ChatRoom>();
 //
 //        String chatRoomIdList = member.getChatRoomIdList();
@@ -42,7 +42,7 @@
 //        return list;
 //    }
 //
-//    public Long createChatRoom(Member member, ChatRoomRequestDto requestDto){   // todo : 유효성 검증로직 추가 (멤버리스트) , dto userNameList 수정
+//    public Long createChatRoom(member member, ChatRoomRequestDto requestDto){   // todo : 유효성 검증로직 추가 (멤버리스트) , dto userNameList 수정
 //        member = memberRepository.findById(member.getMemberId()).orElseThrow(()-> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
 //
 //        requestDto.addUser(member);
@@ -63,7 +63,7 @@
 //    }
 //
 //
-//    public ResponseDto getChatRoomHistory(@PathVariable String id, Member member){
+//    public ResponseDto getChatRoomHistory(@PathVariable String id, member member){
 //
 //        if(!member.getChatRoomIdList().contains(id)){
 //            throw new GlobalException(ErrorCode.NO_SUCH_CHATROOM);

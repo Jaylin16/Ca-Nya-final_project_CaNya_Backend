@@ -21,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping
+@CrossOrigin("https://final-project-frontend-phi.vercel.app")
 @RequiredArgsConstructor
 @Api(tags = "board (메인 페이지, 게시글)")
 public class BoardController {
