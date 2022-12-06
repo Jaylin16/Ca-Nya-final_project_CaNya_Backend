@@ -18,7 +18,7 @@ public class CommunityComment extends Timestamp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long communityCommentId;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String communityCommentContent;
 
     @ManyToOne

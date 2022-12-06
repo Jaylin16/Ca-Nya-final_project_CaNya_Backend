@@ -61,6 +61,9 @@ public class CommunityService {
 
             String newImage = s3Uploader.upload(image, "communityImage");
             community.get().update(communityRequestDto, newImage);
+        }else {
+            String defaultImage = "https://img.siksinhot.com/article/1557391416433073.jpg";
+            community.get().update(communityRequestDto, defaultImage);
         }
 
         return new ResponseEntity<>("수정이 완료되었습니다", HttpStatus.OK);

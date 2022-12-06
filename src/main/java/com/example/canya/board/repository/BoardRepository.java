@@ -18,6 +18,7 @@ public interface BoardRepository extends JpaRepository<Board,Long> {
     List<Board> findBoardsByBoardTitleContaining(String keyword);
     Slice<Board> findBoardsByBoardTitleContaining(String keyword, Pageable pageable);
     List<Board> findBoardByMember(Member member);
+    Slice<Board> findBoardByMember(Member member, Pageable pageable);
     List<Board> findTop6ByIsReadyTrueOrderByCreatedAtDesc();
     List<Board> findTop4ByIsReadyTrueOrderByTotalHeartCountDesc();
     List<Board> findTop8ByIsReadyTrueOrderByCreatedAtDesc();

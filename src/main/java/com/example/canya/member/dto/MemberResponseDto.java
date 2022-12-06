@@ -2,6 +2,8 @@ package com.example.canya.member.dto;
 
 import com.example.canya.board.entity.Board;
 import com.example.canya.comment.entity.Comment;
+import com.example.canya.community.entity.Community;
+import com.example.canya.communityComment.entity.CommunityComment;
 import com.example.canya.image.entity.Image;
 import com.example.canya.rating.entity.Rating;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -16,21 +18,40 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MemberResponseDto {
 
-    private Long boardId;
+    //Member 관련 필드
     private Long memberId;
-    private String boardTitle;
     private String memberNickname;
+
+    //Board 관련 필드
+    private Long boardId;
+    private String boardTitle;
     private String boardContent;
     private String address;
     private String boardCreatedAt;
+    private String totalRating;
+    private List<Image> imageList = new ArrayList<>();
+    private List<Rating> ratingList = new ArrayList<>();
+
+    //Comment 관련 필드
     private Long commentId;
     private String commentContent;
     private Integer commentCount;
     private String commentCreatedAt;
-    private String totalRating;
+
+    //Heart 관련 필드
     private Integer heartCount;
-    private List<Rating> ratingList = new ArrayList<>();
-    private List<Image> imageList = new ArrayList<>();
+
+    //Community 관련 필드
+    private Long communityId;
+    private String communityTitle;
+    private String communityContent;
+    private String communityImage;
+    private String communityCreatedAt;
+
+    //CommunityComment 관련 필드
+    private Long communityCommentId;
+    private String communityCommentContent;
+    private String communityCommentCreatedAt;
 
 
     public MemberResponseDto(Board board) {
@@ -52,5 +73,22 @@ public class MemberResponseDto {
         this.commentId = comment.getCommentId();
         this.commentContent = comment.getCommentContent();
         this.commentCreatedAt = comment.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
+    public MemberResponseDto(Community community) {
+        this.communityId = community.getCommunityId();
+        this.communityTitle = community.getCommunityTitle();
+        this.communityContent = community.getCommunityContent();
+        this.communityImage = community.getCommunityImage();
+        this.communityCreatedAt = community.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
+    public MemberResponseDto(CommunityComment communityComment) {
+        this.communityId = communityComment.getCommunity().getCommunityId();
+        this.communityTitle = communityComment.getCommunity().getCommunityTitle();
+        this.communityContent = communityComment.getCommunity().getCommunityContent();
+        this.communityCommentId = communityComment.getCommunityCommentId();
+        this.communityCommentContent = communityComment.getCommunityCommentContent();
+        this.communityCommentCreatedAt = communityComment.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 }
