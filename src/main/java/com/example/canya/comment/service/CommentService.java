@@ -59,9 +59,9 @@ public class CommentService {
             return new ResponseEntity<>("본 게시글에는 댓글이 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        List<com.example.canya.comment.dto.CommentResponseDto> boardCommentList = new ArrayList<>();
+        List<CommentResponseDto> boardCommentList = new ArrayList<>();
         for(Comment commentList : comments) {
-            com.example.canya.comment.dto.CommentResponseDto commentResponseDto = new com.example.canya.comment.dto.CommentResponseDto(commentList);
+            CommentResponseDto commentResponseDto = new CommentResponseDto(commentList);
 
             boardCommentList.add(commentResponseDto);
         }

@@ -24,25 +24,27 @@ public class CommunityController {
     private final CommunityService communityService;
 
     // 커뮤니티 글 작성
+    @Operation(summary = "커뮤니티 글 작성", description = "커뮤니티 글 작성 기능")
     @PostMapping("/auth/save/community")
     public ResponseEntity<?> saveCommunity(
-            @ModelAttribute(value = "data")String dataList,
-            @AuthenticationPrincipal MemberDetailsImpl memberDetails,
-            @RequestPart(value = "image", required = false) MultipartFile image
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            @RequestParam(value = "data")String dataList,
+            @AuthenticationPrincipal MemberDetailsImpl memberDetails
             ) throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
-
         CommunityRequestDto communityRequestDto = objectMapper.readValue(dataList, new TypeReference<>() {});
 
         return communityService.saveCommunity(communityRequestDto, memberDetails.getMember(), image);
     }
 
     // 커뮤니티 글 수정
+    @Operation(summary = "커뮤니티 글 수정", description = "커뮤니티 글 수정 기능")
     @PutMapping("/auth/update/community/{communityId}")
     public ResponseEntity<?> updateCommunity(
             @PathVariable Long communityId,
             @RequestParam(value = "data") String dataList,
+            @RequestParam(value = "url", required = false)String url,
             @AuthenticationPrincipal MemberDetailsImpl memberDetails,
             @RequestPart(value = "image", required = false)MultipartFile image
             ) throws IOException {
@@ -51,7 +53,7 @@ public class CommunityController {
 
         CommunityRequestDto communityRequestDto = objectMapper.readValue(dataList, new TypeReference<>() {});
 
-        return communityService.updateCommunity(communityId, communityRequestDto, memberDetails, image);
+        return communityService.updateCommunity(communityId, communityRequestDto, memberDetails, image, url);
     }
 
     @Operation(summary = "커뮤니티 글 전체 조회", description = "커뮤니티 글 전체 조회 기능")

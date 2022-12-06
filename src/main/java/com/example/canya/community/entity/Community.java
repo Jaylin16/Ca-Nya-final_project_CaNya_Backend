@@ -2,12 +2,15 @@ package com.example.canya.community.entity;
 
 
 import com.example.canya.community.dto.CommunityRequestDto;
+import com.example.canya.communityComment.entity.CommunityComment;
 import com.example.canya.member.entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import com.example.canya.timestamp.Timestamp;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,7 +23,10 @@ public class Community extends Timestamp {
     private String communityTitle;
     private String communityContent;
     private String communityImage;
-    private Integer communityHitCount;
+    private Long communityHitCount = 0L;
+
+    @OneToMany(mappedBy = "community", cascade = CascadeType.REMOVE)
+    private List<CommunityComment> communityComment = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "member_id")
@@ -37,5 +43,9 @@ public class Community extends Timestamp {
         this.communityTitle = communityRequestDto.getCommunityTitle();
         this.communityContent = communityRequestDto.getCommunityContent();
         this.communityImage = image;
+    }
+
+    public void addHitCount() {
+        this.communityHitCount += 1;
     }
 }
