@@ -21,6 +21,7 @@ public class Community extends Timestamp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long communityId;
     private String communityTitle;
+    @Column(columnDefinition = "TEXT")
     private String communityContent;
     private String communityImage;
     private Long communityHitCount = 0L;

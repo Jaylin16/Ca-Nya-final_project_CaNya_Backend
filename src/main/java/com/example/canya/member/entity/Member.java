@@ -2,6 +2,8 @@ package com.example.canya.member.entity;
 
 import com.example.canya.board.entity.Board;
 import com.example.canya.comment.entity.Comment;
+import com.example.canya.community.entity.Community;
+import com.example.canya.communityComment.entity.CommunityComment;
 import com.example.canya.heart.entity.Heart;
 import com.example.canya.member.dto.MemberRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -48,6 +50,12 @@ public class Member {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
     private List<Heart> Heart = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
+    private List<Community> Community = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
+    private List<CommunityComment> CommunityComment = new ArrayList<>();
 
     @JsonIgnore
     @Enumerated(EnumType.STRING)
