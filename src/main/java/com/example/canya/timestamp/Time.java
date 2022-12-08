@@ -2,6 +2,7 @@ package com.example.canya.timestamp;
 
 import com.example.canya.board.entity.Board;
 import com.example.canya.comment.entity.Comment;
+import com.example.canya.communityComment.entity.CommunityComment;
 import org.springframework.stereotype.Component;
 import java.sql.Timestamp;
 
@@ -99,4 +100,4 @@ public class Time {
         }
         return msg;
     }
-}
+

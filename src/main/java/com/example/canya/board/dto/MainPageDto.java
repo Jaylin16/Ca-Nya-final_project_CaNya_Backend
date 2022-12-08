@@ -1,5 +1,6 @@
 package com.example.canya.board.dto;
 
+import com.example.canya.board.dto.BoardResponseDto;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.List;

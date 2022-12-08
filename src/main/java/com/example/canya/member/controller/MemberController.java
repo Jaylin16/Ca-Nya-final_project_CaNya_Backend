@@ -48,35 +48,62 @@ public class MemberController {
 
     }
 
-    //마이페이지 내가 좋아요한 게시글 전체 조회
     @Operation(summary = "마이페이지 좋아요한 게시글", description = "마이페이지 내가 좋아요한 게시글 전체 조회 기능")
     @GetMapping("/auth/mypage/heart-boards")
-    public ResponseEntity<?> getHeartBoards(@AuthenticationPrincipal MemberDetailsImpl memberDetails){
-        return memberService.getHeartBoards(memberDetails.getMember());
+    public ResponseEntity<?> getHeartBoards(@AuthenticationPrincipal MemberDetailsImpl memberDetails,
+                                            @RequestParam(value = "page") Integer page,
+                                            @RequestParam(value = "size") Integer size){
+
+        Integer pageTemp = page -1;
+        return memberService.getHeartBoards(memberDetails.getMember(), pageTemp, size);
     }
 
-    //마이페이지 내가 작성한 댓글 전체 조회
     @Operation(summary = "마이페이지 작성 댓글 조회", description = "마이페이지 내가 작성한 댓글 전체 조회 기능")
     @GetMapping("/auth/mypage/comments")
-    public ResponseEntity<?> getMyComments(@AuthenticationPrincipal MemberDetailsImpl memberDetails){
-        return memberService.getMyComments(memberDetails.getMember());
+    public ResponseEntity<?> getMyComments(@AuthenticationPrincipal MemberDetailsImpl memberDetails,
+                                           @RequestParam(value = "page") Integer page,
+                                           @RequestParam(value = "size") Integer size){
+
+        Integer pageTemp = page -1;
+        return memberService.getMyComments(memberDetails.getMember(), pageTemp, size);
     }
 
-    //마이페이지 내가 작성한 게시글 전체 조회
     @Operation(summary = "마이페이지 게시글 전체 조회", description = "마이페이지 내가 작성한 게시글 전체 조회 기능")
     @GetMapping("/auth/mypage/boards")
-    public ResponseEntity<?> getMyBoards(@AuthenticationPrincipal MemberDetailsImpl memberDetails){
-        return memberService.getMyBoards(memberDetails.getMember());
+    public ResponseEntity<?> getMyBoards(@AuthenticationPrincipal MemberDetailsImpl memberDetails,
+                                         @RequestParam(value = "page") Integer page,
+                                         @RequestParam(value = "size") Integer size){
+
+        Integer pageTemp = page -1;
+        return memberService.getMyBoards(memberDetails.getMember(), pageTemp, size);
     }
 
-    //마이페이지 메인 (모두 보기) 최신순 기준 3개씩만 보이도록 반환 + 유저 정보 (유저프로필 이미지, 유저가 누른 총 하트수, 유저가 작성한 게시글 수, 유저가 작성한 댓글 수)
-    @Operation(summary = "마이페이지 메인 모두보기", description = "마이페이지 최신순 Top3 + 유저 정보 (프로필 이미지, 총 하트수, 총 게시글 수, 총 댓글 수)")
+    @Operation(summary = "마이페이지 커뮤니티 글 전체 조회", description = "마이페이지 내가 작성한 커뮤니티 글 전체 조회 기능")
+    @GetMapping("/auth/mypage/communities")
+    public ResponseEntity<?> getMyCommunities(@AuthenticationPrincipal MemberDetailsImpl memberDetails,
+                                              @RequestParam(value = "page") Integer page,
+                                              @RequestParam(value = "size") Integer size){
+
+        Integer pageTemp = page -1;
+        return memberService.getMyCommunities(memberDetails.getMember(), pageTemp, size);
+    }
+
+    @Operation(summary = "마이페이지 커뮤니티 댓글 전체 조회", description = "마이페이지 내가 작성한 커뮤니티 댓글 전체 조회 기능")
+    @GetMapping("/auth/mypage/communityComments")
+    public ResponseEntity<?> getMycommunityComments(@AuthenticationPrincipal MemberDetailsImpl memberDetails,
+                                                    @RequestParam(value = "page") Integer page,
+                                                    @RequestParam(value = "size") Integer size){
+
+        Integer pageTemp = page -1;
+        return memberService.getMycommunityComments(memberDetails.getMember(), pageTemp, size);
+    }
+
+    @Operation(summary = "마이페이지 메인 (모두보기)", description = "마이페이지 최신순 Top3 + 유저 정보 (프로필 이미지, 총 하트수, 총 게시글 수, 총 댓글 수)")
     @GetMapping("/auth/mypage/all")
     public ResponseEntity<?> getAllMypage(@AuthenticationPrincipal MemberDetailsImpl memberDetails){
         return memberService.getAllMypage(memberDetails.getMember());
     }
 
-    //마이페이지 내 프로필 사진 변경
     @Operation(summary = "마이페이지 프로필 사진 변경", description = "마이페이지 프로필 사진 변경 기능")
     @PutMapping("/auth/mypage/profile-image/update")
     public ResponseEntity<?> profileUpdate(@RequestPart(value = "image", required = false) MultipartFile image,

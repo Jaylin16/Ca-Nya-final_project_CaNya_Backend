@@ -1,4 +1,4 @@
-package com.example.canya.chatRoom.controller;
+package com.example.canya.chat.controller;
 
 import org.json.JSONObject;
 import org.springframework.web.socket.CloseStatus;
@@ -15,6 +15,7 @@ public class SocketTextHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
+        System.out.println("session in socket text handler= " + session);
         sessions.add(session);
     }
 

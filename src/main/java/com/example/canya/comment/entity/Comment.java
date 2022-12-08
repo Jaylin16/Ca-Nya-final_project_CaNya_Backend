@@ -17,7 +17,7 @@ public class Comment extends Timestamp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String commentContent;
 
     @ManyToOne

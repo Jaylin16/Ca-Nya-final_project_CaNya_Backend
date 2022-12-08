@@ -40,6 +40,8 @@ public class Board extends Timestamp {
     private String secondHighestRating;
 
     @Column
+    private String addressId;
+    @Column
     private Boolean isReady;
 
     @ManyToOne
@@ -71,10 +73,12 @@ public class Board extends Timestamp {
         this.boardContent = dto.getBoardContent();
         this.boardTitle = dto.getBoardTitle();
         this.isReady = true;
+        this.addressId = dto.getAddressId();
     }
 
     public void update(BoardRequestDto dto, List<String> highestRatings) {
         this.address = dto.getAddress();
+        this.addressId = dto.getAddressId();
         this.boardContent = dto.getBoardContent();
         this.boardTitle = dto.getBoardTitle();
         this.highestRating = highestRatings.get(0);

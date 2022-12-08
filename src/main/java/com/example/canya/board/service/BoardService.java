@@ -1,7 +1,7 @@
 package com.example.canya.board.service;
 
 import com.example.canya.annotations.AddImage;
-import com.example.canya.annotations.VerifyMember;
+import com.example.canya.annotations.VerifyMemberBoard;
 import com.example.canya.board.dto.*;
 import com.example.canya.board.entity.Board;
 import com.example.canya.board.repository.BoardRepository;
@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -89,7 +88,7 @@ public class BoardService {
     }
 
     @Transactional
-    @VerifyMember
+    @VerifyMemberBoard
     public ResponseEntity<?> saveBoard(Member member) {
 
         int lastBoardIndex = boardRepository.findBoardByMember(member).size();
@@ -101,14 +100,14 @@ public class BoardService {
             return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
         }
 
-        if (boardList.get(lastBoardIndex - 1).getImageList().size() == 0) {
-
-            return new ResponseEntity<>("이미 만든 보드가 존재합니다.", HttpStatus.BAD_REQUEST);
-        } else {
+//        if (boardList.get(lastBoardIndex - 1).getImageList().size() == 0) {
+//
+//            return new ResponseEntity<>("이미 만든 보드가 존재합니다.", HttpStatus.BAD_REQUEST);
+//        } else {
             Board board = boardRepository.save(new Board(member));
 
             return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
-        }
+//        }
     }
 
     public ResponseEntity<?> getBoardDetail(Long boardId, MemberDetailsImpl memberDetails) {
@@ -120,7 +119,7 @@ public class BoardService {
     }
 
     @Transactional
-    @VerifyMember
+    @VerifyMemberBoard
     @AddImage
     public ResponseEntity<?> editBoard(BoardRequestDto dto, Member member, String[] urls, List<MultipartFile> images, Long boardId) throws IOException {
 
@@ -140,6 +139,17 @@ public class BoardService {
                 }
             }
         }
+
+        if (images != null) {
+            for (MultipartFile image : images) {
+                imageRepository.save(new Image(board, s3Uploader.upload(image, "boardImage"), member));
+            }
+            for (String url : imageUrlList) {
+                String target = "boardImage" + url.substring(url.lastIndexOf("/"));
+                s3Uploader.deleteFile(target);
+            }
+        }
+
         Rating rating = ratingRepository.findRatingByBoardAndMemberId(board, member.getMemberId());
 
         board.update(dto);
@@ -161,7 +171,7 @@ public class BoardService {
     }
 
     @Transactional
-    @VerifyMember
+    @VerifyMemberBoard
     @AddImage
     public ResponseEntity<?> confirmBoard(BoardRequestDto dto, List<MultipartFile> images, Long boardId) throws IOException {
 
@@ -170,7 +180,6 @@ public class BoardService {
         RatingRequestDto ratingDto = new RatingRequestDto(dto.getRatings()[0], dto.getRatings()[1], dto.getRatings()[2], dto.getRatings()[3], dto.getRatings()[4], dto.getRatings()[5]);
 
         Rating rating = new Rating(ratingDto, board, board.getMember());
-
         ratingRepository.save(rating);
         List<String> twoHighestRatings = rating.getTwoHighestRatings(rating);
         board.update(dto, twoHighestRatings);
