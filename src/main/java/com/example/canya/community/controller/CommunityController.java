@@ -23,7 +23,6 @@ public class CommunityController {
 
     private final CommunityService communityService;
 
-    // 커뮤니티 글 작성
     @Operation(summary = "커뮤니티 글 작성", description = "커뮤니티 글 작성 기능")
     @PostMapping("/auth/save/community")
     public ResponseEntity<?> saveCommunity(
@@ -38,7 +37,6 @@ public class CommunityController {
         return communityService.saveCommunity(communityRequestDto, memberDetails.getMember(), image);
     }
 
-    // 커뮤니티 글 수정
     @Operation(summary = "커뮤니티 글 수정", description = "커뮤니티 글 수정 기능")
     @PutMapping("/auth/update/community/{communityId}")
     public ResponseEntity<?> updateCommunity(
@@ -58,8 +56,11 @@ public class CommunityController {
 
     @Operation(summary = "커뮤니티 글 전체 조회", description = "커뮤니티 글 전체 조회 기능")
     @GetMapping("/get/community")
-    public ResponseEntity<?> communityList() {
-        return communityService.getCommunityList();
+    public ResponseEntity<?> communityList(@RequestParam(value = "page") Integer page,
+                                           @RequestParam(value = "size") Integer size) {
+
+        Integer pageTemp = page -1;
+        return communityService.getCommunityList(pageTemp, size);
     }
 
     @Operation(summary = "커뮤니티 글 상세 조회", description = "커뮤니티 글 상세 조회 기능")
