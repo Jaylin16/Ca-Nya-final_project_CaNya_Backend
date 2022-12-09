@@ -6,6 +6,7 @@ import com.example.canya.member.entity.Member;
 import com.example.canya.timestamp.Timestamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
@@ -16,7 +17,7 @@ public class Comment extends Timestamp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String commentContent;
 
     @ManyToOne

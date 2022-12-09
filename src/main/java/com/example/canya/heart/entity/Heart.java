@@ -1,5 +1,4 @@
 package com.example.canya.heart.entity;
-
 import com.example.canya.board.entity.Board;
 import com.example.canya.member.entity.Member;
 import com.example.canya.timestamp.Timestamp;
