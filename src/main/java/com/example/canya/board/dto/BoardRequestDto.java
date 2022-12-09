@@ -17,4 +17,6 @@ public class BoardRequestDto {
     private String address;
     @NotNull
     private Long[] ratings;
+
+    private String addressId;
 }

@@ -21,7 +21,7 @@ public class RatingRequestDto {
 
     public RatingRequestDto(double coffeeRate, double dessertRate,
                             double priceRate,double moodRate, double kindnessRate
-                            , double parkingRate) {
+            , double parkingRate) {
         this.coffeeRate = coffeeRate;
         this.dessertRate = dessertRate;
         this.priceRate = priceRate;
