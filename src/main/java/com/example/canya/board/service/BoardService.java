@@ -13,7 +13,7 @@ import com.example.canya.member.service.MemberDetailsImpl;
 import com.example.canya.rating.dto.RatingRequestDto;
 import com.example.canya.rating.dto.RatingResponseDto;
 import com.example.canya.rating.entity.Rating;
-import com.example.canya.rating.repository.RatingRepository;
+import com.example.canya.timestamp.repository.RatingRepository;
 import com.example.canya.s3.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

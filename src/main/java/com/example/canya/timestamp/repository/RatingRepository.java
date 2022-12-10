@@ -1,4 +1,4 @@
-package com.example.canya.rating.repository;
+package com.example.canya.timestamp.repository;
 
 import com.example.canya.board.entity.Board;
 import com.example.canya.rating.entity.Rating;
