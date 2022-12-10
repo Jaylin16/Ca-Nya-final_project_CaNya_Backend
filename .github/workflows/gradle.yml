@@ -5,48 +5,86 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
+    
 permissions:
+  id-token: write
   contents: read
-
+  
+env:
+  TEST: ${{ secrets.AWS_ACCESS_KEY }}
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v2
     - name: Set up JDK 11
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v2
       with:
         java-version: '11'
         distribution: 'temurin'
-#    - name: Build with Gradle
-#      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-#      with:
-#        arguments: build
+    - name: testing secrets
+      run: echo $TEST
 
-    ## gradle caching
-    - name: Gradle Caching
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-
-    ## build application properties
-#    - name: make application.properties
-#      run: |
-#        cd ./src/main/resources
-#        touch ./application.properties
-#        echo "${{ secrets.PROPERTIES }}" > ./application.properties
-#      shell: bash
+    - name: make application.properties
+      run: |
+        echo ">> mkdir & touch"
+        mkdir -p ./src/main/resources
+        cd ./src/main/resources
+        touch ./application.properties
+        echo ">> copy application.properties"
+        echo "${{ secrets.APPLICATION_PROPERTIES }}" >> ./application.properties
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-
+      shell: bash
+      
     - name: Build with Gradle
       run: ./gradlew build -x test
+      
+   # 압축파일 형태로 전달
+    - name: Make zip file
+      run: zip -r ./wef.zip .
+      shell: bash
+      
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+        aws-region: ap-northeast-2
+        
+        
+    - name: Upload to S3
+      run: aws s3 cp --region ap-northeast-2 ./wef.zip s3://canyabucket/
+      
+    ## gradle caching
+#     - name: Gradle Caching
+#       uses: actions/cache@v3
+#       with:
+#         path: |
+#           ~/.gradle/caches
+#           ~/.gradle/wrapper
+#         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+#         restore-keys: |
+#           ${{ runner.os }}-gradle-
+ 
+#       # 전송할 파일을 담을 디렉토리 생성
+#     - name: Make Directory for deliver
+#       run: mkdir deploy
+
+#       # Jar 파일 Copy
+#     - name: Copy Jar
+#       run: cp ./build/libs/*.jar ./deploy/
+
+#     # S3 Bucket으로 copy
+#     - name: Deliver to AWS S3
+#       env:
+#         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+#         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+#       run: |
+#         aws s3 cp \
+#         --region ap-northeast-2 \
+#         --acl private \ 
+#         ./canya.zip s3://canyabucket/

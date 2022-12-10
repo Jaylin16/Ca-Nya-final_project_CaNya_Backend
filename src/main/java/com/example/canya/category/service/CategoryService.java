@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -62,6 +63,16 @@ public class CategoryService {
             System.out.println(boardList.get(0));
             boardService.addBoards(boardList, keywordPick);
 
+        }
+        if(Objects.equals(keyword,"전체")){
+
+            System.out.println("전체 조회");
+            boardNum = boardRepository.findAll().size();
+            System.out.println("boardNum in 전체= " + boardNum);
+            List<Board> boardList = boardRepository.findBoardsByOrderByCreatedAtDesc(pageable);
+            Collections.shuffle(boardList);
+            System.out.println(boardList.get(0));
+            boardService.addBoards(boardList, keywordPick);
 
         }
         return new ResponseEntity<>(new BoardResponseDto(keywordPick, size, boardNum, page), HttpStatus.OK);
