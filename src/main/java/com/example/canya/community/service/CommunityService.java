@@ -43,14 +43,6 @@ public class CommunityService {
 
         Optional<Community> community = communityRepository.findById(communityId);
 
-        if (community.isEmpty()){
-            return new ResponseEntity<>("해당 게시글을 찾을 수 없습니다", HttpStatus.BAD_REQUEST);
-        }
-
-        if (!(community.get().getMember().getMemberId().equals(memberDetails.getMember().getMemberId()))) {
-            return new ResponseEntity<>("작성자가 아닙니다", HttpStatus.BAD_REQUEST);
-        }
-
         if (url != null) {
             community.get().update(communityRequestDto, url);
         }
@@ -104,16 +96,8 @@ public class CommunityService {
     }
 
     @Transactional
-    public ResponseEntity<?> deleteCommunity(Long communityId, Member member) {
+    public ResponseEntity<?> deleteCommunity(Long communityId) {
         Optional<Community> community = communityRepository.findById(communityId);
-        if(community.isEmpty()) {
-            return new ResponseEntity<>("삭제하려는 글을 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
-        }
-
-        if(!(Objects.equals(community.get().getMember().getMemberId(), member.getMemberId()))) {
-            return new ResponseEntity<>("본인이 작성한 글만 삭제 가능합니다.", HttpStatus.BAD_REQUEST);
-        }
-
         String communityImage = community.get().getCommunityImage();
         String targetCommunityImage = "communityImage" + communityImage.substring(communityImage.lastIndexOf("/"));
 
