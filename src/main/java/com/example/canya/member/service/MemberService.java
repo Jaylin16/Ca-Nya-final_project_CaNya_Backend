@@ -120,6 +120,7 @@ public class MemberService {
         return new ResponseEntity<>("로그인에 성공하셨습니다.", httpHeaders, HttpStatus.OK);
     }
 
+
     @Transactional
     public ResponseEntity<?> getHeartBoards(Member member, Integer page, Integer size) {
 
@@ -144,6 +145,7 @@ public class MemberService {
 
         return new ResponseEntity<>(mypageResponseDto, HttpStatus.OK);
     }
+
 
     @Transactional
     public ResponseEntity<?> getMyComments(Member member, Integer page, Integer size) {
@@ -172,8 +174,8 @@ public class MemberService {
     public ResponseEntity<?> getMyBoards(Member member, Integer page, Integer size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Slice<Board> boards = boardRepository.findBoardByMember(member, pageable);
-
+        Slice<Board> boards = boardRepository.findBoardByIsReadyTrueAndMember(member, pageable);
+//        Slice<Board> boards = boardRepository.findBoardByMember(member, pageable);
         if(boards.isEmpty()) {
             return new ResponseEntity<>("작성한 게시물이 없습니다.", HttpStatus.BAD_REQUEST);
         }
@@ -240,7 +242,7 @@ public class MemberService {
     @Transactional
     public ResponseEntity<?> getAllMypage(Member member) {
 
-        List<Board> createdAtBoards = boardRepository.findTop3ByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId());
+        List<Board> createdAtBoards = boardRepository.findTop3ByMember_MemberIdAndIsReadyTrueOrderByCreatedAtDesc(member.getMemberId());
         List<Heart> hearts = heartRepository.findTop3ByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId());
         List<Comment> comments = commentRepository.findTop3ByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId());
         List<Community> communities = communityRepository.findTop3ByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId());
@@ -254,6 +256,7 @@ public class MemberService {
         List<MemberResponseDto> recentlyMyCommunityCommentList = new ArrayList<>();
 
         for (Board boardList : createdAtBoards) {
+            System.out.println("boardList in member service= " + boardList);
             MemberResponseDto memberResponseDto = new MemberResponseDto(boardList);
 
             recentlyMyBoardList.add(memberResponseDto);
@@ -312,7 +315,7 @@ public class MemberService {
 
         mypageMember.get().update(newProfileImage);
 
-        return new ResponseEntity<>("프로필 사진 변경 완료!", HttpStatus.OK);
+        return new ResponseEntity<>(newProfileImage, HttpStatus.OK);
     }
     
 }

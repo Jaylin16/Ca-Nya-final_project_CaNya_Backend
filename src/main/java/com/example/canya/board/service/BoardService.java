@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -92,7 +93,6 @@ public class BoardService {
     public ResponseEntity<?> saveBoard(Member member) {
 
         int lastBoardIndex = boardRepository.findBoardByMember(member).size();
-        List<Board> boardList = boardRepository.findBoardByMember(member);
 
         if (lastBoardIndex == 0) {
             Board board = boardRepository.save(new Board(member));
@@ -100,14 +100,10 @@ public class BoardService {
             return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
         }
 
-//        if (boardList.get(lastBoardIndex - 1).getImageList().size() == 0) {
-//
-//            return new ResponseEntity<>("이미 만든 보드가 존재합니다.", HttpStatus.BAD_REQUEST);
-//        } else {
-            Board board = boardRepository.save(new Board(member));
+        Board board = boardRepository.save(new Board(member));
 
-            return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
-//        }
+        return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
+
     }
 
     public ResponseEntity<?> getBoardDetail(Long boardId, MemberDetailsImpl memberDetails) {
@@ -131,7 +127,7 @@ public class BoardService {
             imageUrlList.add(image.getImageUrl());
 
         }
-        // 2중 for loop 고쳐야함
+
         for (String url : urls) {
             for (int j = 0; j < imageUrlList.size(); j++) {
                 if (Objects.equals(url, imageUrlList.get(j))) {

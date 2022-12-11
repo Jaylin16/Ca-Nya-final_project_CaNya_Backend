@@ -1,20 +1,17 @@
 package com.example.canya.category.service;
 
-import com.example.canya.annotations.SetPageable;
 import com.example.canya.board.dto.BoardResponseDto;
 import com.example.canya.board.entity.Board;
 import com.example.canya.board.repository.BoardRepository;
 import com.example.canya.board.service.BoardService;
 import com.example.canya.heart.repository.HeartRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +24,6 @@ public class CategoryService {
     private final BoardRepository boardRepository;
     private final HeartRepository heartRepository;
     private final BoardService boardService;
-
 
     public ResponseEntity<?> getMainCategory(String keyword, Integer page, Integer size) {
 
@@ -47,38 +43,29 @@ public class CategoryService {
 
         if(Objects.equals(keyword, "인기")){
 
-            System.out.println("인기 조회");
             boardNum = boardRepository.findAll().size();
-            System.out.println("boardNum in 인기= " + boardNum);;
             List<Board> boardList = boardRepository.findBoardsByOrderByTotalHeartCountDesc(pageable);
             boardService.addBoards(boardList, keywordPick);
 
         }
         if(Objects.equals(keyword,"최신")){
 
-            System.out.println("최신 조회");
             boardNum = boardRepository.findAll().size();
-            System.out.println("boardNum in 최신= " + boardNum);
             List<Board> boardList = boardRepository.findBoardsByOrderByCreatedAtDesc(pageable);
-            System.out.println(boardList.get(0));
             boardService.addBoards(boardList, keywordPick);
 
         }
         if(Objects.equals(keyword,"전체")){
 
-            System.out.println("전체 조회");
             boardNum = boardRepository.findAll().size();
-            System.out.println("boardNum in 전체= " + boardNum);
             List<Board> boardList = boardRepository.findBoardsByOrderByCreatedAtDesc(pageable);
             Collections.shuffle(boardList);
-            System.out.println(boardList.get(0));
             boardService.addBoards(boardList, keywordPick);
 
         }
         return new ResponseEntity<>(new BoardResponseDto(keywordPick, size, boardNum, page), HttpStatus.OK);
 
     }
-
 
     public void addSearchBoard(Slice<Board> boardList, List<BoardResponseDto> boardResponseDtos) {
 
@@ -88,7 +75,7 @@ public class CategoryService {
         }
     }
 
-    @SetPageable
+
     public ResponseEntity<?> searchBoard(String category, String keyword, Integer page, Integer size) {
 
         Pageable pageable = PageRequest.of(page, size);

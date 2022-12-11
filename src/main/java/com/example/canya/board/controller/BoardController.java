@@ -46,7 +46,7 @@ public class BoardController {
         return boardService.getBoardDetail(boardId, memberDetails);
     }
 
-
+    @Timer
     @Operation(summary = "게시물 ID 생성", description = "게시물 작성 페이지 진입시 boardId 부여")
     @PostMapping("/auth/board/save")
     public ResponseEntity<?> saveBoard( @AuthenticationPrincipal MemberDetailsImpl memberDetails){
@@ -54,6 +54,7 @@ public class BoardController {
         return boardService.saveBoard(memberDetails.getMember());
     }
 
+    @Timer
     @Operation(summary = "게시물 편집", description = "게시글 수정 기능")
     @VerifyMemberBoard
     @PutMapping("/auth/board/update/{boardId}")
@@ -77,22 +78,19 @@ public class BoardController {
         return boardService.editBoard(dto,memberDetails.getMember(),urlDto.getUrlList(),images, boardId);
     };
 
+    @Timer
     @Operation(summary = "게시물 등록", description = "기존 boardId 부여된 게시글 작성 완료 기능")
     @PutMapping("/auth/board/submit/{boardId}")
     public ResponseEntity<?> confirmBoard(@RequestPart(value = "image",required = false) List<MultipartFile> image,
                                           @RequestParam("data")String dataList,
                                           @PathVariable Long boardId) throws IOException {
 
-        System.out.println("image in create = " + image);
-        System.out.println("dataList in create = " + dataList);
-        
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});
-        System.out.println("dto.getAddressId() = " + dto.getAddressId());
-        System.out.println("dto.getBoardTitle() = " + dto.getBoardTitle());
         return boardService.confirmBoard(dto, image, boardId);
     }
 
+    @Timer
     @Operation(summary = "게시물 삭제", description = "작성된 게시글 삭제 기능")
     @VerifyMemberBoard
     @DeleteMapping("/auth/board/delete/{boardId}")

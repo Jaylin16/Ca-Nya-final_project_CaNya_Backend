@@ -12,7 +12,7 @@ import org.springframework.util.StopWatch;
 @Component
 @Slf4j
 public class TimerAop {
-    @Pointcut("execution(* com.example.canya.board.controller..*.*(..))")
+    @Pointcut("execution(* com.example.canya..*.*(..))")
     private void cut(){};
 
     @Pointcut("@annotation(com.example.canya.annotations.Timer)")
