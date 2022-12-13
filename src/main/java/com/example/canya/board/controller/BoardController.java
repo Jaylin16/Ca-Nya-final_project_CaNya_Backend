@@ -37,7 +37,6 @@ public class BoardController {
 
     @Timer
     @Operation(summary = "게시물 상세 조회", description = "각 게시된 글 조회 기능")
-
     @GetMapping("/board/{boardId}")
     public ResponseEntity<?> getBoardDetail(@PathVariable Long boardId, @AuthenticationPrincipal MemberDetailsImpl memberDetails){
         if(memberDetails == null){
@@ -82,14 +81,10 @@ public class BoardController {
     public ResponseEntity<?> confirmBoard(@RequestPart(value = "image",required = false) List<MultipartFile> image,
                                           @RequestParam("data")String dataList,
                                           @PathVariable Long boardId) throws IOException {
-
-        System.out.println("image in create = " + image);
-        System.out.println("dataList in create = " + dataList);
         
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {});
-        System.out.println("dto.getAddressId() = " + dto.getAddressId());
-        System.out.println("dto.getBoardTitle() = " + dto.getBoardTitle());
+
         return boardService.confirmBoard(dto, image, boardId);
     }
 

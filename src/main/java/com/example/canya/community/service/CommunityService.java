@@ -15,10 +15,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 import java.util.*;
-
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
@@ -71,11 +69,11 @@ public class CommunityService {
         return new ResponseEntity<>("수정이 완료되었습니다", HttpStatus.OK);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getCommunityList(Integer page, Integer size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Slice<Community> communities = communityRepository.findAll(pageable);
+        Slice<Community> communities = communityRepository.findAllByOrderByCommunityIdDesc(pageable);
 
         List<CommunityResponseDto> communityList = new ArrayList<>();
         for (Community community : communities) {
@@ -90,7 +88,7 @@ public class CommunityService {
 
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getCommunityDetail(Long communityId) {
         Optional<Community> community = communityRepository.findById(communityId);
         if(community.isEmpty()) {
