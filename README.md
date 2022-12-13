@@ -37,7 +37,7 @@
 |------|---|---|
 |박성민|https://github.com/Adam-SungMin-Park|팀장BE|
 |서지영|https://github.com/jiyeong-seo|부팀장FE|
-|임소희|https://github.com/Limsoheeee|BE|
+|임소희|https://github.com/Limsoheeee|FE|
 |장지윤|https://github.com/Jaylin16|BE|
 |김병기|https://github.com/Eolkeun|BE|
 |김정윤||UX/UI|
