@@ -13,8 +13,8 @@ import com.example.canya.member.service.MemberDetailsImpl;
 import com.example.canya.rating.dto.RatingRequestDto;
 import com.example.canya.rating.dto.RatingResponseDto;
 import com.example.canya.rating.entity.Rating;
-import com.example.canya.timestamp.repository.RatingRepository;
 import com.example.canya.s3.S3Uploader;
+import com.example.canya.timestamp.repository.RatingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -92,14 +92,19 @@ public class BoardService {
     @VerifyMemberBoard
     public ResponseEntity<?> saveBoard(Member member) {
 
-        int lastBoardIndex = boardRepository.findBoardByMember(member).size();
-
-        if (lastBoardIndex == 0) {
-            Board board = boardRepository.save(new Board(member));
-
-            return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
-        }
-
+//        int lastBoardIndex = boardRepository.findBoardByMember(member).size();
+//        List<Board> boardList = boardRepository.findBoardByMember(member);
+//
+//        if (lastBoardIndex == 0) {
+//            Board board = boardRepository.save(new Board(member));
+//
+//            return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
+//        }
+//
+////        if (boardList.get(lastBoardIndex - 1).getImageList().size() == 0) {
+////
+////            return new ResponseEntity<>("이미 만든 보드가 존재합니다.", HttpStatus.BAD_REQUEST);
+////        } else {
         Board board = boardRepository.save(new Board(member));
 
         return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
@@ -115,19 +120,19 @@ public class BoardService {
     }
 
     @Transactional
-    @VerifyMemberBoard
+//    @VerifyMemberBoard
     @AddImage
     public ResponseEntity<?> editBoard(BoardRequestDto dto, Member member, String[] urls, List<MultipartFile> images, Long boardId) throws IOException {
-
+        System.out.println();
         Board board = boardRepository.findById(boardId).get();
         List<Image> imageList = imageRepository.findAllByBoard(board);
         List<String> imageUrlList = new ArrayList<>();
-
+        System.out.println("got to the service");
         for (Image image : imageList) {
             imageUrlList.add(image.getImageUrl());
 
         }
-
+        // 2중 for loop 고쳐야함
         for (String url : urls) {
             for (int j = 0; j < imageUrlList.size(); j++) {
                 if (Objects.equals(url, imageUrlList.get(j))) {
@@ -172,6 +177,9 @@ public class BoardService {
     public ResponseEntity<?> confirmBoard(BoardRequestDto dto, List<MultipartFile> images, Long boardId) throws IOException {
 
         Board board = boardRepository.findById(boardId).orElseThrow();
+        if(ratingRepository.findRatingByBoardAndMemberId(board,board.getMember().getMemberId())!=null){
+            ratingRepository.delete(ratingRepository.findRatingByBoardAndMemberId(board, board.getMember().getMemberId()));
+        }
 
         RatingRequestDto ratingDto = new RatingRequestDto(dto.getRatings()[0], dto.getRatings()[1], dto.getRatings()[2], dto.getRatings()[3], dto.getRatings()[4], dto.getRatings()[5]);
 
@@ -186,10 +194,10 @@ public class BoardService {
     }
 
     @Transactional
-    public ResponseEntity<?> deleteBoard(Long boardId) {
+    public ResponseEntity<?> deleteBoard(Long boardId, MemberDetailsImpl memberDetails) {
 
         Board board = boardRepository.findById(boardId).orElseThrow();
-
+        System.out.println("board in delete= " + board);
         boardRepository.deleteById(boardId);
 
         List<Image> deletingImages = board.getImageList();
@@ -199,7 +207,7 @@ public class BoardService {
             String target = "boardImage" + imageUrl.substring(imageUrl.lastIndexOf("/"));
             s3Uploader.deleteFile(target);
         }
-
+        System.out.println("삭제 완료");
         return new ResponseEntity<>("삭제가 완료 되었습니다", HttpStatus.OK);
     }
 

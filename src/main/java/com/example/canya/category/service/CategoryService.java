@@ -12,6 +12,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +27,7 @@ public class CategoryService {
     private final BoardService boardService;
 
     public ResponseEntity<?> getMainCategory(String keyword, Integer page, Integer size) {
+        System.out.println("this shouldnt be called ");
 
         Pageable pageable = PageRequest.of(page, size);
         List<BoardResponseDto> keywordPick = new ArrayList<>();
@@ -36,34 +38,38 @@ public class CategoryService {
 
         return new ResponseEntity<>(new BoardResponseDto(keywordPick, size, boardNum, page), HttpStatus.OK);
     }
+
     public ResponseEntity<?> getMainCategories(String keyword, Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page,size);
+        System.out.println("this should be calledd!!!");
+        Pageable pageable = PageRequest.of(page, size);
         List<BoardResponseDto> keywordPick = new ArrayList<>();
         int boardNum = 0;
 
-        if(Objects.equals(keyword, "인기")){
+        if (Objects.equals(keyword, "인기")) {
 
-            boardNum = boardRepository.findAll().size();
-            List<Board> boardList = boardRepository.findBoardsByOrderByTotalHeartCountDesc(pageable);
+            boardNum = boardRepository.findAllByIsReadyTrueOrderByTotalHeartCountDesc().size();
+            List<Board> boardList = boardRepository.findAllByIsReadyTrueOrderByTotalHeartCountDesc(pageable);
             boardService.addBoards(boardList, keywordPick);
 
         }
-        if(Objects.equals(keyword,"최신")){
+        if (Objects.equals(keyword, "최신")) {
 
-            boardNum = boardRepository.findAll().size();
-            List<Board> boardList = boardRepository.findBoardsByOrderByCreatedAtDesc(pageable);
+            boardNum = boardRepository.findAllByIsReadyTrueOrderByCreatedAtDesc().size();
+            List<Board> boardList = boardRepository.findAllByIsReadyTrueOrderByCreatedAtDesc(pageable);
             boardService.addBoards(boardList, keywordPick);
 
         }
-        if(Objects.equals(keyword,"전체")){
+        if (Objects.equals(keyword, "전체")) {
 
-            boardNum = boardRepository.findAll().size();
-            List<Board> boardList = boardRepository.findBoardsByOrderByCreatedAtDesc(pageable);
+            boardNum = boardRepository.findAllByIsReadyTrueOrderByCreatedAtDesc().size();
+            List<Board> boardList = boardRepository.findAllByIsReadyTrueOrderByCreatedAtDesc(pageable);
             Collections.shuffle(boardList);
             boardService.addBoards(boardList, keywordPick);
-
         }
-        return new ResponseEntity<>(new BoardResponseDto(keywordPick, size, boardNum, page), HttpStatus.OK);
+        else{
+            return new ResponseEntity<>("bad request",HttpStatus.BAD_REQUEST);
+        }
+      return new ResponseEntity<>(new BoardResponseDto(keywordPick, size, boardNum, page), HttpStatus.OK);
 
     }
 

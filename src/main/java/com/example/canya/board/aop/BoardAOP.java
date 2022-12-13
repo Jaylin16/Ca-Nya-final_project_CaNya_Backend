@@ -39,23 +39,23 @@ public class BoardAOP {
     @Pointcut("@annotation(com.example.canya.annotations.AddImage)")
     private void addImage(){}
 
-    @Around(value = "verifyMember()&& args(.., boardId,memberDetails)", argNames = "joinPoint,memberDetails,boardId")
-    public ResponseEntity<?> verify(ProceedingJoinPoint joinPoint, MemberDetailsImpl memberDetails, Long boardId ) throws Throwable{
-        Object currentMember = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Board> optionalBoard = boardRepository.findById(boardId);
-
-        if(optionalBoard.isEmpty()){
-            return new ResponseEntity<>("게시글이 존재하지 않습니다",HttpStatus.BAD_REQUEST);
-        }
-        Board board = optionalBoard.get();
-        if(currentMember.equals(board.getMember().getMemberName())){
-
-            return new ResponseEntity<>(joinPoint.proceed(), HttpStatus.OK);
-        }else{
-
-            return new ResponseEntity<>("invalid user",HttpStatus.BAD_REQUEST);
-        }
-    }
+//    @Around(value = "verifyMember()&& args(.., boardId,memberDetails)", argNames = "joinPoint,memberDetails,boardId")
+//    public ResponseEntity<?> verify(ProceedingJoinPoint joinPoint, MemberDetailsImpl memberDetails, Long boardId ) throws Throwable{
+//        Object currentMember = SecurityContextHolder.getContext().getAuthentication().getName();
+//        Optional<Board> optionalBoard = boardRepository.findById(boardId);
+//
+//        if(optionalBoard.isEmpty()){
+//            return new ResponseEntity<>("게시글이 존재하지 않습니다",HttpStatus.BAD_REQUEST);
+//        }
+//        Board board = optionalBoard.get();
+//        if(currentMember.equals(board.getMember().getMemberName())){
+//
+//            return new ResponseEntity<>(joinPoint.proceed(), HttpStatus.OK);
+//        }else{
+//
+//            return new ResponseEntity<>("invalid user",HttpStatus.BAD_REQUEST);
+//        }
+//    }
 
     @Around(value = "addImage() && args(..,images,boardId)")
     public Object handleImage(ProceedingJoinPoint joinPoint,  List<MultipartFile> images,Long boardId) throws Throwable {

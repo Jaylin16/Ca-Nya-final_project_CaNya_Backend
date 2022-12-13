@@ -36,7 +36,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 // 전부 허용
                 .addMapping("/**")
                 .allowedOrigins("http://localhost:3000","https://www.ca-nya.com","https://final-project-frontend-phi.vercel.app","https://web-ca-nya-1jvasx23lbdi8uwp.gksl2.cloudtype.app")
-                .allowedMethods("GET", "POST", "PUT", "DELETE","OPTIONS","HEAD")
+                .allowedMethods("GET", "POST", "PUT", "DELETE","HEAD")
                 .exposedHeaders("Authorization", "RefreshToken")
                 .allowCredentials(true);
     }

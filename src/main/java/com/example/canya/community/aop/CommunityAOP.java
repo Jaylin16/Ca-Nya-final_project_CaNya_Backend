@@ -28,24 +28,25 @@ public class CommunityAOP {
     private final CommunityRepository communityRepository;
 
     @Pointcut("@annotation(com.example.canya.annotations.VerifyMemberCommunity)")
-    private void verifyMemberCommunity(){}
+    private void verifyMemberCommunity() {
+    }
 
     @Around(value = "verifyMemberCommunity()&& args(.., communityId,memberDetails)", argNames = "joinPoint,memberDetails,communityId")
-    public ResponseEntity<?> verifyCommunity(ProceedingJoinPoint joinPoint, MemberDetailsImpl memberDetails, Long communityId ) throws Throwable{
+    public ResponseEntity<?> verifyCommunity(ProceedingJoinPoint joinPoint, MemberDetailsImpl memberDetails, Long communityId) throws Throwable {
         Object currentMember = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Community> optionalCommunity = communityRepository.findById(communityId);
 
-        if(optionalCommunity.isEmpty()){
+        if (optionalCommunity.isEmpty()) {
             return new ResponseEntity<>("게시글이 존재하지 않습니다", HttpStatus.BAD_REQUEST);
         }
 
         Community community = optionalCommunity.get();
-        if(currentMember.equals(community.getMember().getMemberName())){
+        if (currentMember.equals(community.getMember().getMemberName())) {
 
             return new ResponseEntity<>(joinPoint.proceed(), HttpStatus.OK);
-        }else{
+        } else {
 
-            return new ResponseEntity<>("invalid user",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("invalid user", HttpStatus.BAD_REQUEST);
         }
     }
 

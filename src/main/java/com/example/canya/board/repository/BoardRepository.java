@@ -12,15 +12,16 @@ import java.util.List;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board,Long> {
-    List<Board> findBoardsByOrderByCreatedAtDesc(Pageable pageable);
-    List<Board> findBoardsByOrderByTotalHeartCountDesc(Pageable pageable);
+    List<Board> findAllByIsReadyTrueOrderByCreatedAtDesc(Pageable pageable);
+    List<Board> findAllByIsReadyTrueOrderByCreatedAtDesc();
+    List<Board> findAllByIsReadyTrueOrderByTotalHeartCountDesc(Pageable pageable);
+    List<Board> findAllByIsReadyTrueOrderByTotalHeartCountDesc();
     List<Board> findBoardByMemberMemberNicknameContaining(String keyword);
     Slice<Board> findBoardByMemberMemberNicknameContaining(String keyword,Pageable pageable);
     List<Board> findBoardsByBoardContentContaining(String keyword);
     Slice<Board> findBoardsByBoardContentContaining(String keyword, Pageable pageable);
     List<Board> findBoardsByBoardTitleContaining(String keyword);
     Slice<Board> findBoardsByBoardTitleContaining(String keyword, Pageable pageable);
-    List<Board> findBoardByMember(Member member);
     Slice<Board> findBoardByIsReadyTrueAndMember(Member member, Pageable pageable);
     List<Board> findTop6ByIsReadyTrueOrderByCreatedAtDesc();
     List<Board> findTop4ByIsReadyTrueOrderByTotalHeartCountDesc();
