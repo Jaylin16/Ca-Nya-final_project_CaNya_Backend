@@ -42,6 +42,7 @@ public class BoardService {
         List<Board> allBoards = boardRepository.findTop8ByIsReadyTrueOrderByCreatedAtDesc();
         List<Board> bestBoards = boardRepository.findTop4ByIsReadyTrueOrderByTotalHeartCountDesc();
         List<Board> newBoards = boardRepository.findTop6ByIsReadyTrueOrderByCreatedAtDesc();
+
         List<Board> canyaCoffeeBoards =
                 boardRepository.findTop3ByHighestRatingContainingOrderByTotalHeartCountDesc("커피");
         List<Board> canyaMoodBoards =
@@ -56,12 +57,15 @@ public class BoardService {
         List<BoardResponseDto> newDto = new ArrayList<>();
         List<BoardResponseDto> allDto = new ArrayList<>();
 
-        addBoards(bestBoards, bestDto);
+
         addBoards(canyaCoffeeBoards, coffeeResponseDto);
         addBoards(canyaMoodBoards, moodResponseDto);
         addBoards(canyaDessertBoards, dessertResponseDto);
-        addBoards(allBoards, allDto);
+
+        addBoards(bestBoards, bestDto);
         addBoards(newBoards, newDto);
+        addBoards(allBoards, allDto);
+
 
         return new ResponseEntity<>(new MainPageDto(coffeeResponseDto, moodResponseDto, dessertResponseDto,
                 newDto, allDto, bestDto), HttpStatus.OK);
@@ -69,7 +73,7 @@ public class BoardService {
     }
 
     public void addBoards(List<Board> boardList, List<BoardResponseDto> returningDto) {
-
+        System.out.println(boardList);
         for (Board board : boardList) {
             if (board.getBoardContent() == null || board.getBoardTitle() == null) {
                 boardList.remove(board);
