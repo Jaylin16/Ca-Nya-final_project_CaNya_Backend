@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,6 +41,7 @@ public class BoardService {
         List<Board> allBoards = boardRepository.findTop8ByIsReadyTrueOrderByCreatedAtDesc();
         List<Board> bestBoards = boardRepository.findTop4ByIsReadyTrueOrderByTotalHeartCountDesc();
         List<Board> newBoards = boardRepository.findTop6ByIsReadyTrueOrderByCreatedAtDesc();
+
         List<Board> canyaCoffeeBoards =
                 boardRepository.findTop3ByHighestRatingContainingOrderByTotalHeartCountDesc("커피");
         List<Board> canyaMoodBoards =
@@ -56,12 +56,15 @@ public class BoardService {
         List<BoardResponseDto> newDto = new ArrayList<>();
         List<BoardResponseDto> allDto = new ArrayList<>();
 
-        addBoards(bestBoards, bestDto);
+
         addBoards(canyaCoffeeBoards, coffeeResponseDto);
         addBoards(canyaMoodBoards, moodResponseDto);
         addBoards(canyaDessertBoards, dessertResponseDto);
-        addBoards(allBoards, allDto);
+
+        addBoards(bestBoards, bestDto);
         addBoards(newBoards, newDto);
+        addBoards(allBoards, allDto);
+
 
         return new ResponseEntity<>(new MainPageDto(coffeeResponseDto, moodResponseDto, dessertResponseDto,
                 newDto, allDto, bestDto), HttpStatus.OK);
@@ -69,7 +72,7 @@ public class BoardService {
     }
 
     public void addBoards(List<Board> boardList, List<BoardResponseDto> returningDto) {
-
+        System.out.println(boardList);
         for (Board board : boardList) {
             if (board.getBoardContent() == null || board.getBoardTitle() == null) {
                 boardList.remove(board);
@@ -91,20 +94,7 @@ public class BoardService {
     @Transactional
     @VerifyMemberBoard
     public ResponseEntity<?> saveBoard(Member member) {
-
-//        int lastBoardIndex = boardRepository.findBoardByMember(member).size();
-//        List<Board> boardList = boardRepository.findBoardByMember(member);
-//
-//        if (lastBoardIndex == 0) {
-//            Board board = boardRepository.save(new Board(member));
-//
-//            return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
-//        }
-//
-////        if (boardList.get(lastBoardIndex - 1).getImageList().size() == 0) {
-////
-////            return new ResponseEntity<>("이미 만든 보드가 존재합니다.", HttpStatus.BAD_REQUEST);
-////        } else {
+        
         Board board = boardRepository.save(new Board(member));
 
         return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);

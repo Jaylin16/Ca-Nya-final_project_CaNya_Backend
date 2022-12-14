@@ -32,8 +32,8 @@ public class BoardController {
     @Timer
     @Operation(summary = "메인 페이지", description = "메인 페이지 조회 기능")
     @GetMapping("/board/main")
-    public ResponseEntity<?> getMainBoards() {
 
+    public ResponseEntity<?> getMainBoards(){
         return boardService.getBoards();
     }
 
