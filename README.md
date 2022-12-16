@@ -155,7 +155,7 @@
 
   <br>
   
-  https://user-images.githubusercontent.com/113230019/208028401-74cc839b-d84e-4c03-8a17-efcddc8d35ba.mov
+  ![3-1](https://user-images.githubusercontent.com/113230019/208032966-72dcd768-e997-4a49-909e-e9cac8e34ef4.gif)
   
   <br>
  
@@ -176,7 +176,7 @@
 
   <br>
 
-https://user-images.githubusercontent.com/113230019/208028679-3d728aba-4209-400e-a59e-b3d344bf480b.mp4
+![4-1](https://user-images.githubusercontent.com/113230019/208032998-3185915c-276a-4a7b-9c2b-243a4c3a701e.gif)
 
   <br>
  
@@ -196,6 +196,24 @@ https://user-images.githubusercontent.com/113230019/208028679-3d728aba-4209-400e
   <br>
   
   
+  
+  <br>
+ 
+ </div>
+ </details>
+
+<details>
+ <summary>🎉 반응형 웹</summary>
+ <div markdown="1">       
+
+  <br>
+  
+1. Windows / Mac / Tablet 모든 환경에서 사용할 수 있어요.
+2. 홈페이지 크기를 변경하여도 편하게 보실 수 있어요.
+
+  <br>
+  
+  ![반응형 웹사이트](https://user-images.githubusercontent.com/113230019/208033561-b44c1633-3b7d-4f94-8369-892aa82652f9.gif)
   
   <br>
  
