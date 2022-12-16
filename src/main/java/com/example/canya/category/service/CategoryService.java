@@ -27,7 +27,6 @@ public class CategoryService {
     private final BoardService boardService;
 
     public ResponseEntity<?> getMainCategory(String keyword, Integer page, Integer size) {
-        System.out.println("this shouldnt be called ");
 
         Pageable pageable = PageRequest.of(page, size);
         List<BoardResponseDto> keywordPick = new ArrayList<>();
@@ -40,7 +39,6 @@ public class CategoryService {
     }
 
     public ResponseEntity<?> getMainCategories(String keyword, Integer page, Integer size) {
-        System.out.println("this should be calledd!!!");
         Pageable pageable = PageRequest.of(page, size);
         List<BoardResponseDto> keywordPick = new ArrayList<>();
         int boardNum = 0;

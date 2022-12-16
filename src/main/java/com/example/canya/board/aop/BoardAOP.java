@@ -32,30 +32,29 @@ public class BoardAOP {
     private final BoardRepository boardRepository;
     private final S3Uploader s3Uploader;
     private final ImageRepository imageRepository;
+    @Pointcut("@annotation(com.example.canya.annotations.AddImage)")
+    private void addImage(){}
 
     @Pointcut("@annotation(com.example.canya.annotations.VerifyMemberBoard)")
     private void verifyMember(){}
 
-    @Pointcut("@annotation(com.example.canya.annotations.AddImage)")
-    private void addImage(){}
+    @Around(value = "verifyMember()&& args(.., boardId,memberDetails)", argNames = "joinPoint,memberDetails,boardId")
+    public ResponseEntity<?> verify(ProceedingJoinPoint joinPoint, MemberDetailsImpl memberDetails, Long boardId ) throws Throwable{
+        Object currentMember = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Board> optionalBoard = boardRepository.findById(boardId);
 
-//    @Around(value = "verifyMember()&& args(.., boardId,memberDetails)", argNames = "joinPoint,memberDetails,boardId")
-//    public ResponseEntity<?> verify(ProceedingJoinPoint joinPoint, MemberDetailsImpl memberDetails, Long boardId ) throws Throwable{
-//        Object currentMember = SecurityContextHolder.getContext().getAuthentication().getName();
-//        Optional<Board> optionalBoard = boardRepository.findById(boardId);
-//
-//        if(optionalBoard.isEmpty()){
-//            return new ResponseEntity<>("게시글이 존재하지 않습니다",HttpStatus.BAD_REQUEST);
-//        }
-//        Board board = optionalBoard.get();
-//        if(currentMember.equals(board.getMember().getMemberName())){
-//
-//            return new ResponseEntity<>(joinPoint.proceed(), HttpStatus.OK);
-//        }else{
-//
-//            return new ResponseEntity<>("invalid user",HttpStatus.BAD_REQUEST);
-//        }
-//    }
+        if(optionalBoard.isEmpty()){
+            return new ResponseEntity<>("게시글이 존재하지 않습니다",HttpStatus.BAD_REQUEST);
+        }
+        Board board = optionalBoard.get();
+        if(currentMember.equals(board.getMember().getMemberName())){
+
+            return new ResponseEntity<>(joinPoint.proceed(), HttpStatus.OK);
+        }else{
+
+            return new ResponseEntity<>("invalid user",HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @Around(value = "addImage() && args(..,images,boardId)")
     public Object handleImage(ProceedingJoinPoint joinPoint,  List<MultipartFile> images,Long boardId) throws Throwable {
@@ -77,11 +76,6 @@ public class BoardAOP {
                 s3Uploader.deleteFile(target);
             }
         }
-        else{
-            String DEFAULT_THUMBNAIL = "https://assets.website-files.com/5ee732bebd9839b494ff27cd/5ef0a6c746931523ace53017_Starbucks.jpg";
-            imageRepository.save(new Image(board, DEFAULT_THUMBNAIL, member));
-        }
-
         return joinPoint.proceed();
     }
 }

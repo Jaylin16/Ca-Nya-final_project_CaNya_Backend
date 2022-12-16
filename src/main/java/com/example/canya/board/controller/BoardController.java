@@ -66,20 +66,14 @@ public class BoardController {
                                        @AuthenticationPrincipal MemberDetailsImpl memberDetails) throws IOException {
 
 
-        System.out.println("dataList = " + dataList);
-        System.out.println("urlList = " + urlList);
-        System.out.println(urlList.length());
-
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new SimpleModule());
         BoardRequestDto dto = objectMapper.readValue(dataList, new TypeReference<>() {
         });
         objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 
         if (urlList.length() != 14) {
-            System.out.println("urllist != 0 in controller ");
             UpdateUrlDto urlDto = objectMapper.readValue(urlList, new TypeReference<>() {
             });
-            System.out.println("urlDto = " + urlDto);
             return boardService.editBoard(dto, memberDetails.getMember(), urlDto.getUrlList(), images, boardId);
         } else {
 
@@ -110,7 +104,6 @@ public class BoardController {
     @DeleteMapping("/auth/board/delete/{boardId}")
     public ResponseEntity<?> deleteBoard(@PathVariable Long boardId, @AuthenticationPrincipal MemberDetailsImpl memberDetails) {
 
-        System.out.println("got to the delete controller");
         return boardService.deleteBoard(boardId, memberDetails);
     }
 }

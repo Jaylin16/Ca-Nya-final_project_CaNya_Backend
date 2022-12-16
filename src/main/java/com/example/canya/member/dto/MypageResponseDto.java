@@ -35,7 +35,7 @@ public class MypageResponseDto {
         this.recentlyMyCommunityList = recentlyMyCommunityList;
         this.recentlyMyCommunityCommentList = recentlyMyCommunityCommentList;
         this.memberProfileImage = member.getMemberProfileImage();
-        this.memberBoardCount = member.getBoard().size();
+        this.memberBoardCount = recentlyMyBoardList.size();
         this.memberHeartCount = member.getHeart().size();
         this.memberCommentCount = member.getComment().size();
         this.memberCommunityCount = member.getCommunity().size();

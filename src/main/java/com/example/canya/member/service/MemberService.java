@@ -256,7 +256,6 @@ public class MemberService {
         List<MemberResponseDto> recentlyMyCommunityCommentList = new ArrayList<>();
 
         for (Board boardList : createdAtBoards) {
-            System.out.println("boardList in member service= " + boardList);
             MemberResponseDto memberResponseDto = new MemberResponseDto(boardList);
 
             recentlyMyBoardList.add(memberResponseDto);

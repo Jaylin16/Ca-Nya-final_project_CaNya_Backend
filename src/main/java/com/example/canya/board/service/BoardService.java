@@ -72,7 +72,6 @@ public class BoardService {
     }
 
     public void addBoards(List<Board> boardList, List<BoardResponseDto> returningDto) {
-        System.out.println(boardList);
         for (Board board : boardList) {
             if (board.getBoardContent() == null || board.getBoardTitle() == null) {
                 boardList.remove(board);
@@ -94,7 +93,7 @@ public class BoardService {
     @Transactional
     @VerifyMemberBoard
     public ResponseEntity<?> saveBoard(Member member) {
-        
+
         Board board = boardRepository.save(new Board(member));
 
         return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
@@ -110,19 +109,16 @@ public class BoardService {
     }
 
     @Transactional
-//    @VerifyMemberBoard
     @AddImage
     public ResponseEntity<?> editBoard(BoardRequestDto dto, Member member, String[] urls, List<MultipartFile> images, Long boardId) throws IOException {
-        System.out.println();
         Board board = boardRepository.findById(boardId).get();
         List<Image> imageList = imageRepository.findAllByBoard(board);
         List<String> imageUrlList = new ArrayList<>();
-        System.out.println("got to the service");
+
         for (Image image : imageList) {
             imageUrlList.add(image.getImageUrl());
 
         }
-        // 2중 for loop 고쳐야함
         for (String url : urls) {
             for (int j = 0; j < imageUrlList.size(); j++) {
                 if (Objects.equals(url, imageUrlList.get(j))) {
@@ -131,15 +127,15 @@ public class BoardService {
             }
         }
 
-        if (images != null) {
-            for (MultipartFile image : images) {
-                imageRepository.save(new Image(board, s3Uploader.upload(image, "boardImage"), member));
-            }
-            for (String url : imageUrlList) {
-                String target = "boardImage" + url.substring(url.lastIndexOf("/"));
-                s3Uploader.deleteFile(target);
-            }
-        }
+//        if (images != null) {
+//            for (MultipartFile image : images) {
+//                imageRepository.save(new Image(board, s3Uploader.upload(image, "boardImage"), member));
+//            }
+//            for (String url : imageUrlList) {
+//                String target = "boardImage" + url.substring(url.lastIndexOf("/"));
+//                s3Uploader.deleteFile(target);
+//            }
+//        }
 
         Rating rating = ratingRepository.findRatingByBoardAndMemberId(board, member.getMemberId());
 
@@ -162,7 +158,6 @@ public class BoardService {
     }
 
     @Transactional
-    @VerifyMemberBoard
     @AddImage
     public ResponseEntity<?> confirmBoard(BoardRequestDto dto, List<MultipartFile> images, Long boardId) throws IOException {
 
@@ -187,7 +182,6 @@ public class BoardService {
     public ResponseEntity<?> deleteBoard(Long boardId, MemberDetailsImpl memberDetails) {
 
         Board board = boardRepository.findById(boardId).orElseThrow();
-        System.out.println("board in delete= " + board);
         boardRepository.deleteById(boardId);
 
         List<Image> deletingImages = board.getImageList();
@@ -197,7 +191,6 @@ public class BoardService {
             String target = "boardImage" + imageUrl.substring(imageUrl.lastIndexOf("/"));
             s3Uploader.deleteFile(target);
         }
-        System.out.println("삭제 완료");
         return new ResponseEntity<>("삭제가 완료 되었습니다", HttpStatus.OK);
     }
 
