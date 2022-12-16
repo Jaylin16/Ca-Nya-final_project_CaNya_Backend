@@ -34,10 +34,10 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,11 +120,11 @@ public class MemberService {
         return new ResponseEntity<>("로그인에 성공하셨습니다.", httpHeaders, HttpStatus.OK);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getHeartBoards(Member member, Integer page, Integer size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Slice<Heart> hearts = heartRepository.findAllByMember_MemberId(member.getMemberId(), pageable);
+        Slice<Heart> hearts = heartRepository.findAllByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId(), pageable);
 
         List<MemberResponseDto> myHeartBoardList = new ArrayList<>();
         for (Heart heartList : hearts) {
@@ -145,11 +145,11 @@ public class MemberService {
         return new ResponseEntity<>(mypageResponseDto, HttpStatus.OK);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getMyComments(Member member, Integer page, Integer size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Slice<Comment> comments = commentRepository.findAllByMember_MemberId(member.getMemberId(), pageable);
+        Slice<Comment> comments = commentRepository.findAllByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId(), pageable);
 
         if(comments.isEmpty()) {
             return new ResponseEntity<>("작성한 댓글이 없습니다.", HttpStatus.BAD_REQUEST);
@@ -168,11 +168,11 @@ public class MemberService {
         return new ResponseEntity<>(mypageResponseDto, HttpStatus.OK);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getMyBoards(Member member, Integer page, Integer size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Slice<Board> boards = boardRepository.findBoardByMember(member, pageable);
+        Slice<Board> boards = boardRepository.findBoardByMemberOrderByCreatedAtDesc(member, pageable);
 
         if(boards.isEmpty()) {
             return new ResponseEntity<>("작성한 게시물이 없습니다.", HttpStatus.BAD_REQUEST);
@@ -191,11 +191,11 @@ public class MemberService {
         return new ResponseEntity<>(mypageResponseDto, HttpStatus.OK);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getMyCommunities(Member member, Integer page, Integer size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Slice<Community> communities = communityRepository.findCommunityByMember(member, pageable);
+        Slice<Community> communities = communityRepository.findCommunityByMemberOrderByCreatedAtDesc(member, pageable);
 
         if(communities.isEmpty()) {
             return new ResponseEntity<>("작성한 커뮤니티 글이 없습니다.", HttpStatus.BAD_REQUEST);
@@ -214,11 +214,11 @@ public class MemberService {
         return new ResponseEntity<>(mypageResponseDto, HttpStatus.OK);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getMycommunityComments(Member member, Integer page, Integer size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Slice<CommunityComment> communityComments = communityCommentRepository.findCommunityCommentByMember(member, pageable);
+        Slice<CommunityComment> communityComments = communityCommentRepository.findCommunityCommentByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId(), pageable);
 
         if(communityComments.isEmpty()) {
             return new ResponseEntity<>("작성한 커뮤니티 댓글이 없습니다.", HttpStatus.BAD_REQUEST);
@@ -237,7 +237,7 @@ public class MemberService {
         return new ResponseEntity<>(mypageResponseDto, HttpStatus.OK);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getAllMypage(Member member) {
 
         List<Board> createdAtBoards = boardRepository.findTop3ByMember_MemberIdOrderByCreatedAtDesc(member.getMemberId());
@@ -314,5 +314,5 @@ public class MemberService {
 
         return new ResponseEntity<>("프로필 사진 변경 완료!", HttpStatus.OK);
     }
-    
+
 }

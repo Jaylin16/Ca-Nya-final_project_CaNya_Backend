@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface CommunityRepository extends JpaRepository<Community, Long> {
-    Slice<Community> findCommunityByMember(Member member, Pageable pageable);
+    Slice<Community> findCommunityByMemberOrderByCreatedAtDesc(Member member, Pageable pageable);
     List<Community> findTop3ByMember_MemberIdOrderByCreatedAtDesc(Long memberId);
     Slice<Community> findAllByOrderByCommunityIdDesc(Pageable pageable);
 }

@@ -74,7 +74,7 @@ public class BoardController {
         UpdateUrlDto urlDto = new UpdateUrlDto();
 
         return boardService.editBoard(dto,memberDetails.getMember(),urlDto.getUrlList(),images, boardId);
-    };
+    }
 
     @Operation(summary = "게시물 등록", description = "기존 boardId 부여된 게시글 작성 완료 기능")
     @PutMapping("/auth/board/submit/{boardId}")

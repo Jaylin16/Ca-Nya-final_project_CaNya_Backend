@@ -13,6 +13,6 @@ import java.util.List;
 public interface HeartRepository extends JpaRepository<Heart, Long> {
     boolean existsByBoardAndMember_MemberId(Board board, Long memberId);
     void deleteByBoardAndMember(Board board, Member member);
-    Slice<Heart> findAllByMember_MemberId(Long memberId, Pageable pageable);
+    Slice<Heart> findAllByMember_MemberIdOrderByCreatedAtDesc(Long memberId, Pageable pageable);
     List<Heart> findTop3ByMember_MemberIdOrderByCreatedAtDesc(Long memberId);
 }
