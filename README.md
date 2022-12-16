@@ -114,7 +114,9 @@
 
   <br>
 
-https://user-images.githubusercontent.com/113230019/208029163-097c147d-2821-4989-b5ab-58112e50747f.mov
+![1-1](https://user-images.githubusercontent.com/113230019/208032171-54049047-228a-4d77-8ebc-32635e864786.gif)
+![1-2](https://user-images.githubusercontent.com/113230019/208032195-a6596abc-d260-4c9a-b302-02c2e9e2465e.gif)
+![1-3](https://user-images.githubusercontent.com/113230019/208032210-2941bfde-76cb-41f5-a690-07a668dd57a6.gif)
 
   <br>
  
