@@ -13,8 +13,8 @@ import com.example.canya.member.service.MemberDetailsImpl;
 import com.example.canya.rating.dto.RatingRequestDto;
 import com.example.canya.rating.dto.RatingResponseDto;
 import com.example.canya.rating.entity.Rating;
-import com.example.canya.rating.repository.RatingRepository;
 import com.example.canya.s3.S3Uploader;
+import com.example.canya.timestamp.repository.RatingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +41,7 @@ public class BoardService {
         List<Board> allBoards = boardRepository.findTop8ByIsReadyTrueOrderByCreatedAtDesc();
         List<Board> bestBoards = boardRepository.findTop4ByIsReadyTrueOrderByTotalHeartCountDesc();
         List<Board> newBoards = boardRepository.findTop6ByIsReadyTrueOrderByCreatedAtDesc();
+
         List<Board> canyaCoffeeBoards =
                 boardRepository.findTop3ByHighestRatingContainingOrderByTotalHeartCountDesc("커피");
         List<Board> canyaMoodBoards =
@@ -55,12 +56,15 @@ public class BoardService {
         List<BoardResponseDto> newDto = new ArrayList<>();
         List<BoardResponseDto> allDto = new ArrayList<>();
 
-        addBoards(bestBoards, bestDto);
+
         addBoards(canyaCoffeeBoards, coffeeResponseDto);
         addBoards(canyaMoodBoards, moodResponseDto);
         addBoards(canyaDessertBoards, dessertResponseDto);
-        addBoards(allBoards, allDto);
+
+        addBoards(bestBoards, bestDto);
         addBoards(newBoards, newDto);
+        addBoards(allBoards, allDto);
+
 
         return new ResponseEntity<>(new MainPageDto(coffeeResponseDto, moodResponseDto, dessertResponseDto,
                 newDto, allDto, bestDto), HttpStatus.OK);
@@ -68,7 +72,6 @@ public class BoardService {
     }
 
     public void addBoards(List<Board> boardList, List<BoardResponseDto> returningDto) {
-
         for (Board board : boardList) {
             if (board.getBoardContent() == null || board.getBoardTitle() == null) {
                 boardList.remove(board);
@@ -91,23 +94,10 @@ public class BoardService {
     @VerifyMemberBoard
     public ResponseEntity<?> saveBoard(Member member) {
 
-        int lastBoardIndex = boardRepository.findBoardByMember(member).size();
-        List<Board> boardList = boardRepository.findBoardByMember(member);
+        Board board = boardRepository.save(new Board(member));
 
-        if (lastBoardIndex == 0) {
-            Board board = boardRepository.save(new Board(member));
+        return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
 
-            return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
-        }
-
-//        if (boardList.get(lastBoardIndex - 1).getImageList().size() == 0) {
-//
-//            return new ResponseEntity<>("이미 만든 보드가 존재합니다.", HttpStatus.BAD_REQUEST);
-//        } else {
-            Board board = boardRepository.save(new Board(member));
-
-            return new ResponseEntity<>(board.getBoardId(), HttpStatus.OK);
-//        }
     }
 
     public ResponseEntity<?> getBoardDetail(Long boardId, MemberDetailsImpl memberDetails) {
@@ -119,10 +109,8 @@ public class BoardService {
     }
 
     @Transactional
-    @VerifyMemberBoard
     @AddImage
     public ResponseEntity<?> editBoard(BoardRequestDto dto, Member member, String[] urls, List<MultipartFile> images, Long boardId) throws IOException {
-
         Board board = boardRepository.findById(boardId).get();
         List<Image> imageList = imageRepository.findAllByBoard(board);
         List<String> imageUrlList = new ArrayList<>();
@@ -131,7 +119,6 @@ public class BoardService {
             imageUrlList.add(image.getImageUrl());
 
         }
-        // 2중 for loop 고쳐야함
         for (String url : urls) {
             for (int j = 0; j < imageUrlList.size(); j++) {
                 if (Objects.equals(url, imageUrlList.get(j))) {
@@ -140,15 +127,15 @@ public class BoardService {
             }
         }
 
-        if (images != null) {
-            for (MultipartFile image : images) {
-                imageRepository.save(new Image(board, s3Uploader.upload(image, "boardImage"), member));
-            }
-            for (String url : imageUrlList) {
-                String target = "boardImage" + url.substring(url.lastIndexOf("/"));
-                s3Uploader.deleteFile(target);
-            }
-        }
+//        if (images != null) {
+//            for (MultipartFile image : images) {
+//                imageRepository.save(new Image(board, s3Uploader.upload(image, "boardImage"), member));
+//            }
+//            for (String url : imageUrlList) {
+//                String target = "boardImage" + url.substring(url.lastIndexOf("/"));
+//                s3Uploader.deleteFile(target);
+//            }
+//        }
 
         Rating rating = ratingRepository.findRatingByBoardAndMemberId(board, member.getMemberId());
 
@@ -171,11 +158,13 @@ public class BoardService {
     }
 
     @Transactional
-    @VerifyMemberBoard
     @AddImage
     public ResponseEntity<?> confirmBoard(BoardRequestDto dto, List<MultipartFile> images, Long boardId) throws IOException {
 
         Board board = boardRepository.findById(boardId).orElseThrow();
+        if(ratingRepository.findRatingByBoardAndMemberId(board,board.getMember().getMemberId())!=null){
+            ratingRepository.delete(ratingRepository.findRatingByBoardAndMemberId(board, board.getMember().getMemberId()));
+        }
 
         RatingRequestDto ratingDto = new RatingRequestDto(dto.getRatings()[0], dto.getRatings()[1], dto.getRatings()[2], dto.getRatings()[3], dto.getRatings()[4], dto.getRatings()[5]);
 
@@ -190,10 +179,9 @@ public class BoardService {
     }
 
     @Transactional
-    public ResponseEntity<?> deleteBoard(Long boardId) {
+    public ResponseEntity<?> deleteBoard(Long boardId, MemberDetailsImpl memberDetails) {
 
         Board board = boardRepository.findById(boardId).orElseThrow();
-
         boardRepository.deleteById(boardId);
 
         List<Image> deletingImages = board.getImageList();
@@ -203,7 +191,6 @@ public class BoardService {
             String target = "boardImage" + imageUrl.substring(imageUrl.lastIndexOf("/"));
             s3Uploader.deleteFile(target);
         }
-
         return new ResponseEntity<>("삭제가 완료 되었습니다", HttpStatus.OK);
     }
 

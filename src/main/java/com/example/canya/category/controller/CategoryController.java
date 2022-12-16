@@ -1,5 +1,6 @@
 package com.example.canya.category.controller;
 
+import com.example.canya.annotations.Timer;
 import com.example.canya.category.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.Objects;
 public class CategoryController {
 
     private final CategoryService categoryService;
-
+    @Timer
     @Operation(summary = "메인 카테고리별 조회", description = "메인 페이지 카테고리별 조회 기능")
     @GetMapping("/board/main/{keyword}")
     public ResponseEntity<?> getMainCategory(@PathVariable String keyword,
@@ -32,6 +33,7 @@ public class CategoryController {
             return categoryService.getMainCategory(keyword, pageTemp, size);
         }
     }
+    @Timer
     @GetMapping("/board/search/{category}/{keyword}")
     public ResponseEntity<?> searchBoard(@PathVariable String category,
                                          @PathVariable String keyword,

@@ -35,7 +35,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         reg
                 // 전부 허용
                 .addMapping("/**")
-                .allowedOrigins("http://localhost:3000","https://www.ca-nya.com","https://final-project-frontend-phi.vercel.app","https://web-ca-nya-1jvasx23lbdi8uwp.gksl2.cloudtype.app")
+                .allowedOrigins("http://localhost:3000","http://ca-nya.com.s3-website.ap-northeast-2.amazonaws.com","http://canya-front.s3-website.ap-northeast-2.amazonaws.com","http://www.ca-nya.com","https://final-project-frontend-phi.vercel.app","https://web-ca-nya-1jvasx23lbdi8uwp.gksl2.cloudtype.app")
                 .allowedMethods("GET", "POST", "PUT", "DELETE","OPTIONS","HEAD")
                 .exposedHeaders("Authorization", "RefreshToken")
                 .allowCredentials(true);
@@ -82,7 +82,6 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
-
 
         return http.build();
     }

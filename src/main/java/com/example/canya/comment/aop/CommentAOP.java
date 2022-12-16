@@ -1,7 +1,8 @@
 package com.example.canya.comment.aop;
 
-import com.example.canya.board.entity.Board;
+
 import com.example.canya.comment.entity.Comment;
+
 import com.example.canya.comment.repository.CommentRepository;
 import com.example.canya.member.service.MemberDetailsImpl;
 import lombok.RequiredArgsConstructor;

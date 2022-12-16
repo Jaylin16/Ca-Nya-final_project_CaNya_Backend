@@ -64,12 +64,12 @@ public class Rating {
     }
     public List<String> getTwoHighestRatings(Rating ratingList){
         HashMap<String, Double> ratingMap = new HashMap<String, Double>();
-        ratingMap.put("커피 맛집", ratingList.getCoffeeRate());
-        ratingMap.put("디저트 맛집", ratingList.getDessertRate());
-        ratingMap.put("친절 맛집", ratingList.getKindnessRate());
-        ratingMap.put("분위기 맛집", ratingList.getMoodRate());
-        ratingMap.put("주차 맛집", ratingList.getParkingRate());
-        ratingMap.put("가성비 맛집", ratingList.getPriceRate());
+        ratingMap.put("커피맛집", ratingList.getCoffeeRate());
+        ratingMap.put("디저트맛집", ratingList.getDessertRate());
+        ratingMap.put("친절맛집", ratingList.getKindnessRate());
+        ratingMap.put("분위기맛집", ratingList.getMoodRate());
+        ratingMap.put("주차맛집", ratingList.getParkingRate());
+        ratingMap.put("가성비맛집", ratingList.getPriceRate());
         List<Map.Entry<String, Double>> entries = ratingMap.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toList());

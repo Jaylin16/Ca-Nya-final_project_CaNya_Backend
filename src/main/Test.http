@@ -1,18 +1,97 @@
 ###
-POST https://localhost:8080/member/register
+POST http://localhost:8080/member/register
 Content-Type: application/json
 
 {
-  "memberName": "Adam",
+  "memberName": "Adam1",
   "memberNickname": "서지영지서지영",
   "password" : "1234"
 }
 
 ###
-POST https://localhost:8080/member/login
+POST http://localhost:8080/member/login
 Content-Type: application/json
 
 {
-  "memberName" : "apple",
-  "password" : "apple12"
+  "memberName" : "Adam1",
+  "password" : "1234"
 }
+
+###
+POST http://localhost:8080/auth/save/community
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZGFtIiwiYXVkIjoi7ISc7KeA7JiB7KeA7ISc7KeA7JiBIiwibWVtYmVyU3RhdHVzIjoidGFsbCIsInByb2ZpbGVJbWFnZVVybCI6Imh0dHA6Ly9kb29ncmFweXMuY29tL2NvbW1vbi9pbWcvZGVmYXVsdF9wcm9maWxlLnBuZyIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2NzA4MDAxODJ9.-sL0S1lzd-_uyOjb4EwYdQOZD1-AVqdGRCTKiGjgyLs
+
+{
+
+}
+
+
+
+###
+POST http://localhost:8080/auth/board/save
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZGFtMSIsImF1ZCI6IuyEnOyngOyYgeyngOyEnOyngOyYgSIsIm1lbWJlclN0YXR1cyI6InRhbGwiLCJwcm9maWxlSW1hZ2VVcmwiOiJodHRwOi8vZG9vZ3JhcHlzLmNvbS9jb21tb24vaW1nL2RlZmF1bHRfcHJvZmlsZS5wbmciLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNjcxMDQ5NzYxfQ.lP73SnnQtGcH-XHctzVuOhECcx7RbyzGG0qbawsqNgc
+Content-Type: application/json
+
+{
+
+}
+
+###
+GET http://localhost:8080/member/auth/mypage/all
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqaXlvdW5nIiwiYXVkIjoi7LCM7JeJIiwibWVtYmVyU3RhdHVzIjoidmVudGkiLCJwcm9maWxlSW1hZ2VVcmwiOiJodHRwczovL2pheWxpbi1idWNrZXQuczMuYXAtbm9ydGhlYXN0LTIuYW1hem9uYXdzLmNvbS9tZW1iZXJQcm9maWxlSW1hZ2UvZDUxZjJlMzAtY2VkMC00MjM4LWExNzUtOGMyYmE1N2QyMTMxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY3MDc4NDMwNn0.aDZbXTtHOBhQN7PzyDTGykB2KIpTziJ36A8n-Lx9_LQ
+Content-Type: application/json
+
+{
+
+}
+###
+GET http://localhost:8080/board/main
+Content-Type: application/json
+
+{
+
+}
+###
+GET http://localhost:8080/member/auth/mypage/boards?page=1&size=1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqaXlvdW5nIiwiYXVkIjoi7LCM7JeJIiwibWVtYmVyU3RhdHVzIjoidmVudGkiLCJwcm9maWxlSW1hZ2VVcmwiOiJodHRwczovL2pheWxpbi1idWNrZXQuczMuYXAtbm9ydGhlYXN0LTIuYW1hem9uYXdzLmNvbS9tZW1iZXJQcm9maWxlSW1hZ2UvZDUxZjJlMzAtY2VkMC00MjM4LWExNzUtOGMyYmE1N2QyMTMxIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY3MDc4NDMwNn0.aDZbXTtHOBhQN7PzyDTGykB2KIpTziJ36A8n-Lx9_LQ
+Content-Type: application/json
+
+{
+
+}
+
+###
+POST http://localhost:8080/auth/communityComment/1/create
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZGFtMSIsImF1ZCI6IuyEnOyngOyYgeyngOyEnOyngOyYgSIsIm1lbWJlclN0YXR1cyI6InRhbGwiLCJwcm9maWxlSW1hZ2VVcmwiOiJodHRwOi8vZG9vZ3JhcHlzLmNvbS9jb21tb24vaW1nL2RlZmF1bHRfcHJvZmlsZS5wbmciLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNjcwOTY3NTM0fQ.PSNEJROgkjBtbfFzqGJh1Lt2LbVGRWg0TS-oTQCys0o
+Content-Type: application/json
+
+{
+  "communityCommentContent": "testing"
+}
+
+###
+PUT http://localhost:8080/auth/communityComment/9/update
+Authorization: Bearer eybGciOiJIUzI1NiJ9.eidWNrZXQuczMuYXAtbm9ydGhlYXN0LTIuYW1hem9uYXdzLmNvbS9tZW1iZXJQcm9maWxlSW1hZ2UvZGNhMDVhNDMiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNjcwNzk0NDA3fQ.mjNfUlTjiFVWQdwRtL5krV0juIIxLhazkE3bTEVQgtA
+Content-Type: application/json
+
+{
+  "communityCommentContent": "testing22992"
+}
+
+
+###
+DELETE http://localhost:8080/auth/communityComment/9/delete
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZGFtIiwiYXVkIjoi7ISc7KeA7JiB7KeA7ISc7KeA7JiBIiwibWVtYmVyU3RhdHVzIjoidGFsbCIsInByb2ZpbGVJbWFnZVVybCI6Imh0dHA6Ly9kb29ncmFweXMuY29tL2NvbW1vbi9pbWcvZGVmYXVsdF9wcm9maWxlLnBuZyIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2NzA3OTUxNjR9.ScknxZKawKKSsNDFptKPQh-vcYzU5HcJOq2Kl_v11FU
+Content-Type: application/json
+
+
+###
+GET http://localhost:8080/board/main/최신?page=5&size=5
+Content-Type: application/json
+
+
+###
+DELETE http://localhost:8080/auth/board/delete/46
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZGFtMSIsImF1ZCI6IuyEnOyngOyYgeyngOyEnOyngOyYgSIsIm1lbWJlclN0YXR1cyI6ImdyYW5kZSIsInByb2ZpbGVJbWFnZVVybCI6Imh0dHA6Ly9kb29ncmFweXMuY29tL2NvbW1vbi9pbWcvZGVmYXVsdF9wcm9maWxlLnBuZyIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2NzA4Mzc0MjZ9.2WXj_f6w687WD8Z7wksog5a9R-OIFEQy7ql-Hn7cG5s
+Content-Type: application/json
