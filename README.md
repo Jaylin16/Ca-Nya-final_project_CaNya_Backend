@@ -46,7 +46,8 @@
 
 ## 🍀 서비스 아키텍쳐
 
-![1](https://user-images.githubusercontent.com/113230019/207134801-e8b3e958-2e3a-4fb9-be57-c34c6ff4e61e.png)
+<img width="894" alt="스크린샷 2022-12-16 오후 3 23 59" src="https://user-images.githubusercontent.com/113230019/208035976-1f5cd00f-7914-4cad-94c4-57961671597c.png">
+
 
 <br>
 
